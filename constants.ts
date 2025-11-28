@@ -1,5 +1,64 @@
 
-import { PricingTier, Program, ProviderStat } from './types';
+import { PricingTier, Program, ProviderStat, School, Badge, ReferralStats, FeedPost } from './types';
+
+export const MOCK_SCHOOLS: School[] = [
+  { id: 's1', name: 'Berlin International School', district: 'Dahlem', logo: 'BIS' },
+  { id: 's2', name: 'John F. Kennedy School', district: 'Zehlendorf', logo: 'JFK' },
+  { id: 's3', name: 'Nelson Mandela School', district: 'Wilmersdorf', logo: 'NMS' },
+];
+
+export const MOCK_BADGES: Badge[] = [
+  { id: 'b1', name: 'Activity Explorer', icon: '🌍', description: 'Booked 5 different categories', earnedDate: '2023-11-15' },
+  { id: 'b2', name: 'Super Reviewer', icon: '⭐', description: 'Left 10 detailed reviews', earnedDate: '2024-01-20' },
+  { id: 'b3', name: 'Early Bird', icon: '🌅', description: 'Booked 2 weeks in advance', earnedDate: '2024-03-05' },
+];
+
+export const MOCK_REFERRAL_STATS: ReferralStats = {
+  code: 'SARAH-BERLIN-24',
+  totalReferrals: 3,
+  earnedPoints: 600,
+  milestones: [
+    { label: 'Refer 1 Friend (200 pts)', achieved: true },
+    { label: 'Refer 5 Friends (1000 pts)', achieved: false },
+    { label: 'Refer a Provider (300 pts)', achieved: true },
+  ]
+};
+
+export const MOCK_FEED_POSTS: FeedPost[] = [
+  {
+    id: 'f1',
+    providerName: 'Berlin Kickers',
+    providerImage: 'https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    image: 'https://images.unsplash.com/photo-1526232761682-d26e03ac148e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    caption: 'Great session today with the U10 group! Working on dribbling skills. ⚽️ #youthsoccer #berlin',
+    likes: 45,
+    comments: 3,
+    timeAgo: '2h ago',
+    liked: true,
+  },
+  {
+    id: 'f2',
+    providerName: 'The Makery',
+    providerImage: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    image: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    caption: 'Look at these amazing clay creations from our weekend workshop! 🎨✨ Next class starts Saturday.',
+    likes: 89,
+    comments: 12,
+    timeAgo: '5h ago',
+    liked: false,
+  },
+  {
+    id: 'f3',
+    providerName: 'CampFuchs',
+    providerImage: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    image: 'https://images.unsplash.com/photo-1533240332313-0db49b459ad6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    caption: 'Summer camp registration is now OPEN! Early bird spots are filling up fast. 🌲⛺️',
+    likes: 120,
+    comments: 24,
+    timeAgo: '1d ago',
+    liked: false,
+  }
+];
 
 export const MOCK_PROGRAMS: Program[] = [
   {
@@ -16,8 +75,10 @@ export const MOCK_PROGRAMS: Program[] = [
     location: 'Mitte, Berlin',
     coordinates: { lat: 52.5200, lng: 13.4050 },
     verified: true,
+    verifications: ['background_check', 'first_aid', 'child_safeguarding'],
     isOnline: true,
     nextSession: 'Tue, 16:00',
+    schoolId: 's3',
   },
   {
     id: '2',
@@ -33,8 +94,10 @@ export const MOCK_PROGRAMS: Program[] = [
     location: 'Kreuzberg, Berlin',
     coordinates: { lat: 52.4964, lng: 13.4216 },
     verified: true,
+    verifications: ['background_check', 'insurance'],
     isOnline: false,
     nextSession: 'Wed, 15:30',
+    recommended: true,
   },
   {
     id: '3',
@@ -50,8 +113,10 @@ export const MOCK_PROGRAMS: Program[] = [
     location: 'Charlottenburg',
     coordinates: { lat: 52.5163, lng: 13.3077 },
     verified: true,
+    verifications: ['background_check', 'child_safeguarding', 'first_aid', 'insurance'],
     isOnline: true,
     nextSession: 'Flexible Schedule',
+    schoolId: 's1',
   },
   {
     id: '4',
@@ -67,6 +132,7 @@ export const MOCK_PROGRAMS: Program[] = [
     location: 'Grunewald, Berlin',
     coordinates: { lat: 52.4676, lng: 13.2597 },
     verified: true,
+    verifications: ['background_check', 'child_safeguarding', 'insurance'],
     isOnline: false,
     nextSession: 'July 15 - 20',
   },
@@ -84,8 +150,10 @@ export const MOCK_PROGRAMS: Program[] = [
     location: 'Prenzlauer Berg',
     coordinates: { lat: 52.5422, lng: 13.4140 },
     verified: true,
+    verifications: ['background_check'],
     isOnline: false,
     nextSession: 'Thu, 14:00',
+    schoolId: 's2',
   },
   {
     id: '6',
@@ -101,8 +169,10 @@ export const MOCK_PROGRAMS: Program[] = [
     location: 'Neukölln, Berlin',
     coordinates: { lat: 52.4812, lng: 13.4353 },
     verified: true,
+    verifications: ['background_check', 'first_aid', 'child_safeguarding'],
     isOnline: true,
     nextSession: 'By Request',
+    recommended: true,
   },
 ];
 
@@ -161,6 +231,19 @@ export const PROVIDER_PRICING: PricingTier[] = [
       'Analytics dashboard',
     ],
   },
+  {
+    name: 'Business Plus',
+    price: '€48',
+    period: 'month',
+    tagline: 'Scale your operation',
+    features: [
+      'Unlimited Program listings',
+      '8% platform commission',
+      'School & Enterprise Integration',
+      'Cancellation Protection',
+      'Advanced Marketing Tools',
+    ],
+  },
 ];
 
 export const PROVIDER_STATS: ProviderStat[] = [
@@ -196,5 +279,9 @@ export const FAQ_ITEMS = [
   {
     question: "Do you offer programs for adults?",
     answer: "Currently, our primary focus is on youth education and recreation (ages 4-18). However, we are exploring adult programs and family workshops for our future expansion."
+  },
+  {
+    question: "What are Prime Points?",
+    answer: "Prime Points is our loyalty program. You earn points for every booking, review, and referral. Points can be redeemed for discounts, premium subscriptions, and exclusive access to events."
   }
 ];

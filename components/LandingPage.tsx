@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { ShieldCheck, Calendar, Users, Star, CheckCircle2, ChevronDown, ChevronUp, MapPin, Edit, MessageCircle, TrendingUp } from 'lucide-react';
+import { ShieldCheck, Calendar, Users, Star, CheckCircle2, ChevronDown, ChevronUp, MapPin, Edit, MessageCircle, TrendingUp, Search } from 'lucide-react';
 import { Button } from './Button';
 import { PARENT_PRICING, PROVIDER_PRICING, FAQ_ITEMS, MOCK_PROGRAMS } from '../constants';
 
@@ -31,11 +31,33 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onLogin 
             Prime Youth Connect modernizes how families discover and book children's programs. 
             A safety-first, vetted two-way marketplace for education and recreation.
           </p>
+          
+          {/* Dual Search Bar */}
+          <div className="max-w-2xl mx-auto bg-white p-2 rounded-lg shadow-lg flex flex-col md:flex-row gap-2 mb-8">
+             <div className="flex-1 relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+                <input 
+                  type="text" 
+                  placeholder="Find Programs (e.g. Soccer, Math)" 
+                  className="w-full pl-10 pr-4 py-3 bg-transparent text-slate-900 placeholder:text-slate-400 outline-none"
+                />
+             </div>
+             <div className="hidden md:block w-px bg-slate-200"></div>
+             <div className="flex-1 relative">
+                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+                <input 
+                  type="text" 
+                  placeholder="Location (e.g. Mitte)" 
+                  className="w-full pl-10 pr-4 py-3 bg-transparent text-slate-900 placeholder:text-slate-400 outline-none"
+                />
+             </div>
+             <Button onClick={onGetStarted} className="md:w-auto w-full h-auto py-3 px-6">
+                Search
+             </Button>
+          </div>
+
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" onClick={onGetStarted} className="bg-primary hover:bg-cyan-600">
-              Find Activities
-            </Button>
-            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10" onClick={onLogin}>
+            <Button variant="outline" className="border-white text-white hover:bg-white/10" onClick={onLogin}>
               Provider Login
             </Button>
           </div>
@@ -46,7 +68,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onLogin 
       <section className="py-16 bg-white border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="flex justify-between items-center mb-8">
-             <h2 className="text-2xl font-bold text-slate-900">Trending Programs</h2>
+             <h2 className="text-2xl font-bold text-slate-900">Featured Programs</h2>
              <button onClick={onGetStarted} className="text-primary font-medium hover:underline">View All</button>
           </div>
           <div className="flex overflow-x-auto gap-6 pb-6 hide-scrollbar snap-x">
@@ -92,8 +114,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onLogin 
             </div>
             
             <div className="grid md:grid-cols-3 gap-12 relative">
-               {/* Connecting Line (Desktop) */}
-               <div className="hidden md:block absolute top-1/2 left-0 w-full h-1 bg-slate-700 -translate-y-1/2 z-0"></div>
+               {/* Removed vertical line */}
 
                {/* Step 1 */}
                <div className="relative z-10 flex flex-col items-center text-center">
@@ -202,7 +223,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onLogin 
             </div>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {(pricingMode === 'families' ? PARENT_PRICING : PROVIDER_PRICING).map((tier) => (
               <div 
                 key={tier.name}

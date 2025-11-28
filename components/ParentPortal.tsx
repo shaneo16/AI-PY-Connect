@@ -1,16 +1,23 @@
 
 import React, { useState } from 'react';
-import { Search, Filter, Calendar as CalendarIcon, MapPin, Star, Heart, CheckCircle, ShieldCheck, List, Map as MapIcon, X, Lock, MessageCircle } from 'lucide-react';
-import { MOCK_PROGRAMS } from '../constants';
-import { Program } from '../types';
+import { Search, Filter, Calendar as CalendarIcon, MapPin, Star, Heart, CheckCircle, ShieldCheck, List, Map as MapIcon, X, Lock, MessageCircle, Home, Award, User, Settings, Users, Sparkles, Copy, Share2, Heart as HeartIcon, MessageSquare, FileCheck, Shield } from 'lucide-react';
+import { MOCK_PROGRAMS, MOCK_SCHOOLS, MOCK_BADGES, MOCK_REFERRAL_STATS, MOCK_FEED_POSTS } from '../constants';
+import { Program, VerificationType } from '../types';
 import { Button } from './Button';
 
 export const ParentPortal: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'explore' | 'planner' | 'messages'>('explore');
+  const [activeTab, setActiveTab] = useState<'home' | 'explore' | 'planner' | 'highlights' | 'settings'>('home');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [selectedSchool, setSelectedSchool] = useState<string>('All');
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
   const [selectedProgram, setSelectedProgram] = useState<Program | null>(null);
+  
+  // Settings State
+  const [childSchool, setChildSchool] = useState(MOCK_SCHOOLS[0].id);
+  const [healthInfo, setHealthInfo] = useState('');
+  const [photoConsent, setPhotoConsent] = useState(false);
+  const [showToast, setShowToast] = useState(false);
   
   // Simulation for Gating Features
   const [subscription, setSubscription] = useState<'Free' | 'Active'>('Free');
@@ -20,18 +27,40 @@ export const ParentPortal: React.FC = () => {
                           prog.provider.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           prog.category.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === 'All' || prog.category === selectedCategory;
-    return matchesSearch && matchesCategory;
+    const matchesSchool = selectedSchool === 'All' || (prog.schoolId === selectedSchool);
+    
+    return matchesSearch && matchesCategory && matchesSchool;
   });
 
   const categories = ['All', 'Sports', 'Arts', 'Music', 'Education', 'Life Skills', 'Camps', 'Workshops'];
 
+  const saveSettings = (e: React.FormEvent) => {
+    e.preventDefault();
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
+  }
+
+  const copyReferral = () => {
+    navigator.clipboard.writeText(MOCK_REFERRAL_STATS.code);
+    alert('Referral code copied!');
+  }
+
+  const currentSchool = MOCK_SCHOOLS.find(s => s.id === childSchool);
+
   return (
     <div className="flex h-[calc(100vh-64px)] bg-slate-50 relative">
       {/* Sidebar (Desktop) */}
-      <aside className="hidden md:flex flex-col w-64 bg-white border-r border-slate-200 p-6 space-y-6 shrink-0 z-10">
+      <aside className="hidden md:flex flex-col w-64 bg-white border-r border-slate-200 p-6 space-y-6 shrink-0 z-10 overflow-y-auto">
         <div>
           <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">Dashboard</h2>
           <nav className="space-y-2">
+            <button 
+              onClick={() => setActiveTab('home')}
+              className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${activeTab === 'home' ? 'bg-cyan-50 text-primary font-medium' : 'text-slate-600 hover:bg-slate-50'}`}
+            >
+              <Home size={20} />
+              <span>Overview</span>
+            </button>
             <button 
               onClick={() => setActiveTab('explore')}
               className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${activeTab === 'explore' ? 'bg-cyan-50 text-primary font-medium' : 'text-slate-600 hover:bg-slate-50'}`}
@@ -40,20 +69,53 @@ export const ParentPortal: React.FC = () => {
               <span>Explore</span>
             </button>
             <button 
+              onClick={() => setActiveTab('highlights')}
+              className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${activeTab === 'highlights' ? 'bg-cyan-50 text-primary font-medium' : 'text-slate-600 hover:bg-slate-50'}`}
+            >
+              <HeartIcon size={20} />
+              <span>Highlights</span>
+            </button>
+            <button 
               onClick={() => setActiveTab('planner')}
               className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${activeTab === 'planner' ? 'bg-cyan-50 text-primary font-medium' : 'text-slate-600 hover:bg-slate-50'}`}
             >
               <CalendarIcon size={20} />
               <span>My Planner</span>
             </button>
+            <button 
+              onClick={() => setActiveTab('settings')}
+              className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${activeTab === 'settings' ? 'bg-cyan-50 text-primary font-medium' : 'text-slate-600 hover:bg-slate-50'}`}
+            >
+              <Settings size={20} />
+              <span>Settings</span>
+            </button>
           </nav>
         </div>
         
-        <div className="pt-6 border-t border-slate-100">
+        {/* Prime Points Widget */}
+        <div className="p-4 bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl text-white shadow-lg">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="font-bold text-sm text-amber-400 flex items-center"><Award size={14} className="mr-1"/> Prime Points</h3>
+            <span className="text-xs font-bold bg-white/20 px-2 py-0.5 rounded">GOLD</span>
+          </div>
+          <div className="text-3xl font-bold mb-1">3,450</div>
+          <div className="w-full bg-white/10 rounded-full h-1.5 mb-2">
+            <div className="bg-amber-400 h-1.5 rounded-full" style={{ width: '65%' }}></div>
+          </div>
+          <p className="text-[10px] text-slate-400">550 pts to Platinum Tier</p>
+          <button className="w-full mt-3 py-1 text-xs bg-white/10 hover:bg-white/20 rounded text-center transition-colors">Redeem Rewards</button>
+        </div>
+
+        <div className="pt-2 border-t border-slate-100">
           <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">My Children</h2>
           <div className="flex items-center space-x-3 mb-3">
-             <div className="h-8 w-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-xs">E</div>
-             <span className="text-sm font-medium">Emma (8)</span>
+             <div className="h-8 w-8 rounded-full overflow-hidden border border-slate-200">
+                <img src="https://images.unsplash.com/photo-1595152452543-e5fc28ebc2b8?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="Emma" className="w-full h-full object-cover"/>
+             </div>
+             <div className="flex flex-col">
+                <span className="text-sm font-medium">Emma (8)</span>
+                <span className="text-[10px] text-slate-400 truncate w-24">{currentSchool?.name}</span>
+             </div>
           </div>
           <div className="flex items-center space-x-3">
              <div className="h-8 w-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold text-xs">L</div>
@@ -73,15 +135,104 @@ export const ParentPortal: React.FC = () => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col min-w-0">
+      <main className="flex-1 flex flex-col min-w-0 overflow-y-auto">
+        {activeTab === 'home' && (
+          <div className="p-6 md:p-8 max-w-5xl mx-auto w-full">
+            <h1 className="text-2xl font-bold text-slate-900 mb-6">Welcome back, Sarah!</h1>
+            
+            <div className="grid md:grid-cols-2 gap-6 mb-8">
+              {/* Activity Progress */}
+              <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                 <h2 className="font-bold text-lg mb-4 flex items-center">
+                    <Sparkles className="text-secondary mr-2" size={20}/> Weekly Activity Goal
+                 </h2>
+                 <div className="flex items-end space-x-2 mb-2">
+                    <span className="text-4xl font-bold text-slate-900">80%</span>
+                    <span className="text-sm text-slate-500 mb-1">completed</span>
+                 </div>
+                 <div className="w-full bg-slate-100 rounded-full h-3 mb-4">
+                    <div className="bg-secondary h-3 rounded-full transition-all duration-1000" style={{ width: '80%' }}></div>
+                 </div>
+                 <p className="text-sm text-slate-600">Great job! Emma has 1 more session this week to hit her goal.</p>
+              </div>
+
+              {/* Refer & Earn */}
+              <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 relative overflow-hidden">
+                 <div className="absolute top-0 right-0 p-4 opacity-10">
+                    <Users size={120} />
+                 </div>
+                 <h2 className="font-bold text-lg mb-2 flex items-center">
+                    <Users className="text-primary mr-2" size={20}/> Refer & Earn
+                 </h2>
+                 <p className="text-sm text-slate-600 mb-4">Give €10, Get 200 Points!</p>
+                 
+                 <div className="flex gap-2 mb-4">
+                    <div className="bg-slate-100 rounded-lg px-3 py-2 flex-1 font-mono text-sm border border-slate-200 flex items-center justify-between">
+                       <span>{MOCK_REFERRAL_STATS.code}</span>
+                       <button onClick={copyReferral} className="text-primary hover:text-cyan-700"><Copy size={16}/></button>
+                    </div>
+                    <Button size="sm" onClick={copyReferral}>Copy</Button>
+                 </div>
+
+                 <div className="space-y-2">
+                    {MOCK_REFERRAL_STATS.milestones.map((m, i) => (
+                       <div key={i} className="flex items-center text-xs">
+                          <div className={`w-4 h-4 rounded-full flex items-center justify-center mr-2 ${m.achieved ? 'bg-green-100 text-green-600' : 'bg-slate-100 text-slate-300'}`}>
+                             <CheckCircle size={10} />
+                          </div>
+                          <span className={m.achieved ? 'text-slate-700 font-medium' : 'text-slate-400'}>{m.label}</span>
+                       </div>
+                    ))}
+                 </div>
+              </div>
+            </div>
+
+            {/* Badges */}
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-8">
+                <h2 className="font-bold text-lg mb-4 flex items-center">
+                  <Award className="text-amber-500 mr-2" size={20}/> Recent Achievements
+                </h2>
+                <div className="flex gap-6 overflow-x-auto pb-2">
+                  {MOCK_BADGES.map(badge => (
+                    <div key={badge.id} className="flex flex-col items-center text-center group cursor-pointer min-w-[80px]">
+                        <div className="w-16 h-16 rounded-full bg-amber-50 border-2 border-amber-200 flex items-center justify-center text-3xl shadow-sm mb-2 group-hover:scale-110 transition-transform">
+                          {badge.icon}
+                        </div>
+                        <span className="text-xs font-bold text-slate-700">{badge.name}</span>
+                        <span className="text-[10px] text-slate-400">{badge.earnedDate}</span>
+                    </div>
+                  ))}
+                  <div className="flex flex-col items-center text-center opacity-40 min-w-[80px]">
+                      <div className="w-16 h-16 rounded-full bg-slate-100 border-2 border-slate-200 flex items-center justify-center text-2xl mb-2">
+                        🔒
+                      </div>
+                      <span className="text-xs font-bold text-slate-500">Next</span>
+                  </div>
+                </div>
+            </div>
+
+            {/* AI Recommendations */}
+            <div className="mb-8">
+               <h2 className="font-bold text-xl mb-4 flex items-center text-slate-900">
+                 Recommended for you
+               </h2>
+               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                 {MOCK_PROGRAMS.filter(p => p.recommended).map(prog => (
+                   <ProgramCard key={prog.id} program={prog} onClick={() => setSelectedProgram(prog)} />
+                 ))}
+               </div>
+            </div>
+          </div>
+        )}
+
         {activeTab === 'explore' && (
           <>
             {/* Header / Search Bar */}
-            <div className="bg-white border-b border-slate-200 p-4 md:p-6 shadow-sm z-20">
-               <div className="max-w-5xl mx-auto">
+            <div className="bg-white border-b border-slate-200 p-4 md:p-6 shadow-sm z-20 sticky top-0">
+               <div className="max-w-6xl mx-auto">
                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
                     <div>
-                      <h1 className="text-2xl font-bold text-slate-900">Find Activities</h1>
+                      <h1 className="text-2xl font-bold text-slate-900">Find Programs</h1>
                       <p className="text-sm text-slate-500">Discover vetted programs & services.</p>
                     </div>
                     <div className="flex-1 md:max-w-lg relative">
@@ -96,7 +247,7 @@ export const ParentPortal: React.FC = () => {
                     </div>
                  </div>
 
-                 <div className="flex flex-wrap items-center justify-between gap-4">
+                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div className="flex gap-2 overflow-x-auto pb-1 hide-scrollbar flex-1">
                       {categories.map(cat => (
                         <button
@@ -112,25 +263,46 @@ export const ParentPortal: React.FC = () => {
                         </button>
                       ))}
                     </div>
-                    <div className="flex bg-slate-100 p-1 rounded-lg shrink-0">
-                       <button onClick={() => setViewMode('list')} className={`p-1.5 rounded-md ${viewMode === 'list' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-400 hover:text-slate-600'}`}>
-                          <List size={20} />
-                       </button>
-                       <button onClick={() => setViewMode('map')} className={`p-1.5 rounded-md ${viewMode === 'map' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-400 hover:text-slate-600'}`}>
-                          <MapIcon size={20} />
-                       </button>
+                    
+                    {/* School Filter */}
+                    <div className="flex items-center gap-2">
+                       <select 
+                         value={selectedSchool}
+                         onChange={(e) => setSelectedSchool(e.target.value)}
+                         className="bg-slate-100 text-slate-700 text-sm rounded-lg px-3 py-1.5 border-none focus:ring-2 focus:ring-primary outline-none"
+                       >
+                         <option value="All">All Schools</option>
+                         {MOCK_SCHOOLS.map(s => (
+                           <option key={s.id} value={s.id}>{s.name}</option>
+                         ))}
+                       </select>
+
+                       <div className="flex bg-slate-100 p-1 rounded-lg shrink-0">
+                          <button onClick={() => setViewMode('list')} className={`p-1.5 rounded-md ${viewMode === 'list' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-400 hover:text-slate-600'}`}>
+                             <List size={20} />
+                          </button>
+                          <button onClick={() => setViewMode('map')} className={`p-1.5 rounded-md ${viewMode === 'map' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-400 hover:text-slate-600'}`}>
+                             <MapIcon size={20} />
+                          </button>
+                       </div>
                     </div>
                  </div>
                </div>
             </div>
 
             <div className="flex-1 overflow-y-auto p-4 md:p-8 relative">
-              <div className="max-w-5xl mx-auto">
+              <div className="max-w-6xl mx-auto">
                 {viewMode === 'list' ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-20">
-                    {filteredPrograms.map((program) => (
-                      <ProgramCard key={program.id} program={program} onClick={() => setSelectedProgram(program)} />
-                    ))}
+                    {filteredPrograms.length > 0 ? (
+                       filteredPrograms.map((program) => (
+                        <ProgramCard key={program.id} program={program} onClick={() => setSelectedProgram(program)} />
+                      ))
+                    ) : (
+                      <div className="col-span-full text-center py-20 text-slate-500">
+                        No programs found matching your filters.
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="bg-slate-200 rounded-xl h-[500px] w-full flex items-center justify-center relative overflow-hidden border border-slate-300">
@@ -164,6 +336,59 @@ export const ParentPortal: React.FC = () => {
               </div>
             </div>
           </>
+        )}
+
+        {activeTab === 'highlights' && (
+          <div className="max-w-2xl mx-auto w-full p-4 md:p-8">
+             <header className="mb-6 text-center">
+               <h1 className="text-2xl font-bold text-slate-900">Community Highlights</h1>
+               <p className="text-slate-500">Updates from your favorite providers.</p>
+             </header>
+
+             <div className="space-y-6">
+                {MOCK_FEED_POSTS.map(post => (
+                   <div key={post.id} className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+                      <div className="p-4 flex items-center justify-between">
+                         <div className="flex items-center space-x-3">
+                            <div className="w-10 h-10 rounded-full overflow-hidden border border-slate-200">
+                               <img src={post.providerImage} alt={post.providerName} className="w-full h-full object-cover"/>
+                            </div>
+                            <div>
+                               <h3 className="font-bold text-slate-900 text-sm">{post.providerName}</h3>
+                               <p className="text-xs text-slate-500">{post.timeAgo}</p>
+                            </div>
+                         </div>
+                         <button className="text-slate-400 hover:text-slate-600"><Share2 size={18}/></button>
+                      </div>
+                      
+                      <div className="aspect-square w-full bg-slate-100 relative">
+                         <img src={post.image} alt="Post" className="w-full h-full object-cover"/>
+                      </div>
+
+                      <div className="p-4">
+                         <div className="flex items-center space-x-4 mb-3">
+                            <button className={`flex items-center space-x-1 ${post.liked ? 'text-red-500' : 'text-slate-600 hover:text-red-500'}`}>
+                               <HeartIcon size={24} className={post.liked ? 'fill-red-500' : ''} />
+                            </button>
+                            <button className="flex items-center space-x-1 text-slate-600 hover:text-primary">
+                               <MessageSquare size={24} />
+                            </button>
+                         </div>
+                         <div className="mb-2">
+                            <span className="font-bold text-sm text-slate-900">{post.likes} likes</span>
+                         </div>
+                         <p className="text-sm text-slate-700">
+                            <span className="font-bold mr-2">{post.providerName}</span>
+                            {post.caption}
+                         </p>
+                         {post.comments > 0 && (
+                            <button className="text-xs text-slate-400 mt-2 hover:text-slate-600">View all {post.comments} comments</button>
+                         )}
+                      </div>
+                   </div>
+                ))}
+             </div>
+          </div>
         )}
 
         {activeTab === 'planner' && (
@@ -207,6 +432,90 @@ export const ParentPortal: React.FC = () => {
             </div>
           </div>
         )}
+
+        {activeTab === 'settings' && (
+           <div className="max-w-3xl mx-auto p-4 md:p-8">
+             <header className="mb-8">
+                <h1 className="text-2xl font-bold text-slate-900 mb-2">Account Settings</h1>
+                <p className="text-slate-500">Manage your family profile and preferences.</p>
+             </header>
+
+             {showToast && (
+                <div className="fixed top-20 right-8 bg-green-500 text-white px-4 py-2 rounded shadow-lg animate-in slide-in-from-right z-50">
+                   Settings Saved Successfully!
+                </div>
+             )}
+
+             <form onSubmit={saveSettings} className="space-y-8">
+                {/* Child Profile */}
+                <div className="bg-white p-6 rounded-xl border border-slate-200">
+                   <h3 className="text-lg font-bold mb-4">Child Profile: Emma</h3>
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                         <label className="block text-sm font-medium text-slate-700 mb-1">School</label>
+                         <select 
+                           value={childSchool} 
+                           onChange={(e) => setChildSchool(e.target.value)}
+                           className="w-full p-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary outline-none"
+                         >
+                            {MOCK_SCHOOLS.map(s => (
+                               <option key={s.id} value={s.id}>{s.name} ({s.district})</option>
+                            ))}
+                         </select>
+                         <p className="text-xs text-slate-400 mt-1">This helps us find programs near your school.</p>
+                      </div>
+                      <div>
+                         <label className="block text-sm font-medium text-slate-700 mb-1">Health / Allergies</label>
+                         <input 
+                            type="text" 
+                            value={healthInfo}
+                            onChange={(e) => setHealthInfo(e.target.value)}
+                            placeholder="e.g. Peanut Allergy, Asthma"
+                            className="w-full p-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary outline-none"
+                         />
+                      </div>
+                   </div>
+                   
+                   <div className="mt-4">
+                      <label className="flex items-center space-x-2">
+                         <input 
+                           type="checkbox" 
+                           checked={photoConsent}
+                           onChange={(e) => setPhotoConsent(e.target.checked)}
+                           className="rounded text-primary focus:ring-primary" 
+                         />
+                         <span className="text-sm text-slate-700">I grant permission for photos of my child to be taken during activities.</span>
+                      </label>
+                   </div>
+                </div>
+
+                {/* Payment */}
+                <div className="bg-white p-6 rounded-xl border border-slate-200">
+                   <h3 className="text-lg font-bold mb-4">Payment Method</h3>
+                   <div className="flex items-center p-3 border border-slate-200 rounded-lg bg-slate-50 mb-3">
+                      <div className="w-10 h-6 bg-slate-300 rounded mr-3"></div>
+                      <span className="font-mono text-slate-600">•••• •••• •••• 4242</span>
+                      <button type="button" className="ml-auto text-sm text-primary hover:underline">Edit</button>
+                   </div>
+                   <Button variant="outline" size="sm" type="button">+ Add New Card</Button>
+                </div>
+
+                {/* Legal */}
+                <div className="bg-white p-6 rounded-xl border border-slate-200">
+                   <h3 className="text-lg font-bold mb-4">Legal</h3>
+                   <ul className="space-y-2 text-sm text-primary">
+                      <li><a href="#" className="hover:underline">Terms & Conditions</a></li>
+                      <li><a href="#" className="hover:underline">Privacy Policy</a></li>
+                      <li><a href="#" className="hover:underline">Data Processing Agreement</a></li>
+                   </ul>
+                </div>
+
+                <div className="flex justify-end">
+                   <Button type="submit" size="lg">Save Changes</Button>
+                </div>
+             </form>
+           </div>
+        )}
       </main>
 
       {/* Detail Modal / Overlay */}
@@ -246,13 +555,20 @@ export const ParentPortal: React.FC = () => {
                           </div>
                        </div>
                        
-                       <div className="flex gap-2 mt-4">
+                       <div className="flex flex-wrap gap-2 mt-4">
                           <span className="px-2 py-1 bg-slate-100 text-slate-600 text-xs font-semibold uppercase rounded">{selectedProgram.category}</span>
-                          {selectedProgram.verified && (
-                             <span className="px-2 py-1 bg-cyan-50 text-primary text-xs font-semibold uppercase rounded flex items-center">
-                                <ShieldCheck size={12} className="mr-1" /> Vetted
+                          {/* Full Labels for Verification Badges */}
+                          {selectedProgram.verifications.map((type) => (
+                             <span key={type} className={`px-2 py-1 text-xs font-semibold uppercase rounded flex items-center ${
+                                type === 'background_check' ? 'bg-blue-100 text-blue-700' :
+                                type === 'first_aid' ? 'bg-red-100 text-red-700' :
+                                type === 'child_safeguarding' ? 'bg-purple-100 text-purple-700' :
+                                'bg-green-100 text-green-700' // insurance
+                             }`}>
+                                <VerificationIcon type={type} size={12} className="mr-1" />
+                                {type.replace('_', ' ')}
                              </span>
-                          )}
+                          ))}
                        </div>
                     </div>
 
@@ -331,6 +647,16 @@ export const ParentPortal: React.FC = () => {
   );
 };
 
+const VerificationIcon: React.FC<{ type: VerificationType, size?: number, className?: string }> = ({ type, size = 16, className }) => {
+  switch (type) {
+    case 'background_check': return <ShieldCheck size={size} className={`text-blue-500 ${className}`} />;
+    case 'first_aid': return <Heart size={size} className={`text-red-500 fill-red-500 ${className}`} />;
+    case 'child_safeguarding': return <Shield size={size} className={`text-purple-500 ${className}`} />;
+    case 'insurance': return <FileCheck size={size} className={`text-green-500 ${className}`} />;
+    default: return <CheckCircle size={size} className={`text-slate-500 ${className}`} />;
+  }
+};
+
 interface ProgramCardProps {
   program: Program;
   onClick: () => void;
@@ -354,6 +680,13 @@ const ProgramCard: React.FC<ProgramCardProps> = ({ program, onClick }) => {
         <span className="absolute top-3 left-3 px-2 py-0.5 bg-black/40 backdrop-blur rounded text-[10px] font-bold text-white uppercase tracking-wider">
            {program.type === 'service' ? 'Service' : 'Program'}
         </span>
+
+        {/* AI Recommended Badge */}
+        {program.recommended && (
+           <span className="absolute bottom-2 right-2 px-2 py-0.5 bg-secondary/90 backdrop-blur rounded text-[10px] font-bold text-white uppercase tracking-wider flex items-center shadow-lg">
+             <Sparkles size={10} className="mr-1"/> Recommended
+           </span>
+        )}
 
         {/* Provider Avatar Overlay */}
         <div className="absolute -bottom-6 left-4 flex items-end">
@@ -379,21 +712,36 @@ const ProgramCard: React.FC<ProgramCardProps> = ({ program, onClick }) => {
         
         <p className="text-sm text-slate-500 mb-2 font-medium">{program.provider}</p>
         
+        {/* Verification Icons Only */}
+        <div className="flex gap-1 mb-2">
+           {program.verifications.map(type => (
+              <div key={type} title={type.replace('_', ' ')} className="bg-slate-50 p-1 rounded-full">
+                 <VerificationIcon type={type} size={12} />
+              </div>
+           ))}
+        </div>
+
         <div className="flex items-center text-xs text-slate-400 mb-4">
           <MapPin size={12} className="mr-1 shrink-0" />
           <span className="truncate">{program.location}</span>
         </div>
 
-        <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between">
+        <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between gap-2">
            <div>
              <span className="text-lg font-bold text-slate-900">€{program.price}</span>
              <span className="text-xs text-slate-400"> {program.type === 'service' ? '/hr' : '/session'}</span>
            </div>
-           {program.type === 'service' ? (
-              <span className="text-xs font-semibold text-primary bg-cyan-50 px-3 py-1.5 rounded-full">Request Info</span>
-           ) : (
-              <span className="text-xs font-semibold text-slate-700 bg-slate-100 px-3 py-1.5 rounded-full group-hover:bg-primary group-hover:text-white transition-colors">Book Now</span>
-           )}
+           
+           <div className="flex gap-2">
+             <button onClick={(e) => { e.stopPropagation(); alert('Invite sent to friends!'); }} className="px-3 py-1.5 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 transition-colors text-xs font-bold" title="Invite Friends">
+               <Users size={14} />
+             </button>
+             {program.type === 'service' ? (
+                <span className="text-xs font-semibold text-primary bg-cyan-50 px-3 py-1.5 rounded-full flex items-center justify-center">Request</span>
+             ) : (
+                <span className="text-xs font-semibold text-slate-700 bg-slate-100 px-3 py-1.5 rounded-full group-hover:bg-primary group-hover:text-white transition-colors flex items-center justify-center">Book</span>
+             )}
+           </div>
         </div>
       </div>
     </div>
