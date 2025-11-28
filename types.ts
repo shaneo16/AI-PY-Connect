@@ -1,3 +1,4 @@
+
 export enum UserRole {
   GUEST = 'GUEST',
   PARENT = 'PARENT',
@@ -81,4 +82,76 @@ export interface FeedPost {
   comments: number;
   timeAgo: string;
   liked?: boolean;
+}
+
+export interface ChatMessage {
+  id: string;
+  senderId: string;
+  text: string;
+  timestamp: string;
+  isMe: boolean;
+}
+
+export interface Conversation {
+  id: string;
+  participantName: string;
+  participantRole: 'Parent' | 'Provider';
+  participantImage: string;
+  lastMessage: string;
+  unreadCount: number;
+  messages: ChatMessage[];
+}
+
+export interface IncidentReport {
+  id: string;
+  programId: string;
+  studentName: string;
+  date: string;
+  description: string;
+  severity: 'Low' | 'Medium' | 'High';
+  status: 'Open' | 'Resolved';
+}
+
+export interface Product {
+  id: string;
+  name: string;
+  price: number;
+  image: string;
+}
+
+export interface Expense {
+  id: string;
+  category: string;
+  amount: number;
+  date: string;
+  status: 'Pending' | 'Approved';
+}
+
+export interface Worker {
+  id: string;
+  name: string;
+  role: string;
+  status: 'Active' | 'Inactive';
+}
+
+export interface Invoice {
+  id: string;
+  workerId: string;
+  amount: number;
+  date: string;
+  status: 'Paid' | 'Pending';
+}
+
+export interface Student {
+  id: string;
+  name: string;
+  age: number;
+  parentName: string;
+  status: 'Present' | 'Absent' | 'Late';
+}
+
+export interface AttendanceRecord {
+  sessionId: string;
+  date: string;
+  students: Student[];
 }

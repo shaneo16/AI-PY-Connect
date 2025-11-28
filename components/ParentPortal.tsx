@@ -1,17 +1,22 @@
 
+
 import React, { useState } from 'react';
-import { Search, Filter, Calendar as CalendarIcon, MapPin, Star, Heart, CheckCircle, ShieldCheck, List, Map as MapIcon, X, Lock, MessageCircle, Home, Award, User, Settings, Users, Sparkles, Copy, Share2, Heart as HeartIcon, MessageSquare, FileCheck, Shield } from 'lucide-react';
-import { MOCK_PROGRAMS, MOCK_SCHOOLS, MOCK_BADGES, MOCK_REFERRAL_STATS, MOCK_FEED_POSTS } from '../constants';
-import { Program, VerificationType } from '../types';
+import { Search, Filter, Calendar as CalendarIcon, MapPin, Star, Heart, CheckCircle, ShieldCheck, List, Map as MapIcon, X, Lock, MessageCircle, Home, Award, User, Settings, Users, Sparkles, Copy, Share2, Heart as HeartIcon, MessageSquare, FileCheck, Shield, Send } from 'lucide-react';
+import { MOCK_PROGRAMS, MOCK_SCHOOLS, MOCK_BADGES, MOCK_REFERRAL_STATS, MOCK_FEED_POSTS, MOCK_CONVERSATIONS } from '../constants';
+import { Program, VerificationType, Conversation, ChatMessage } from '../types';
 import { Button } from './Button';
 
 export const ParentPortal: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'home' | 'explore' | 'planner' | 'highlights' | 'settings'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'explore' | 'planner' | 'highlights' | 'chat' | 'settings'>('home');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [selectedSchool, setSelectedSchool] = useState<string>('All');
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
   const [selectedProgram, setSelectedProgram] = useState<Program | null>(null);
+  
+  // Chat State
+  const [activeConversationId, setActiveConversationId] = useState<string>(MOCK_CONVERSATIONS[0].id);
+  const [newMessage, setNewMessage] = useState('');
   
   // Settings State
   const [childSchool, setChildSchool] = useState(MOCK_SCHOOLS[0].id);
@@ -46,6 +51,15 @@ export const ParentPortal: React.FC = () => {
   }
 
   const currentSchool = MOCK_SCHOOLS.find(s => s.id === childSchool);
+  const activeConversation = MOCK_CONVERSATIONS.find(c => c.id === activeConversationId);
+
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newMessage.trim()) return;
+    // In a real app, this would send to backend
+    alert(`Message sent: ${newMessage}`);
+    setNewMessage('');
+  };
 
   return (
     <div className="flex h-[calc(100vh-64px)] bg-slate-50 relative">
@@ -74,6 +88,13 @@ export const ParentPortal: React.FC = () => {
             >
               <HeartIcon size={20} />
               <span>Highlights</span>
+            </button>
+            <button 
+              onClick={() => setActiveTab('chat')}
+              className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${activeTab === 'chat' ? 'bg-cyan-50 text-primary font-medium' : 'text-slate-600 hover:bg-slate-50'}`}
+            >
+              <MessageCircle size={20} />
+              <span>Messages</span>
             </button>
             <button 
               onClick={() => setActiveTab('planner')}
@@ -114,7 +135,7 @@ export const ParentPortal: React.FC = () => {
              </div>
              <div className="flex flex-col">
                 <span className="text-sm font-medium">Emma (8)</span>
-                <span className="text-[10px] text-slate-400 truncate w-24">{currentSchool?.name}</span>
+                <span className="text--[10px] text-slate-400 truncate w-24">{currentSchool?.name}</span>
              </div>
           </div>
           <div className="flex items-center space-x-3">
@@ -336,6 +357,89 @@ export const ParentPortal: React.FC = () => {
               </div>
             </div>
           </>
+        )}
+
+        {activeTab === 'chat' && (
+          <div className="flex h-full">
+             {/* Chat Sidebar */}
+             <div className="w-72 border-r border-slate-200 bg-white flex flex-col">
+                <div className="p-4 border-b border-slate-200">
+                   <h2 className="font-bold text-slate-900">Messages</h2>
+                </div>
+                <div className="flex-1 overflow-y-auto">
+                   {MOCK_CONVERSATIONS.map(conv => (
+                      <div 
+                        key={conv.id} 
+                        onClick={() => setActiveConversationId(conv.id)}
+                        className={`p-4 flex items-center space-x-3 cursor-pointer hover:bg-slate-50 transition-colors border-b border-slate-50 ${activeConversationId === conv.id ? 'bg-cyan-50' : ''}`}
+                      >
+                         <div className="relative">
+                            <div className="w-10 h-10 rounded-full overflow-hidden border border-slate-200">
+                               <img src={conv.participantImage} alt={conv.participantName} className="w-full h-full object-cover"/>
+                            </div>
+                            {conv.unreadCount > 0 && (
+                               <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-white text-[10px] font-bold flex items-center justify-center border border-white">
+                                  {conv.unreadCount}
+                               </div>
+                            )}
+                         </div>
+                         <div className="flex-1 min-w-0">
+                            <div className="flex justify-between items-baseline mb-0.5">
+                               <h3 className="font-bold text-sm text-slate-900 truncate">{conv.participantName}</h3>
+                               <span className="text-[10px] text-slate-400">10:00</span>
+                            </div>
+                            <p className="text-xs text-slate-500 truncate">{conv.lastMessage}</p>
+                         </div>
+                      </div>
+                   ))}
+                </div>
+             </div>
+
+             {/* Chat Window */}
+             <div className="flex-1 flex flex-col bg-slate-50">
+                {activeConversation ? (
+                   <>
+                      <div className="p-4 bg-white border-b border-slate-200 flex items-center space-x-3">
+                         <div className="w-8 h-8 rounded-full overflow-hidden border border-slate-200">
+                             <img src={activeConversation.participantImage} alt={activeConversation.participantName} className="w-full h-full object-cover"/>
+                         </div>
+                         <div>
+                            <h3 className="font-bold text-slate-900 text-sm">{activeConversation.participantName}</h3>
+                            <span className="text-xs text-green-500 flex items-center"><span className="w-2 h-2 bg-green-500 rounded-full mr-1"></span>Online</span>
+                         </div>
+                      </div>
+
+                      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                         {activeConversation.messages.map(msg => (
+                            <div key={msg.id} className={`flex ${msg.isMe ? 'justify-end' : 'justify-start'}`}>
+                               <div className={`max-w-[70%] rounded-2xl px-4 py-2 text-sm shadow-sm ${msg.isMe ? 'bg-primary text-white rounded-br-none' : 'bg-white text-slate-700 rounded-bl-none border border-slate-100'}`}>
+                                  {msg.text}
+                                  <div className={`text-[10px] mt-1 text-right ${msg.isMe ? 'text-cyan-100' : 'text-slate-400'}`}>{msg.timestamp}</div>
+                               </div>
+                            </div>
+                         ))}
+                      </div>
+
+                      <div className="p-4 bg-white border-t border-slate-200">
+                         <form onSubmit={handleSendMessage} className="flex gap-2">
+                            <input 
+                              type="text" 
+                              value={newMessage}
+                              onChange={(e) => setNewMessage(e.target.value)}
+                              placeholder="Type a message..."
+                              className="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                            />
+                            <Button type="submit" disabled={!newMessage.trim()}><Send size={18}/></Button>
+                         </form>
+                      </div>
+                   </>
+                ) : (
+                   <div className="flex-1 flex items-center justify-center text-slate-400">
+                      Select a conversation
+                   </div>
+                )}
+             </div>
+          </div>
         )}
 
         {activeTab === 'highlights' && (
@@ -629,6 +733,7 @@ export const ParentPortal: React.FC = () => {
                      {/* Locked for Free Users */}
                      <button 
                        disabled={subscription === 'Free'}
+                       onClick={() => { setActiveTab('chat'); setSelectedProgram(null); }}
                        className={`p-3 rounded-lg border flex items-center justify-center transition-colors ${
                           subscription === 'Free' 
                             ? 'bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed' 

@@ -1,5 +1,6 @@
 
-import { PricingTier, Program, ProviderStat, School, Badge, ReferralStats, FeedPost } from './types';
+
+import { PricingTier, Program, ProviderStat, School, Badge, ReferralStats, FeedPost, Conversation, IncidentReport } from './types';
 
 export const MOCK_SCHOOLS: School[] = [
   { id: 's1', name: 'Berlin International School', district: 'Dahlem', logo: 'BIS' },
@@ -57,6 +58,56 @@ export const MOCK_FEED_POSTS: FeedPost[] = [
     comments: 24,
     timeAgo: '1d ago',
     liked: false,
+  }
+];
+
+export const MOCK_CONVERSATIONS: Conversation[] = [
+  {
+    id: 'c1',
+    participantName: 'Berlin Kickers',
+    participantRole: 'Provider',
+    participantImage: 'https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    lastMessage: 'Don\'t forget shin guards for tomorrow!',
+    unreadCount: 1,
+    messages: [
+      { id: 'm1', senderId: 'p1', text: 'Hi Sarah, just a reminder about the match tomorrow.', timestamp: '10:00 AM', isMe: false },
+      { id: 'm2', senderId: 'me', text: 'Thanks! What time should we arrive?', timestamp: '10:05 AM', isMe: true },
+      { id: 'm3', senderId: 'p1', text: 'Please be there by 9:30 AM for warm-ups.', timestamp: '10:06 AM', isMe: false },
+      { id: 'm4', senderId: 'p1', text: 'Don\'t forget shin guards for tomorrow!', timestamp: '10:07 AM', isMe: false },
+    ]
+  },
+  {
+    id: 'c2',
+    participantName: 'Sarah J.',
+    participantRole: 'Provider',
+    participantImage: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    lastMessage: 'Leo is making great progress with fractions.',
+    unreadCount: 0,
+    messages: [
+      { id: 'm1', senderId: 'p2', text: 'Leo is making great progress with fractions.', timestamp: 'Yesterday', isMe: false },
+      { id: 'm2', senderId: 'me', text: 'That is wonderful to hear! Thanks Sarah.', timestamp: 'Yesterday', isMe: true },
+    ]
+  }
+];
+
+export const MOCK_INCIDENTS: IncidentReport[] = [
+  {
+    id: 'inc1',
+    programId: '1',
+    studentName: 'Tom Muller',
+    date: '2024-06-10',
+    description: 'Scraped knee during warm-up drill. Cleaned and bandaged.',
+    severity: 'Low',
+    status: 'Resolved'
+  },
+  {
+    id: 'inc2',
+    programId: '1',
+    studentName: 'Lisa Schmidt',
+    date: '2024-06-12',
+    description: 'Argument with another student involving pushing.',
+    severity: 'Medium',
+    status: 'Open'
   }
 ];
 
@@ -235,7 +286,7 @@ export const PROVIDER_PRICING: PricingTier[] = [
     name: 'Business Plus',
     price: '€48',
     period: 'month',
-    tagline: 'Scale your operation',
+    tagline: 'Full Business Control',
     features: [
       'Unlimited Program listings',
       '8% platform commission',
@@ -284,4 +335,16 @@ export const FAQ_ITEMS = [
     question: "What are Prime Points?",
     answer: "Prime Points is our loyalty program. You earn points for every booking, review, and referral. Points can be redeemed for discounts, premium subscriptions, and exclusive access to events."
   }
+];
+
+export const PRODUCTS = [
+  { id: 'p1', name: 'Team Jersey', price: 25, image: 'https://images.unsplash.com/photo-1577212017184-80cc25b6833c?auto=format&fit=crop&w=200&q=80' },
+  { id: 'p2', name: 'Shin Guards', price: 15, image: 'https://images.unsplash.com/photo-1518605348435-e000c0dc0af3?auto=format&fit=crop&w=200&q=80' },
+  { id: 'p3', name: 'Water Bottle', price: 12, image: 'https://images.unsplash.com/photo-1602143407151-cd111ca4a302?auto=format&fit=crop&w=200&q=80' },
+];
+
+export const MOCK_WORKERS = [
+  { id: 'w1', name: 'Coach Mike', role: 'Head Coach', status: 'Active' },
+  { id: 'w2', name: 'Sarah L.', role: 'Assistant', status: 'Active' },
+  { id: 'w3', name: 'Tom B.', role: 'Intern', status: 'Inactive' },
 ];
