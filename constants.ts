@@ -1,6 +1,4 @@
-
-
-import { PricingTier, Program, ProviderStat, School, Badge, ReferralStats, FeedPost, Conversation, IncidentReport } from './types';
+import { PricingTier, Program, ProviderStat, School, Badge, ReferralStats, FeedPost, Conversation, IncidentReport, Student } from './types';
 
 export const MOCK_SCHOOLS: School[] = [
   { id: 's1', name: 'Berlin International School', district: 'Dahlem', logo: 'BIS' },
@@ -11,7 +9,8 @@ export const MOCK_SCHOOLS: School[] = [
 export const MOCK_BADGES: Badge[] = [
   { id: 'b1', name: 'Activity Explorer', icon: '🌍', description: 'Booked 5 different categories', earnedDate: '2023-11-15' },
   { id: 'b2', name: 'Super Reviewer', icon: '⭐', description: 'Left 10 detailed reviews', earnedDate: '2024-01-20' },
-  { id: 'b3', name: 'Early Bird', icon: '🌅', description: 'Booked 2 weeks in advance', earnedDate: '2024-03-05' },
+  { id: 'b3', name: 'Art Pro', icon: '🎨', description: 'Completed 5 Art workshops', earnedDate: '2024-02-10' },
+  { id: 'b4', name: 'Sporty Kid', icon: '⚽', description: 'Active in Sports for 3 months', earnedDate: '2024-03-01' },
 ];
 
 export const MOCK_REFERRAL_STATS: ReferralStats = {
@@ -139,7 +138,7 @@ export const MOCK_PROGRAMS: Program[] = [
     category: 'Arts',
     type: 'workshop',
     price: 25,
-    image: 'https://images.unsplash.com/photo-1460661611711-2117027e8ced?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Better art photo
     rating: 4.9,
     reviews: 89,
     location: 'Kreuzberg, Berlin',
@@ -347,4 +346,12 @@ export const MOCK_WORKERS = [
   { id: 'w1', name: 'Coach Mike', role: 'Head Coach', status: 'Active' },
   { id: 'w2', name: 'Sarah L.', role: 'Assistant', status: 'Active' },
   { id: 'w3', name: 'Tom B.', role: 'Intern', status: 'Inactive' },
+];
+
+export const MOCK_STUDENTS: Student[] = [
+  { id: 'st1', name: 'Emma Schmidt', age: 8, parentName: 'Sarah Schmidt', status: 'Present' },
+  { id: 'st2', name: 'Leo Fischer', age: 10, parentName: 'Mark Fischer', status: 'Late' },
+  { id: 'st3', name: 'Hanna Weber', age: 9, parentName: 'Julia Weber', status: 'Present' },
+  { id: 'st4', name: 'Noah Becker', age: 8, parentName: 'Thomas Becker', status: 'Absent' },
+  { id: 'st5', name: 'Lucas Meyer', age: 7, parentName: 'Anna Meyer', status: 'Present' },
 ];
