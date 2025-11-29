@@ -22,8 +22,28 @@ export interface Badge {
 
 export type VerificationType = 'background_check' | 'first_aid' | 'child_safeguarding' | 'insurance';
 
+export interface ProviderProfile {
+  id: string;
+  name: string;
+  image: string;
+  coverImage?: string; // Premium
+  tier: 'Starter' | 'Professional' | 'Business';
+  tagline: string;
+  bio: string;
+  rating: number;
+  reviewCount: number;
+  location: string;
+  joinedDate: string;
+  verifications: VerificationType[];
+  gallery?: string[]; // Premium
+  video?: string; // Premium
+  socialLinks?: { instagram?: string; website?: string }; // Premium
+  responseRate?: string;
+}
+
 export interface Program {
   id: string;
+  providerId: string; // Link to provider
   title: string;
   provider: string;
   providerImage: string;
@@ -39,8 +59,8 @@ export interface Program {
   nextSession: string;
   coordinates?: { lat: number; lng: number };
   isOnline?: boolean;
-  schoolId?: string; // Linked to specific school
-  recommended?: boolean; // AI recommendation flag
+  schoolId?: string; 
+  recommended?: boolean; 
 }
 
 export interface PricingTier {

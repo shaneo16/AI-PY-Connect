@@ -1,4 +1,5 @@
-import { PricingTier, Program, ProviderStat, School, Badge, ReferralStats, FeedPost, Conversation, IncidentReport, Student } from './types';
+
+import { PricingTier, Program, ProviderStat, School, Badge, ReferralStats, FeedPost, Conversation, IncidentReport, Student, ProviderProfile, Expense } from './types';
 
 export const MOCK_SCHOOLS: School[] = [
   { id: 's1', name: 'Berlin International School', district: 'Dahlem', logo: 'BIS' },
@@ -23,6 +24,109 @@ export const MOCK_REFERRAL_STATS: ReferralStats = {
     { label: 'Refer a Provider (300 pts)', achieved: true },
   ]
 };
+
+export const MOCK_PROVIDERS: ProviderProfile[] = [
+  {
+    id: 'pr1',
+    name: 'Berlin Kickers',
+    image: 'https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    coverImage: 'https://images.unsplash.com/photo-1517466787929-bc90951d0974?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+    tier: 'Business',
+    tagline: 'Professional Youth Soccer Coaching',
+    bio: 'Berlin Kickers was founded in 2010 with a mission to develop young talent through structured, fun, and competitive soccer training. Our coaches are UEFA B certified and passionate about player development.',
+    rating: 4.8,
+    reviewCount: 124,
+    location: 'Mitte, Berlin',
+    joinedDate: '2019',
+    verifications: ['background_check', 'first_aid', 'child_safeguarding'],
+    responseRate: '1 hr',
+    gallery: [
+      'https://images.unsplash.com/photo-1526232761682-d26e03ac148e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+    ],
+    video: 'https://www.w3schools.com/html/mov_bbb.mp4', // Placeholder
+    socialLinks: { instagram: '@berlinkickers', website: 'www.berlinkickers.de' }
+  },
+  {
+    id: 'pr2',
+    name: 'The Makery',
+    image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    coverImage: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+    tier: 'Professional',
+    tagline: 'Creative Arts & Crafts for Kids',
+    bio: 'The Makery is a space where imagination comes to life. We offer pottery, painting, and textile workshops designed to boost creativity and fine motor skills.',
+    rating: 4.9,
+    reviewCount: 89,
+    location: 'Kreuzberg, Berlin',
+    joinedDate: '2020',
+    verifications: ['background_check', 'insurance'],
+    responseRate: '3 hrs',
+    gallery: [
+      'https://images.unsplash.com/photo-1513364776144-60967b0f800f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1460661631041-83824193b58d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+    ],
+    socialLinks: { instagram: '@themakery_berlin' }
+  },
+  {
+    id: 'pr3',
+    name: 'Sarah J.',
+    image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    tier: 'Starter', // Free tier, less features
+    tagline: 'Experienced Math Tutor',
+    bio: 'I am a university math student with 4 years of tutoring experience. I specialize in helping primary school children build confidence in numbers.',
+    rating: 4.7,
+    reviewCount: 56,
+    location: 'Charlottenburg',
+    joinedDate: '2022',
+    verifications: ['background_check', 'child_safeguarding'],
+    responseRate: '24 hrs',
+  },
+  {
+    id: 'pr4',
+    name: 'CampFuchs',
+    image: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    coverImage: 'https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+    tier: 'Professional',
+    tagline: 'Adventure Camps in Nature',
+    bio: 'We organize outdoor adventure camps focusing on survival skills, teamwork, and nature appreciation.',
+    rating: 4.6,
+    reviewCount: 210,
+    location: 'Grunewald, Berlin',
+    joinedDate: '2018',
+    verifications: ['background_check', 'child_safeguarding', 'insurance'],
+    responseRate: '12 hrs',
+  },
+  {
+    id: 'pr5',
+    name: 'Melody Music',
+    image: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    tier: 'Business',
+    coverImage: 'https://images.unsplash.com/photo-1552422535-c45813c61732?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+    tagline: 'Music School for All Ages',
+    bio: 'Professional music instruction in piano, violin, and guitar. Our teachers are conservatory graduates.',
+    rating: 5.0,
+    reviewCount: 32,
+    location: 'Prenzlauer Berg',
+    joinedDate: '2021',
+    verifications: ['background_check'],
+    responseRate: '2 hrs',
+  },
+  {
+    id: 'pr6',
+    name: 'Lisa M.',
+    image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    tier: 'Starter',
+    tagline: 'Reliable Weekend Babysitter',
+    bio: 'I am a certified nanny with first aid training. Available for evenings and weekends.',
+    rating: 4.9,
+    reviewCount: 15,
+    location: 'Neukölln, Berlin',
+    joinedDate: '2023',
+    verifications: ['background_check', 'first_aid'],
+    responseRate: '1 hr',
+  }
+];
 
 export const MOCK_FEED_POSTS: FeedPost[] = [
   {
@@ -113,6 +217,7 @@ export const MOCK_INCIDENTS: IncidentReport[] = [
 export const MOCK_PROGRAMS: Program[] = [
   {
     id: '1',
+    providerId: 'pr1',
     title: 'Junior Soccer Academy',
     provider: 'Berlin Kickers',
     providerImage: 'https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
@@ -132,13 +237,14 @@ export const MOCK_PROGRAMS: Program[] = [
   },
   {
     id: '2',
+    providerId: 'pr2',
     title: 'Creative Art Workshop',
     provider: 'The Makery',
     providerImage: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
     category: 'Arts',
     type: 'workshop',
     price: 25,
-    image: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Better art photo
+    image: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', 
     rating: 4.9,
     reviews: 89,
     location: 'Kreuzberg, Berlin',
@@ -151,6 +257,7 @@ export const MOCK_PROGRAMS: Program[] = [
   },
   {
     id: '3',
+    providerId: 'pr3',
     title: 'Math Whiz Tutoring',
     provider: 'Sarah J.',
     providerImage: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
@@ -170,6 +277,7 @@ export const MOCK_PROGRAMS: Program[] = [
   },
   {
     id: '4',
+    providerId: 'pr4',
     title: 'Summer Adventure Camp',
     provider: 'CampFuchs',
     providerImage: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
@@ -188,6 +296,7 @@ export const MOCK_PROGRAMS: Program[] = [
   },
   {
     id: '5',
+    providerId: 'pr5',
     title: 'Piano for Beginners',
     provider: 'Melody Music',
     providerImage: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
@@ -207,6 +316,7 @@ export const MOCK_PROGRAMS: Program[] = [
   },
   {
     id: '6',
+    providerId: 'pr6',
     title: 'Weekend Babysitting',
     provider: 'Lisa M.',
     providerImage: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
@@ -311,6 +421,18 @@ export const ANALYTICS_DATA = [
   { name: 'May', revenue: 1890, bookings: 48 },
   { name: 'Jun', revenue: 2390, bookings: 38 },
   { name: 'Jul', revenue: 3490, bookings: 43 },
+];
+
+export const PROGRAM_PERFORMANCE = [
+   { id: '1', title: 'Junior Soccer Academy', revenue: 4500, bookings: 300, rating: 4.8 },
+   { id: '2', title: 'Summer Camp', revenue: 12000, bookings: 48, rating: 4.9 },
+   { id: '3', title: 'Private Coaching', revenue: 850, bookings: 17, rating: 5.0 },
+];
+
+export const MOCK_EXPENSES: Expense[] = [
+   { id: 'e1', category: 'Equipment', amount: 350, date: '2024-06-01', status: 'Approved' },
+   { id: 'e2', category: 'Marketing', amount: 120, date: '2024-06-05', status: 'Approved' },
+   { id: 'e3', category: 'Venue Rental', amount: 800, date: '2024-06-10', status: 'Pending' },
 ];
 
 export const FAQ_ITEMS = [
