@@ -4,9 +4,9 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell
 } from 'recharts';
 import { 
-  LayoutDashboard, List, Users, Calendar, TrendingUp, DollarSign, Plus, Settings, Search, Edit, Trash2, Rocket, Shield, BookOpen, Heart as HeartIcon, MessageSquare, Share2, Image, Upload, AlertTriangle, Send, Mic, Radio, X, Megaphone, Printer, Download, PlusCircle, CheckCircle, Clock
+  LayoutDashboard, List, Users, Calendar, TrendingUp, DollarSign, Plus, Settings, Search, Edit, Trash2, Rocket, Shield, BookOpen, Heart as HeartIcon, MessageSquare, Share2, Image, Upload, AlertTriangle, Send, Mic, Radio, X, Megaphone, Printer, Download, PlusCircle, CheckCircle, Clock, Briefcase, MapPin, User, Lock, ChevronLeft, ChevronRight
 } from 'lucide-react';
-import { PROVIDER_STATS, ANALYTICS_DATA, MOCK_PROGRAMS, MOCK_FEED_POSTS, MOCK_INCIDENTS, MOCK_CONVERSATIONS, MOCK_STUDENTS, MOCK_EXPENSES, PROGRAM_PERFORMANCE } from '../constants';
+import { PROVIDER_STATS, ANALYTICS_DATA, MOCK_PROGRAMS, MOCK_FEED_POSTS, MOCK_INCIDENTS, MOCK_CONVERSATIONS, MOCK_STUDENTS, MOCK_EXPENSES, PROGRAM_PERFORMANCE, MOCK_JOBS } from '../constants';
 import { Button } from './Button';
 import { IncidentReport, Expense } from '../types';
 
@@ -65,6 +65,17 @@ export const ProviderPortal: React.FC = () => {
   const totalExpenses = expenses.reduce((acc, curr) => acc + curr.amount, 0);
   const netIncome = totalRevenue - totalExpenses;
 
+  // Schedule Logic
+  const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  // Mock Schedule Mapping based on MOCK_PROGRAMS "nextSession" info loosely
+  const scheduleEvents = [
+     { id: 'ev1', title: 'Junior Soccer Academy', day: 'Tue', time: '16:00', duration: '90m', category: 'Sports', color: 'bg-cyan-100 text-cyan-800 border-cyan-200' },
+     { id: 'ev2', title: 'Creative Art Workshop', day: 'Wed', time: '15:30', duration: '120m', category: 'Arts', color: 'bg-fuchsia-100 text-secondary border-fuchsia-200' },
+     { id: 'ev3', title: 'Piano for Beginners', day: 'Thu', time: '14:00', duration: '45m', category: 'Music', color: 'bg-amber-100 text-amber-700 border-amber-200' },
+     { id: 'ev4', title: 'Junior Soccer Academy', day: 'Thu', time: '16:00', duration: '90m', category: 'Sports', color: 'bg-cyan-100 text-cyan-800 border-cyan-200' },
+     { id: 'ev5', title: 'Weekend Babysitting', day: 'Sat', time: '18:00', duration: '4h', category: 'Life Skills', color: 'bg-green-100 text-green-800 border-green-200' },
+  ];
+
   return (
     <div className="flex h-[calc(100vh-64px)] bg-slate-50">
       {/* Provider Sidebar */}
@@ -80,6 +91,7 @@ export const ProviderPortal: React.FC = () => {
             <SidebarLink icon={<List size={20} />} label="My Programs" active={activeTab === 'programs'} onClick={() => setActiveTab('programs')} />
             <SidebarLink icon={<MessageSquare size={20} />} label="Messages" active={activeTab === 'chat'} onClick={() => setActiveTab('chat')} />
             <SidebarLink icon={<Megaphone size={20} />} label="Promote" active={activeTab === 'promote'} onClick={() => setActiveTab('promote')} />
+            <SidebarLink icon={<Briefcase size={20} />} label="Job Board" active={activeTab === 'jobs'} onClick={() => setActiveTab('jobs')} />
             <SidebarLink icon={<HeartIcon size={20} />} label="Highlights" active={activeTab === 'highlights'} onClick={() => setActiveTab('highlights')} />
             <SidebarLink icon={<Calendar size={20} />} label="Schedule" active={activeTab === 'schedule'} onClick={() => setActiveTab('schedule')} />
             <SidebarLink icon={<Rocket size={20} />} label="Growth Tools" active={activeTab === 'tools'} onClick={() => setActiveTab('tools')} />
@@ -119,6 +131,84 @@ export const ProviderPortal: React.FC = () => {
           </Button>
         </header>
 
+        {/* Schedule Tab */}
+        {activeTab === 'schedule' && (
+           <div className="max-w-6xl mx-auto h-[calc(100vh-200px)] flex gap-6">
+              {/* Calendar Grid */}
+              <div className="flex-1 bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col">
+                 <div className="p-4 border-b border-slate-200 flex justify-between items-center">
+                    <div className="flex items-center gap-4">
+                       <h2 className="text-xl font-bold text-slate-900">Weekly Schedule</h2>
+                       <div className="flex bg-slate-100 rounded-lg p-0.5">
+                          <button className="p-1 hover:bg-white rounded text-slate-500"><ChevronLeft size={18}/></button>
+                          <span className="px-3 py-1 text-sm font-medium text-slate-700">June 12 - 18</span>
+                          <button className="p-1 hover:bg-white rounded text-slate-500"><ChevronRight size={18}/></button>
+                       </div>
+                    </div>
+                    <div className="flex gap-2">
+                       <Button variant="outline" size="sm">Day</Button>
+                       <Button variant="outline" size="sm" className="bg-slate-100 text-slate-900">Week</Button>
+                       <Button variant="outline" size="sm">Month</Button>
+                    </div>
+                 </div>
+                 
+                 <div className="flex-1 grid grid-cols-7 divide-x divide-slate-200 overflow-hidden">
+                    {daysOfWeek.map((day) => (
+                       <div key={day} className="flex flex-col min-w-[120px]">
+                          <div className="p-3 text-center border-b border-slate-200 bg-slate-50">
+                             <span className="text-sm font-bold text-slate-700 block">{day}</span>
+                          </div>
+                          <div className="flex-1 p-2 space-y-2 bg-white relative">
+                             {/* Render Events */}
+                             {scheduleEvents.filter(e => e.day === day).map(event => (
+                                <div key={event.id} className={`p-2 rounded-lg border text-xs cursor-pointer hover:shadow-md transition-shadow ${event.color}`}>
+                                   <div className="font-bold truncate">{event.title}</div>
+                                   <div className="flex items-center mt-1 opacity-80">
+                                      <Clock size={10} className="mr-1"/>
+                                      {event.time} ({event.duration})
+                                   </div>
+                                </div>
+                             ))}
+                             {/* Hour lines for visual structure (simplified) */}
+                             {[9, 12, 15, 18].map(hour => (
+                                <div key={hour} className="absolute w-full border-t border-slate-50 left-0" style={{ top: `${(hour-8)*8}%` }}></div>
+                             ))}
+                          </div>
+                       </div>
+                    ))}
+                 </div>
+              </div>
+              
+              {/* Schedule Sidebar */}
+              <div className="w-80 flex flex-col gap-6">
+                 <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                    <h3 className="font-bold text-slate-900 mb-4">Upcoming Sessions</h3>
+                    <div className="space-y-4">
+                       {scheduleEvents.slice(0, 3).map((event, i) => (
+                          <div key={i} className="flex items-start gap-3">
+                             <div className="flex flex-col items-center justify-center w-12 bg-slate-50 rounded-lg p-2 border border-slate-100">
+                                <span className="text-xs font-bold text-slate-500 uppercase">{event.day}</span>
+                                <span className="text-sm font-bold text-slate-900">{event.time}</span>
+                             </div>
+                             <div>
+                                <div className="font-bold text-sm text-slate-900">{event.title}</div>
+                                <div className="text-xs text-slate-500 mt-0.5">{event.category} • 12 Students</div>
+                             </div>
+                          </div>
+                       ))}
+                    </div>
+                    <Button variant="outline" className="w-full mt-4">View All</Button>
+                 </div>
+                 
+                 <div className="bg-secondary/10 p-6 rounded-xl border border-secondary/20">
+                    <h3 className="font-bold text-secondary mb-2">Sync Calendar</h3>
+                    <p className="text-sm text-slate-600 mb-4">Connect your Google or Outlook calendar to avoid conflicts.</p>
+                    <Button className="w-full bg-secondary hover:bg-fuchsia-600 border-none">Connect Now</Button>
+                 </div>
+              </div>
+           </div>
+        )}
+
         {activeTab === 'promote' && (
            <div className="max-w-6xl mx-auto">
              <div className="mb-8">
@@ -151,6 +241,62 @@ export const ProviderPortal: React.FC = () => {
                                <Download size={16} className="mr-2" /> Download Social Card
                             </Button>
                          </div>
+                      </div>
+                   </div>
+                ))}
+             </div>
+           </div>
+        )}
+
+        {/* Job Board Tab */}
+        {activeTab === 'jobs' && (
+           <div className="max-w-4xl mx-auto">
+             <div className="mb-8">
+                <h2 className="text-2xl font-bold text-slate-900">Job Board</h2>
+                <p className="text-slate-500">Find new opportunities posted by families.</p>
+             </div>
+             
+             <div className="space-y-4">
+                {MOCK_JOBS.map(job => (
+                   <div key={job.id} className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                      <div className="flex justify-between items-start mb-2">
+                         <div>
+                            <h3 className="font-bold text-lg text-slate-900">{job.title}</h3>
+                            <div className="flex items-center gap-2 mt-1">
+                               <span className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-xs font-bold uppercase">{job.category}</span>
+                               <span className="text-xs text-slate-500">• Posted {job.datePosted}</span>
+                            </div>
+                         </div>
+                         {job.budget && (
+                            <div className="font-bold text-slate-900 bg-green-50 px-3 py-1 rounded-lg border border-green-100">
+                               {job.budget}
+                            </div>
+                         )}
+                      </div>
+                      
+                      <p className="text-slate-600 text-sm mb-4">{job.description}</p>
+                      
+                      <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                         <div className="flex items-center gap-4 text-sm text-slate-500">
+                            <span className="flex items-center"><MapPin size={14} className="mr-1"/> {job.location}</span>
+                            {tier === 'Starter' ? (
+                               <span className="flex items-center blur-sm select-none bg-slate-100 px-2 rounded">
+                                  <User size={14} className="mr-1"/> Hidden Name
+                               </span>
+                            ) : (
+                               <span className="flex items-center text-slate-900 font-medium">
+                                  <User size={14} className="mr-1"/> {job.parentName}
+                               </span>
+                            )}
+                         </div>
+                         
+                         {tier === 'Starter' ? (
+                            <Button variant="outline" size="sm" onClick={() => setTier('Professional')} className="opacity-70">
+                               <Lock size={14} className="mr-2"/> Upgrade to Contact
+                            </Button>
+                         ) : (
+                            <Button size="sm" className="bg-secondary hover:bg-fuchsia-600">Contact Parent</Button>
+                         )}
                       </div>
                    </div>
                 ))}

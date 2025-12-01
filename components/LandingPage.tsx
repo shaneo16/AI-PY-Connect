@@ -24,12 +24,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onLogin 
       <section className="relative bg-peach pt-24 pb-24 px-6 lg:px-8 overflow-hidden">
         <div className="relative z-10 max-w-7xl mx-auto text-center">
           <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6 text-slate-900 relative inline-block">
-            {/* Real Paint Splash Decoration */}
+            {/* Art Supplies & Books Decoration */}
             <img 
-              src="https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?auto=format&fit=crop&w=500&q=80" 
-              alt="Colorful Paint Splash" 
-              className="absolute -top-20 -right-20 w-48 h-48 object-cover pointer-events-none z-0 opacity-90 mix-blend-multiply"
-              style={{ maskImage: 'radial-gradient(circle, black 40%, transparent 70%)', WebkitMaskImage: 'radial-gradient(circle, black 40%, transparent 70%)' }}
+              src="https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=500&q=80" 
+              alt="Art Supplies and Books" 
+              className="absolute -top-24 -right-24 w-40 h-40 object-cover pointer-events-none z-0 opacity-80 mix-blend-multiply"
+              style={{ maskImage: 'radial-gradient(circle, black 30%, transparent 70%)', WebkitMaskImage: 'radial-gradient(circle, black 30%, transparent 70%)' }}
             />
             Connecting Families with <br />
             <span className="relative z-10 text-primaryDark">Trusted Youth Educators</span>
@@ -61,7 +61,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onLogin 
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="flex justify-between items-center mb-10">
              <div>
-                <span className="text-primary font-bold uppercase tracking-wider text-sm bg-cyan-50 px-3 py-1 rounded-full border border-primary/20 mb-2 inline-block">For Families</span>
                 <h2 className="text-3xl font-bold text-slate-900">Featured Programs</h2>
                 <p className="text-slate-500 mt-2">Explore top-rated activities for your children</p>
              </div>
@@ -167,7 +166,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onLogin 
       <section className="py-24 bg-peach">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="text-center mb-16">
-            <span className="text-primary font-bold uppercase tracking-wider text-sm bg-cyan-50 px-3 py-1 rounded-full border border-primary/20 mb-4 inline-block">For Families</span>
             <h2 className="text-3xl font-bold text-slate-900">Why Prime Youth Connect?</h2>
             <p className="mt-4 text-slate-600">Safety, quality, and convenience for modern families.</p>
           </div>

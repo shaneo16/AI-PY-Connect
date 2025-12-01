@@ -1,5 +1,5 @@
 
-import { PricingTier, Program, ProviderStat, School, Badge, ReferralStats, FeedPost, Conversation, IncidentReport, Student, ProviderProfile, Expense } from './types';
+import { PricingTier, Program, ProviderStat, School, Badge, ReferralStats, FeedPost, Conversation, IncidentReport, Student, ProviderProfile, Expense, Job } from './types';
 
 export const MOCK_SCHOOLS: School[] = [
   { id: 's1', name: 'Berlin International School', district: 'Dahlem', logo: 'BIS' },
@@ -476,4 +476,10 @@ export const MOCK_STUDENTS: Student[] = [
   { id: 'st3', name: 'Hanna Weber', age: 9, parentName: 'Julia Weber', status: 'Present' },
   { id: 'st4', name: 'Noah Becker', age: 8, parentName: 'Thomas Becker', status: 'Absent' },
   { id: 'st5', name: 'Lucas Meyer', age: 7, parentName: 'Anna Meyer', status: 'Present' },
+];
+
+export const MOCK_JOBS: Job[] = [
+  { id: 'j1', title: 'Math Tutor for 10yr old', description: 'Looking for a patient math tutor for my son Leo. He needs help with fractions and geometry.', parentName: 'Sarah Schmidt', location: 'Zehlendorf', datePosted: '2 days ago', category: 'Education', budget: '€20-25/hr' },
+  { id: 'j2', title: 'Soccer Coach for Birthday Party', description: 'Need a fun coach to organize a soccer game for a 9th birthday party.', parentName: 'Mark Fischer', location: 'Mitte', datePosted: '5 days ago', category: 'Sports', budget: '€100 fixed' },
+  { id: 'j3', title: 'Weekend Babysitter', description: 'Seeking a reliable babysitter for Saturday evenings.', parentName: 'Julia Weber', location: 'Prenzlauer Berg', datePosted: '1 week ago', category: 'Life Skills', budget: '€15/hr' },
 ];

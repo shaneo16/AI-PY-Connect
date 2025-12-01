@@ -1,17 +1,21 @@
 
 import React, { useState } from 'react';
-import { Search, Filter, Calendar as CalendarIcon, MapPin, Star, Heart, CheckCircle, ShieldCheck, List, Map as MapIcon, X, Lock, MessageCircle, Home, Award, User, Settings, Users, Sparkles, Copy, Share2, Heart as HeartIcon, MessageSquare, FileCheck, Shield, Send, ArrowLeft, Instagram, Globe, PlayCircle } from 'lucide-react';
-import { MOCK_PROGRAMS, MOCK_SCHOOLS, MOCK_BADGES, MOCK_REFERRAL_STATS, MOCK_FEED_POSTS, MOCK_CONVERSATIONS, MOCK_PROVIDERS, PRODUCTS } from '../constants';
-import { Program, VerificationType, Conversation, ChatMessage, ProviderProfile } from '../types';
+import { Search, Filter, Calendar as CalendarIcon, MapPin, Star, Heart, CheckCircle, ShieldCheck, List, Map as MapIcon, X, Lock, MessageCircle, Home, Award, User, Settings, Users, Sparkles, Copy, Share2, Heart as HeartIcon, MessageSquare, FileCheck, Shield, Send, ArrowLeft, Instagram, Globe, PlayCircle, Briefcase, Plus } from 'lucide-react';
+import { MOCK_PROGRAMS, MOCK_SCHOOLS, MOCK_BADGES, MOCK_REFERRAL_STATS, MOCK_FEED_POSTS, MOCK_CONVERSATIONS, MOCK_PROVIDERS, PRODUCTS, MOCK_JOBS } from '../constants';
+import { Program, VerificationType, Conversation, ChatMessage, ProviderProfile, Job } from '../types';
 import { Button } from './Button';
 
 export const ParentPortal: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'home' | 'explore' | 'planner' | 'highlights' | 'chat' | 'settings'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'explore' | 'planner' | 'highlights' | 'chat' | 'settings' | 'jobs'>('home');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [selectedSchool, setSelectedSchool] = useState<string>('All');
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
   const [selectedProgram, setSelectedProgram] = useState<Program | null>(null);
+  
+  // Job Board State
+  const [myJobs, setMyJobs] = useState<Job[]>(MOCK_JOBS.filter(j => j.parentName === 'Sarah Schmidt'));
+  const [showJobModal, setShowJobModal] = useState(false);
   
   // Provider Profile State
   const [viewingProviderId, setViewingProviderId] = useState<string | null>(null);
@@ -84,6 +88,23 @@ export const ParentPortal: React.FC = () => {
     setSelectedAddons([]);
     alert('Booking Confirmed! (Mock)');
   };
+  
+  const handlePostJob = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newJob: Job = {
+        id: Math.random().toString(),
+        title: "New Job Request",
+        description: "Mock job description...",
+        parentName: "Sarah Schmidt",
+        location: "Mitte",
+        datePosted: "Just now",
+        category: "Education",
+        budget: "Negotiable"
+    };
+    setMyJobs([...myJobs, newJob]);
+    setShowJobModal(false);
+    alert("Job Posted Successfully!");
+  }
 
   if (viewingProviderId && currentProvider) {
      return (
@@ -122,6 +143,13 @@ export const ParentPortal: React.FC = () => {
             >
               <HeartIcon size={20} />
               <span>Highlights</span>
+            </button>
+            <button 
+              onClick={() => setActiveTab('jobs')}
+              className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${activeTab === 'jobs' ? 'bg-cyan-50 text-primary font-medium' : 'text-slate-600 hover:bg-slate-50'}`}
+            >
+              <Briefcase size={20} />
+              <span>My Jobs</span>
             </button>
             <button 
               onClick={() => setActiveTab('chat')}
@@ -173,6 +201,42 @@ export const ParentPortal: React.FC = () => {
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col min-w-0 overflow-y-auto">
+        {activeTab === 'jobs' && (
+            <div className="max-w-4xl mx-auto w-full p-4 md:p-8">
+               <div className="flex justify-between items-center mb-6">
+                 <div>
+                    <h1 className="text-2xl font-bold text-slate-900">My Jobs</h1>
+                    <p className="text-slate-500">Post a request for tutors, coaches, or babysitters.</p>
+                 </div>
+                 <Button onClick={() => setShowJobModal(true)}><Plus size={18} className="mr-2"/> Post a Job</Button>
+               </div>
+
+               <div className="space-y-4">
+                  {myJobs.length === 0 ? (
+                      <div className="text-center py-20 text-slate-400">
+                          <Briefcase size={48} className="mx-auto mb-4 opacity-50"/>
+                          <p>You haven't posted any jobs yet.</p>
+                      </div>
+                  ) : (
+                      myJobs.map(job => (
+                          <div key={job.id} className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                             <div className="flex justify-between items-start mb-2">
+                                <h3 className="font-bold text-lg text-slate-900">{job.title}</h3>
+                                <span className="bg-slate-100 text-slate-600 px-2 py-1 rounded text-xs font-bold uppercase">{job.category}</span>
+                             </div>
+                             <p className="text-slate-600 text-sm mb-4">{job.description}</p>
+                             <div className="flex items-center gap-4 text-xs text-slate-500">
+                                <span className="flex items-center"><MapPin size={12} className="mr-1"/> {job.location}</span>
+                                <span className="flex items-center"><CalendarIcon size={12} className="mr-1"/> {job.datePosted}</span>
+                                {job.budget && <span className="font-bold text-slate-700">{job.budget}</span>}
+                             </div>
+                          </div>
+                      ))
+                  )}
+               </div>
+            </div>
+        )}
+
         {activeTab === 'home' && (
           <div className="p-6 md:p-8 max-w-5xl mx-auto w-full space-y-8">
             <header>
@@ -327,6 +391,10 @@ export const ParentPortal: React.FC = () => {
           </div>
         )}
 
+        {/* ... (Other tabs logic remains the same) ... */}
+        {/* For brevity, omitting duplicate code of activeTab 'explore', 'chat', 'highlights', 'planner', 'settings' if no changes there */}
+        {/* BUT since I must return full file content, I will paste the rest of the file ... */}
+        
         {activeTab === 'explore' && (
           <>
             {/* Header / Search Bar */}
@@ -862,6 +930,39 @@ export const ParentPortal: React.FC = () => {
          </div>
       )}
 
+      {/* New Job Modal */}
+      {showJobModal && (
+         <div className="absolute inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="bg-white w-full max-w-md rounded-xl shadow-xl overflow-hidden animate-in zoom-in-95 duration-200">
+               <div className="p-4 border-b border-slate-100 flex justify-between items-center">
+                  <h3 className="font-bold text-lg text-slate-900">Post a Job Request</h3>
+                  <button onClick={() => setShowJobModal(false)}><X size={20} className="text-slate-400"/></button>
+               </div>
+               <form onSubmit={handlePostJob} className="p-6 space-y-4">
+                  <div>
+                     <label className="block text-sm font-medium text-slate-700 mb-1">Job Title</label>
+                     <input type="text" placeholder="e.g. Math Tutor needed" className="w-full p-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-primary" required />
+                  </div>
+                  <div>
+                     <label className="block text-sm font-medium text-slate-700 mb-1">Description</label>
+                     <textarea rows={3} placeholder="Describe what you need..." className="w-full p-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-primary" required></textarea>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                     <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">Budget</label>
+                        <input type="text" placeholder="e.g. €20/hr" className="w-full p-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-primary" />
+                     </div>
+                     <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">Location</label>
+                        <input type="text" placeholder="e.g. Mitte" className="w-full p-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-primary" />
+                     </div>
+                  </div>
+                  <Button type="submit" className="w-full">Post Job</Button>
+               </form>
+            </div>
+         </div>
+      )}
+
       {/* Detail Modal / Overlay */}
       {selectedProgram && !showBookingModal && (
         <div className="absolute inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex justify-end">
@@ -1259,26 +1360,3 @@ const ProgramCard: React.FC<ProgramCardProps> = ({ program, onClick, onProviderC
         <div className="flex items-center text-xs text-slate-400 mb-4">
           <MapPin size={12} className="mr-1 shrink-0" />
           <span className="truncate">{program.location}</span>
-        </div>
-
-        <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between gap-2">
-           <div>
-             <span className="text-lg font-bold text-slate-900">€{program.price}</span>
-             <span className="text-xs text-slate-400"> {program.type === 'service' ? '/hr' : '/session'}</span>
-           </div>
-           
-           <div className="flex gap-2">
-             <button onClick={(e) => { e.stopPropagation(); alert('Invite sent to friends!'); }} className="px-3 py-1.5 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 transition-colors text-xs font-bold" title="Invite Friends">
-               <Users size={14} />
-             </button>
-             {program.type === 'service' ? (
-                <span className="text-xs font-semibold text-primary bg-cyan-50 px-3 py-1.5 rounded-full flex items-center justify-center">Request</span>
-             ) : (
-                <span className="text-xs font-semibold text-slate-700 bg-slate-100 px-3 py-1.5 rounded-full group-hover:bg-primary group-hover:text-white transition-colors flex items-center justify-center">Book</span>
-             )}
-           </div>
-        </div>
-      </div>
-    </div>
-  );
-};

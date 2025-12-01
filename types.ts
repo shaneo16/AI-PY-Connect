@@ -175,3 +175,14 @@ export interface AttendanceRecord {
   date: string;
   students: Student[];
 }
+
+export interface Job {
+  id: string;
+  title: string;
+  description: string;
+  parentName: string;
+  location: string;
+  datePosted: string;
+  category: string;
+  budget?: string;
+}
