@@ -9,7 +9,7 @@ interface NavigationProps {
   role: UserRole;
   onLogout: () => void;
   onLogin: (role: UserRole) => void;
-  onNavigate: (page: 'home' | 'about') => void;
+  onNavigate: (page: 'home' | 'about' | 'programs') => void;
 }
 
 export const Navigation: React.FC<NavigationProps> = ({ role, onLogout, onLogin, onNavigate }) => {
@@ -31,7 +31,7 @@ export const Navigation: React.FC<NavigationProps> = ({ role, onLogout, onLogin,
           {role === UserRole.GUEST ? (
             <>
               <div className="hidden md:flex items-center space-x-6 text-sm font-medium text-slate-600 mr-4">
-                <button onClick={() => onNavigate('home')} className="hover:text-primary transition-colors">For Families</button>
+                <button onClick={() => onNavigate('programs')} className="hover:text-primary transition-colors">Programs</button>
                 <button onClick={() => onNavigate('home')} className="hover:text-secondary transition-colors">For Providers</button>
                 <button onClick={() => onNavigate('about')} className="hover:text-primary transition-colors">About</button>
               </div>

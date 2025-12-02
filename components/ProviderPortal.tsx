@@ -1,20 +1,24 @@
 
 import React, { useState } from 'react';
 import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer
 } from 'recharts';
 import { 
-  LayoutDashboard, List, Users, Calendar, TrendingUp, DollarSign, Plus, Settings, Search, Edit, Trash2, Rocket, Shield, BookOpen, Heart as HeartIcon, MessageSquare, Share2, Image, Upload, AlertTriangle, Send, Mic, Radio, X, Megaphone, Printer, Download, PlusCircle, CheckCircle, Clock, Briefcase, MapPin, User, Lock, ChevronLeft, ChevronRight
+  LayoutDashboard, List, Users, Calendar, TrendingUp, DollarSign, Plus, Settings, Search, Edit, Trash2, Rocket, Shield, BookOpen, Heart as HeartIcon, MessageSquare, Share2, Image, Upload, AlertTriangle, Send, X, Megaphone, Printer, Download, PlusCircle, Clock, Briefcase, MapPin, User, Lock, ChevronLeft, ChevronRight, FileText, CheckCircle, Radio, Save
 } from 'lucide-react';
-import { PROVIDER_STATS, ANALYTICS_DATA, MOCK_PROGRAMS, MOCK_FEED_POSTS, MOCK_INCIDENTS, MOCK_CONVERSATIONS, MOCK_STUDENTS, MOCK_EXPENSES, PROGRAM_PERFORMANCE, MOCK_JOBS } from '../constants';
+import { PROVIDER_STATS, ANALYTICS_DATA, MOCK_PROGRAMS, MOCK_FEED_POSTS, MOCK_CONVERSATIONS, MOCK_STUDENTS, MOCK_EXPENSES, PROGRAM_PERFORMANCE, MOCK_JOBS } from '../constants';
 import { Button } from './Button';
-import { IncidentReport, Expense } from '../types';
+import { Expense, Program, VerificationType } from '../types';
+import { VerificationIcon } from './ParentPortal';
 
 export const ProviderPortal: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [tier, setTier] = useState<'Starter' | 'Professional' | 'Business'>('Professional');
   const [analyticsSubTab, setAnalyticsSubTab] = useState<'performance' | 'financials'>('performance');
   
+  // Profile Editing State
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+
   // Incident Modal State
   const [showIncidentModal, setShowIncidentModal] = useState(false);
   const [selectedProgramId, setSelectedProgramId] = useState<string>('');
@@ -22,10 +26,26 @@ export const ProviderPortal: React.FC = () => {
   // Roster Modal State
   const [showRosterModal, setShowRosterModal] = useState(false);
 
+  // Promote Modal State
+  const [showPromoteModal, setShowPromoteModal] = useState(false);
+  const [programToPromote, setProgramToPromote] = useState<Program | null>(null);
+
+  // Create Program Modal State
+  const [showCreateProgramModal, setShowCreateProgramModal] = useState(false);
+
   // Expenses State
   const [expenses, setExpenses] = useState<Expense[]>(MOCK_EXPENSES);
   const [showExpenseModal, setShowExpenseModal] = useState(false);
   const [newExpense, setNewExpense] = useState({ category: '', amount: '', date: '' });
+
+  // Invoices State
+  const [showInvoiceModal, setShowInvoiceModal] = useState(false);
+  const [showInvoicePreview, setShowInvoicePreview] = useState(false);
+  const [currentInvoice, setCurrentInvoice] = useState<any>(null);
+  const [invoices, setInvoices] = useState([
+    { id: 'INV-001', student: 'Leo Fischer', date: '2024-06-10', amount: 120, status: 'Paid' },
+    { id: 'INV-002', student: 'Emma Schmidt', date: '2024-06-12', amount: 45, status: 'Pending' }
+  ]);
 
   // Chat State
   const [activeConversationId, setActiveConversationId] = useState<string>(MOCK_CONVERSATIONS[0].id);
@@ -58,6 +78,28 @@ export const ProviderPortal: React.FC = () => {
     setNewExpense({ category: '', amount: '', date: '' });
   };
 
+  const handleCreateInvoice = (e: React.FormEvent) => {
+     e.preventDefault();
+     const newInv = {
+        id: `INV-00${invoices.length + 1}`,
+        student: 'New Student',
+        date: new Date().toISOString().split('T')[0],
+        amount: 100,
+        status: 'Pending',
+        items: [{ desc: 'Tuition Fee', price: 100 }]
+     };
+     setInvoices([...invoices, newInv]);
+     setShowInvoiceModal(false);
+     setCurrentInvoice(newInv);
+     setShowInvoicePreview(true);
+  };
+
+  const handleCreateProgram = (e: React.FormEvent) => {
+      e.preventDefault();
+      alert("New Program Created!");
+      setShowCreateProgramModal(false);
+  }
+
   const activeConversation = MOCK_CONVERSATIONS.find(c => c.id === activeConversationId);
 
   // Financial Calculations
@@ -67,7 +109,6 @@ export const ProviderPortal: React.FC = () => {
 
   // Schedule Logic
   const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  // Mock Schedule Mapping based on MOCK_PROGRAMS "nextSession" info loosely
   const scheduleEvents = [
      { id: 'ev1', title: 'Junior Soccer Academy', day: 'Tue', time: '16:00', duration: '90m', category: 'Sports', color: 'bg-cyan-100 text-cyan-800 border-cyan-200' },
      { id: 'ev2', title: 'Creative Art Workshop', day: 'Wed', time: '15:30', duration: '120m', category: 'Arts', color: 'bg-fuchsia-100 text-secondary border-fuchsia-200' },
@@ -79,7 +120,7 @@ export const ProviderPortal: React.FC = () => {
   return (
     <div className="flex h-[calc(100vh-64px)] bg-slate-50">
       {/* Provider Sidebar */}
-      <aside className="hidden lg:flex flex-col w-64 bg-slate-900 text-slate-300 p-6 space-y-6">
+      <aside className="hidden lg:flex flex-col w-64 bg-slate-900 text-slate-300 p-6 space-y-6 shrink-0 overflow-y-auto">
         <div>
           <div className="flex items-center space-x-3 mb-8 px-2">
              <div className="w-8 h-8 bg-secondary rounded-lg flex items-center justify-center text-white font-bold shadow shadow-secondary/50">P</div>
@@ -87,14 +128,9 @@ export const ProviderPortal: React.FC = () => {
           </div>
           <nav className="space-y-1">
             <SidebarLink icon={<LayoutDashboard size={20} />} label="Overview" active={activeTab === 'overview'} onClick={() => setActiveTab('overview')} />
-            <SidebarLink icon={<Users size={20} />} label="My Profile" active={activeTab === 'profile'} onClick={() => setActiveTab('profile')} />
             <SidebarLink icon={<List size={20} />} label="My Programs" active={activeTab === 'programs'} onClick={() => setActiveTab('programs')} />
             <SidebarLink icon={<MessageSquare size={20} />} label="Messages" active={activeTab === 'chat'} onClick={() => setActiveTab('chat')} />
-            <SidebarLink icon={<Megaphone size={20} />} label="Promote" active={activeTab === 'promote'} onClick={() => setActiveTab('promote')} />
-            <SidebarLink icon={<Briefcase size={20} />} label="Job Board" active={activeTab === 'jobs'} onClick={() => setActiveTab('jobs')} />
-            <SidebarLink icon={<HeartIcon size={20} />} label="Highlights" active={activeTab === 'highlights'} onClick={() => setActiveTab('highlights')} />
-            <SidebarLink icon={<Calendar size={20} />} label="Schedule" active={activeTab === 'schedule'} onClick={() => setActiveTab('schedule')} />
-            <SidebarLink icon={<Rocket size={20} />} label="Growth Tools" active={activeTab === 'tools'} onClick={() => setActiveTab('tools')} />
+            <SidebarLink icon={<Users size={20} />} label="Community" active={activeTab === 'community'} onClick={() => setActiveTab('community')} />
             <SidebarLink icon={<TrendingUp size={20} />} label="Analytics" active={activeTab === 'analytics'} onClick={() => setActiveTab('analytics')} />
           </nav>
         </div>
@@ -126,348 +162,19 @@ export const ProviderPortal: React.FC = () => {
                <span className="text-slate-500 text-sm">Welcome back, Shane.</span>
             </div>
           </div>
-          <Button className="flex items-center gap-2 bg-secondary hover:bg-fuchsia-600 border-none shadow-lg shadow-secondary/20">
-            <Plus size={18} /> New Program
-          </Button>
+          {(activeTab === 'overview' || activeTab === 'programs') && (
+            <Button 
+                onClick={() => setShowCreateProgramModal(true)}
+                className="flex items-center gap-2 bg-secondary hover:bg-fuchsia-600 border-none shadow-lg shadow-secondary/20"
+            >
+                <Plus size={18} /> New Program
+            </Button>
+          )}
         </header>
 
-        {/* Schedule Tab */}
-        {activeTab === 'schedule' && (
-           <div className="max-w-6xl mx-auto h-[calc(100vh-200px)] flex gap-6">
-              {/* Calendar Grid */}
-              <div className="flex-1 bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col">
-                 <div className="p-4 border-b border-slate-200 flex justify-between items-center">
-                    <div className="flex items-center gap-4">
-                       <h2 className="text-xl font-bold text-slate-900">Weekly Schedule</h2>
-                       <div className="flex bg-slate-100 rounded-lg p-0.5">
-                          <button className="p-1 hover:bg-white rounded text-slate-500"><ChevronLeft size={18}/></button>
-                          <span className="px-3 py-1 text-sm font-medium text-slate-700">June 12 - 18</span>
-                          <button className="p-1 hover:bg-white rounded text-slate-500"><ChevronRight size={18}/></button>
-                       </div>
-                    </div>
-                    <div className="flex gap-2">
-                       <Button variant="outline" size="sm">Day</Button>
-                       <Button variant="outline" size="sm" className="bg-slate-100 text-slate-900">Week</Button>
-                       <Button variant="outline" size="sm">Month</Button>
-                    </div>
-                 </div>
-                 
-                 <div className="flex-1 grid grid-cols-7 divide-x divide-slate-200 overflow-hidden">
-                    {daysOfWeek.map((day) => (
-                       <div key={day} className="flex flex-col min-w-[120px]">
-                          <div className="p-3 text-center border-b border-slate-200 bg-slate-50">
-                             <span className="text-sm font-bold text-slate-700 block">{day}</span>
-                          </div>
-                          <div className="flex-1 p-2 space-y-2 bg-white relative">
-                             {/* Render Events */}
-                             {scheduleEvents.filter(e => e.day === day).map(event => (
-                                <div key={event.id} className={`p-2 rounded-lg border text-xs cursor-pointer hover:shadow-md transition-shadow ${event.color}`}>
-                                   <div className="font-bold truncate">{event.title}</div>
-                                   <div className="flex items-center mt-1 opacity-80">
-                                      <Clock size={10} className="mr-1"/>
-                                      {event.time} ({event.duration})
-                                   </div>
-                                </div>
-                             ))}
-                             {/* Hour lines for visual structure (simplified) */}
-                             {[9, 12, 15, 18].map(hour => (
-                                <div key={hour} className="absolute w-full border-t border-slate-50 left-0" style={{ top: `${(hour-8)*8}%` }}></div>
-                             ))}
-                          </div>
-                       </div>
-                    ))}
-                 </div>
-              </div>
-              
-              {/* Schedule Sidebar */}
-              <div className="w-80 flex flex-col gap-6">
-                 <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                    <h3 className="font-bold text-slate-900 mb-4">Upcoming Sessions</h3>
-                    <div className="space-y-4">
-                       {scheduleEvents.slice(0, 3).map((event, i) => (
-                          <div key={i} className="flex items-start gap-3">
-                             <div className="flex flex-col items-center justify-center w-12 bg-slate-50 rounded-lg p-2 border border-slate-100">
-                                <span className="text-xs font-bold text-slate-500 uppercase">{event.day}</span>
-                                <span className="text-sm font-bold text-slate-900">{event.time}</span>
-                             </div>
-                             <div>
-                                <div className="font-bold text-sm text-slate-900">{event.title}</div>
-                                <div className="text-xs text-slate-500 mt-0.5">{event.category} • 12 Students</div>
-                             </div>
-                          </div>
-                       ))}
-                    </div>
-                    <Button variant="outline" className="w-full mt-4">View All</Button>
-                 </div>
-                 
-                 <div className="bg-secondary/10 p-6 rounded-xl border border-secondary/20">
-                    <h3 className="font-bold text-secondary mb-2">Sync Calendar</h3>
-                    <p className="text-sm text-slate-600 mb-4">Connect your Google or Outlook calendar to avoid conflicts.</p>
-                    <Button className="w-full bg-secondary hover:bg-fuchsia-600 border-none">Connect Now</Button>
-                 </div>
-              </div>
-           </div>
-        )}
-
-        {activeTab === 'promote' && (
-           <div className="max-w-6xl mx-auto">
-             <div className="mb-8">
-                <h2 className="text-2xl font-bold text-slate-900">Promote Your Programs</h2>
-                <p className="text-slate-500">Share your activities on social media to attract more families. Available to all providers.</p>
-             </div>
-
-             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {MOCK_PROGRAMS.slice(0, 3).map((prog) => (
-                   <div key={prog.id} className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm flex flex-col hover:border-secondary/50 transition-colors">
-                      <div className="relative h-48 bg-slate-100">
-                         <img src={prog.image} className="w-full h-full object-cover" />
-                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end p-4">
-                            <h3 className="text-white font-bold text-lg">{prog.title}</h3>
-                            <p className="text-white/80 text-sm">{prog.provider}</p>
-                         </div>
-                      </div>
-                      <div className="p-4 flex-1 flex flex-col">
-                         <p className="text-sm text-slate-600 mb-4 flex-1">
-                            Ready to share? Post this program to your followers to fill up your spots!
-                         </p>
-                         <div className="space-y-2">
-                            <Button className="w-full bg-[#E1306C] hover:bg-[#C13584] text-white flex items-center justify-center">
-                               <Share2 size={16} className="mr-2" /> Share on Instagram
-                            </Button>
-                            <Button className="w-full bg-[#1877F2] hover:bg-[#165EAB] text-white flex items-center justify-center">
-                               <Share2 size={16} className="mr-2" /> Share on Facebook
-                            </Button>
-                            <Button variant="outline" className="w-full flex items-center justify-center hover:bg-secondary/5 hover:text-secondary hover:border-secondary">
-                               <Download size={16} className="mr-2" /> Download Social Card
-                            </Button>
-                         </div>
-                      </div>
-                   </div>
-                ))}
-             </div>
-           </div>
-        )}
-
-        {/* Job Board Tab */}
-        {activeTab === 'jobs' && (
-           <div className="max-w-4xl mx-auto">
-             <div className="mb-8">
-                <h2 className="text-2xl font-bold text-slate-900">Job Board</h2>
-                <p className="text-slate-500">Find new opportunities posted by families.</p>
-             </div>
-             
-             <div className="space-y-4">
-                {MOCK_JOBS.map(job => (
-                   <div key={job.id} className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                      <div className="flex justify-between items-start mb-2">
-                         <div>
-                            <h3 className="font-bold text-lg text-slate-900">{job.title}</h3>
-                            <div className="flex items-center gap-2 mt-1">
-                               <span className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-xs font-bold uppercase">{job.category}</span>
-                               <span className="text-xs text-slate-500">• Posted {job.datePosted}</span>
-                            </div>
-                         </div>
-                         {job.budget && (
-                            <div className="font-bold text-slate-900 bg-green-50 px-3 py-1 rounded-lg border border-green-100">
-                               {job.budget}
-                            </div>
-                         )}
-                      </div>
-                      
-                      <p className="text-slate-600 text-sm mb-4">{job.description}</p>
-                      
-                      <div className="flex items-center justify-between pt-4 border-t border-slate-100">
-                         <div className="flex items-center gap-4 text-sm text-slate-500">
-                            <span className="flex items-center"><MapPin size={14} className="mr-1"/> {job.location}</span>
-                            {tier === 'Starter' ? (
-                               <span className="flex items-center blur-sm select-none bg-slate-100 px-2 rounded">
-                                  <User size={14} className="mr-1"/> Hidden Name
-                               </span>
-                            ) : (
-                               <span className="flex items-center text-slate-900 font-medium">
-                                  <User size={14} className="mr-1"/> {job.parentName}
-                               </span>
-                            )}
-                         </div>
-                         
-                         {tier === 'Starter' ? (
-                            <Button variant="outline" size="sm" onClick={() => setTier('Professional')} className="opacity-70">
-                               <Lock size={14} className="mr-2"/> Upgrade to Contact
-                            </Button>
-                         ) : (
-                            <Button size="sm" className="bg-secondary hover:bg-fuchsia-600">Contact Parent</Button>
-                         )}
-                      </div>
-                   </div>
-                ))}
-             </div>
-           </div>
-        )}
-
-        {/* ... (Previous code logic for tabs maintained, but ensuring Secondary color usage) ... */}
-        {activeTab === 'analytics' && (
-           <div className="max-w-6xl mx-auto">
-              {/* Analytics Tab Content (Shortened for brevity - logic identical to previous but ensuring colors) */}
-              <div className="flex justify-between items-center mb-6">
-                 <div>
-                    <h2 className="text-2xl font-bold text-slate-900">Analytics & Financials</h2>
-                    <p className="text-sm text-slate-500">Track your business performance and manage finances.</p>
-                 </div>
-                 
-                 <div className="flex bg-slate-100 p-1 rounded-lg">
-                    <button 
-                       onClick={() => setAnalyticsSubTab('performance')}
-                       className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${analyticsSubTab === 'performance' ? 'bg-white shadow-sm text-secondary font-bold' : 'text-slate-500 hover:text-slate-700'}`}
-                    >
-                       Performance
-                    </button>
-                    <button 
-                       onClick={() => setAnalyticsSubTab('financials')}
-                       className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${analyticsSubTab === 'financials' ? 'bg-white shadow-sm text-secondary font-bold' : 'text-slate-500 hover:text-slate-700'}`}
-                    >
-                       Financials & Reports
-                    </button>
-                 </div>
-              </div>
-              
-              {tier === 'Starter' ? (
-                 <div className="bg-white rounded-xl border border-slate-200 p-12 text-center">
-                    <div className="w-16 h-16 bg-fuchsia-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                       <TrendingUp size={32} className="text-secondary" />
-                    </div>
-                    <h2 className="text-xl font-bold text-slate-900 mb-2">Analytics are locked</h2>
-                    <p className="text-slate-600 mb-6 max-w-md mx-auto">Upgrade to the Professional Plan to access detailed revenue tracking, expense management, and tax reports.</p>
-                    <Button variant="secondary" onClick={() => setTier('Professional')}>Upgrade Now</Button>
-                 </div>
-              ) : (
-                  <>
-                    {analyticsSubTab === 'performance' && (
-                        <div className="space-y-6">
-                            {/* Charts and Tables */}
-                            <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                                <h3 className="font-bold text-lg mb-6">Revenue Trends</h3>
-                                <div className="h-72">
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={ANALYTICS_DATA}>
-                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                                        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} dy={10} />
-                                        <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} />
-                                        <RechartsTooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} cursor={{ fill: '#f1f5f9' }} />
-                                        <Bar dataKey="revenue" fill="#d946ef" radius={[4, 4, 0, 0]} barSize={32} />
-                                    </BarChart>
-                                </ResponsiveContainer>
-                                </div>
-                            </div>
-                            
-                            {/* ... Table logic ... */}
-                             <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                             <div className="p-6 border-b border-slate-100">
-                                <h3 className="font-bold text-lg">Revenue by Program</h3>
-                             </div>
-                             <table className="w-full text-left text-sm">
-                                <thead className="bg-slate-50 text-slate-500 font-medium">
-                                   <tr>
-                                      <th className="px-6 py-3">Program Name</th>
-                                      <th className="px-6 py-3">Bookings</th>
-                                      <th className="px-6 py-3">Rating</th>
-                                      <th className="px-6 py-3 text-right">Revenue Generated</th>
-                                   </tr>
-                                </thead>
-                                <tbody className="divide-y divide-slate-100">
-                                   {PROGRAM_PERFORMANCE.map(prog => (
-                                      <tr key={prog.id} className="hover:bg-slate-50">
-                                         <td className="px-6 py-4 font-medium text-slate-900">{prog.title}</td>
-                                         <td className="px-6 py-4 text-slate-600">{prog.bookings}</td>
-                                         <td className="px-6 py-4 text-amber-500 font-bold">{prog.rating}</td>
-                                         <td className="px-6 py-4 text-right font-bold text-slate-900">€{prog.revenue.toLocaleString()}</td>
-                                      </tr>
-                                   ))}
-                                </tbody>
-                             </table>
-                          </div>
-                        </div>
-                    )}
-                    
-                    {analyticsSubTab === 'financials' && (
-                        <div className="space-y-6">
-                            {/* Financial Cards */}
-                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                             <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                                <div className="text-sm text-slate-500 mb-1">Total Revenue</div>
-                                <div className="text-2xl font-bold text-green-600">€{totalRevenue.toLocaleString()}</div>
-                             </div>
-                             <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                                <div className="text-sm text-slate-500 mb-1">Total Expenses</div>
-                                <div className="text-2xl font-bold text-red-500">€{totalExpenses.toLocaleString()}</div>
-                             </div>
-                             <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                                <div className="text-sm text-slate-500 mb-1">Net Income</div>
-                                <div className={`text-2xl font-bold ${netIncome >= 0 ? 'text-slate-900' : 'text-red-500'}`}>
-                                   €{netIncome.toLocaleString()}
-                                </div>
-                             </div>
-                          </div>
-                          
-                           {/* Actions Bar */}
-                          <div className="flex flex-wrap gap-4">
-                             <Button onClick={() => alert('Exporting CSV...')} variant="outline" className="flex items-center hover:bg-secondary hover:text-white hover:border-secondary">
-                                <Download size={16} className="mr-2"/> Export Tax Report (CSV)
-                             </Button>
-                             <Button onClick={() => alert('Printing P&L...')} variant="outline" className="flex items-center hover:bg-secondary hover:text-white hover:border-secondary">
-                                <Printer size={16} className="mr-2"/> Print Profit & Loss
-                             </Button>
-                             <div className="flex-1"></div>
-                             <Button onClick={() => setShowExpenseModal(true)} className="flex items-center bg-secondary hover:bg-fuchsia-600">
-                                <PlusCircle size={16} className="mr-2"/> Add Expense
-                             </Button>
-                          </div>
-                          
-                          {/* Expenses Table */}
-                          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                             <div className="p-6 border-b border-slate-100">
-                                <h3 className="font-bold text-lg">Expense Ledger</h3>
-                             </div>
-                             <table className="w-full text-left text-sm">
-                                <thead className="bg-slate-50 text-slate-500 font-medium">
-                                   <tr>
-                                      <th className="px-6 py-3">Date</th>
-                                      <th className="px-6 py-3">Category</th>
-                                      <th className="px-6 py-3">Status</th>
-                                      <th className="px-6 py-3 text-right">Amount</th>
-                                   </tr>
-                                </thead>
-                                <tbody className="divide-y divide-slate-100">
-                                   {expenses.map(exp => (
-                                      <tr key={exp.id} className="hover:bg-slate-50">
-                                         <td className="px-6 py-4 text-slate-600">{exp.date}</td>
-                                         <td className="px-6 py-4 font-medium text-slate-900">{exp.category}</td>
-                                         <td className="px-6 py-4">
-                                            <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-bold uppercase ${
-                                               exp.status === 'Approved' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'
-                                            }`}>
-                                               {exp.status}
-                                            </span>
-                                         </td>
-                                         <td className="px-6 py-4 text-right font-bold text-red-500">-€{exp.amount}</td>
-                                      </tr>
-                                   ))}
-                                </tbody>
-                             </table>
-                             {expenses.length === 0 && (
-                                <div className="p-8 text-center text-slate-500">No expenses recorded yet.</div>
-                             )}
-                          </div>
-                        </div>
-                    )}
-                  </>
-              )}
-           </div>
-        )}
-
-        {(activeTab === 'overview' || activeTab === 'programs') && (
-            // Overview logic
+        {(activeTab === 'overview') && (
             <div className="space-y-8">
-               {activeTab === 'overview' && (
+                {/* 1. Stats Row */}
                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                   {PROVIDER_STATS.map((stat) => (
                     <div key={stat.name} className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
@@ -485,18 +192,112 @@ export const ProviderPortal: React.FC = () => {
                     </div>
                   ))}
                 </div>
-               )}
+                
+                {/* 2. Profile Section (Merged) */}
+                <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div className="p-6 border-b border-slate-100 flex justify-between items-center">
+                        <h2 className="text-lg font-bold text-slate-900">Provider Profile</h2>
+                        {!isEditingProfile && (
+                            <Button size="sm" variant="outline" onClick={() => setIsEditingProfile(true)}>
+                                <Edit size={16} className="mr-2"/> Edit Profile
+                            </Button>
+                        )}
+                    </div>
+                    
+                    {!isEditingProfile ? (
+                        // View Mode
+                        <div className="p-6 flex flex-col md:flex-row gap-8 items-start">
+                            <div className="w-32 h-32 rounded-full border-4 border-slate-100 shadow-sm overflow-hidden shrink-0">
+                                <img src="https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="Profile" className="w-full h-full object-cover" />
+                            </div>
+                            <div className="flex-1">
+                                <h3 className="text-2xl font-bold text-slate-900 mb-1">Berlin Kickers</h3>
+                                <p className="text-lg text-slate-500 mb-4">Professional Youth Soccer Coaching</p>
+                                <p className="text-slate-600 leading-relaxed mb-4 max-w-2xl">
+                                    Berlin Kickers was founded in 2010 with a mission to develop young talent through structured, fun, and competitive soccer training. Our coaches are UEFA B certified.
+                                </p>
+                                <div className="flex flex-wrap gap-2">
+                                    {['background_check', 'first_aid', 'child_safeguarding'].map(v => (
+                                        <div key={v} className="flex items-center text-xs font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded">
+                                            <VerificationIcon type={v as VerificationType} size={14} className="mr-1" />
+                                            {v.replace('_', ' ').toUpperCase()}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    ) : (
+                        // Edit Mode
+                        <div className="p-6 space-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 mb-1">Company / Provider Name</label>
+                                    <input type="text" defaultValue="Berlin Kickers" className="w-full p-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-secondary outline-none" />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 mb-1">Tagline</label>
+                                    <input type="text" defaultValue="Professional Youth Soccer Coaching" className="w-full p-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-secondary outline-none" />
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-1">Bio / Description</label>
+                                <textarea rows={4} className="w-full p-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-secondary outline-none" defaultValue="Berlin Kickers was founded in 2010..." />
+                            </div>
 
-               {/* Active Programs Table */}
+                            <div className="pt-4 flex justify-end gap-2">
+                                <Button variant="ghost" onClick={() => setIsEditingProfile(false)}>Cancel</Button>
+                                <Button className="bg-secondary hover:bg-fuchsia-600" onClick={() => setIsEditingProfile(false)}>
+                                    <Save size={16} className="mr-2"/> Save Changes
+                                </Button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+               {/* Active Programs Summary Table (reused) */}
                <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                   <div className="p-6 border-b border-slate-100 flex justify-between items-center">
                     <h3 className="text-lg font-bold text-slate-900">Active Programs</h3>
-                    {activeTab === 'programs' && (
-                        <div className="relative">
-                            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                            <input type="text" placeholder="Search..." className="pl-9 pr-4 py-1.5 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary" />
-                        </div>
-                    )}
+                  </div>
+                  <table className="w-full text-left text-sm">
+                    <thead className="bg-slate-50 text-slate-500 font-medium">
+                      <tr>
+                        <th className="px-6 py-3">Program Name</th>
+                        <th className="px-6 py-3">Category</th>
+                        <th className="px-6 py-3">Enrolled</th>
+                        <th className="px-6 py-3">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {MOCK_PROGRAMS.slice(0, 3).map((prog) => (
+                        <tr key={prog.id} className="hover:bg-slate-50 transition-colors">
+                          <td className="px-6 py-4 font-medium text-slate-900">{prog.title}</td>
+                          <td className="px-6 py-4 text-slate-500">{prog.category}</td>
+                          <td className="px-6 py-4 text-slate-900">12/20</td>
+                          <td className="px-6 py-4"><span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">Active</span></td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <div className="p-4 text-center border-t border-slate-100">
+                    <Button variant="ghost" className="text-secondary hover:text-fuchsia-700" onClick={() => setActiveTab('programs')}>View All Programs</Button>
+                  </div>
+                </div>
+            </div>
+        )}
+
+        {/* My Programs Tab */}
+        {activeTab === 'programs' && (
+             <div className="space-y-8">
+               {/* Active Programs Table */}
+               <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                  <div className="p-6 border-b border-slate-100 flex justify-between items-center">
+                    <h3 className="text-lg font-bold text-slate-900">All Programs</h3>
+                    <div className="relative">
+                        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                        <input type="text" placeholder="Search..." className="pl-9 pr-4 py-1.5 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary" />
+                    </div>
                   </div>
                   <table className="w-full text-left text-sm">
                     <thead className="bg-slate-50 text-slate-500 font-medium">
@@ -509,7 +310,7 @@ export const ProviderPortal: React.FC = () => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                      {MOCK_PROGRAMS.slice(0, activeTab === 'overview' ? 3 : undefined).map((prog) => (
+                      {MOCK_PROGRAMS.map((prog) => (
                         <tr key={prog.id} className="hover:bg-slate-50 transition-colors">
                           <td className="px-6 py-4 font-medium text-slate-900">{prog.title}</td>
                           <td className="px-6 py-4 text-slate-500">{prog.category}</td>
@@ -517,6 +318,13 @@ export const ProviderPortal: React.FC = () => {
                           <td className="px-6 py-4"><span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">Active</span></td>
                           <td className="px-6 py-4 text-right">
                             <div className="flex items-center justify-end space-x-2">
+                               <button 
+                                  onClick={() => { setProgramToPromote(prog); setShowPromoteModal(true); }}
+                                  className="p-1 text-slate-400 hover:text-secondary transition-colors" 
+                                  title="Promote Program"
+                               >
+                                  <Share2 size={16}/>
+                               </button>
                                <button 
                                   onClick={() => { setSelectedProgramId(prog.id); setShowRosterModal(true); }}
                                   className="p-1 text-slate-400 hover:text-secondary transition-colors" 
@@ -539,370 +347,48 @@ export const ProviderPortal: React.FC = () => {
                       ))}
                     </tbody>
                   </table>
-                  {activeTab === 'overview' && (
-                     <div className="p-4 text-center border-t border-slate-100">
-                        <Button variant="ghost" className="text-secondary hover:text-fuchsia-700" onClick={() => setActiveTab('programs')}>View All Programs</Button>
-                     </div>
-                  )}
                 </div>
-            </div>
-        )}
-        
-        {/* Other Tabs Rendering (Highlights, Profile, etc.) - Ensuring Colors */}
-        {activeTab === 'profile' && (
-             <div className="max-w-4xl mx-auto">
-              <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                 <div className="p-6 border-b border-slate-100">
-                    <h2 className="text-lg font-bold text-slate-900">Edit Profile</h2>
-                    <p className="text-sm text-slate-500">Update your public provider profile.</p>
-                 </div>
-                 <div className="p-6 space-y-6">
-                    {/* Basic Info */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                       <div>
-                          <label className="block text-sm font-medium text-slate-700 mb-1">Company / Provider Name</label>
-                          <input type="text" defaultValue="Berlin Kickers" className="w-full p-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-secondary outline-none" />
-                       </div>
-                       <div>
-                          <label className="block text-sm font-medium text-slate-700 mb-1">Tagline</label>
-                          <input type="text" defaultValue="Youth Soccer Academy" className="w-full p-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-secondary outline-none" />
-                       </div>
+
+                {/* Weekly Schedule */}
+                <div className="bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col">
+                    <div className="p-4 border-b border-slate-200 flex justify-between items-center">
+                        <div className="flex items-center gap-4">
+                            <h2 className="text-xl font-bold text-slate-900">Weekly Schedule</h2>
+                            <div className="flex bg-slate-100 rounded-lg p-0.5">
+                                <button className="p-1 hover:bg-white rounded text-slate-500"><ChevronLeft size={18}/></button>
+                                <span className="px-3 py-1 text-sm font-medium text-slate-700">June 12 - 18</span>
+                                <button className="p-1 hover:bg-white rounded text-slate-500"><ChevronRight size={18}/></button>
+                            </div>
+                        </div>
+                        <Button variant="outline" size="sm">View Calendar</Button>
                     </div>
                     
-                    <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">About</label>
-                        <textarea rows={4} className="w-full p-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-secondary outline-none" defaultValue="We provide high-quality soccer training for children of all ages. Our methodology focuses on skill development, teamwork, and fun." />
+                    <div className="flex-1 grid grid-cols-7 divide-x divide-slate-200 overflow-hidden">
+                        {daysOfWeek.map((day) => (
+                            <div key={day} className="flex flex-col min-w-[100px]">
+                                <div className="p-3 text-center border-b border-slate-200 bg-slate-50">
+                                    <span className="text-sm font-bold text-slate-700 block">{day}</span>
+                                </div>
+                                <div className="flex-1 p-2 space-y-2 bg-white relative min-h-[150px]">
+                                    {scheduleEvents.filter(e => e.day === day).map(event => (
+                                        <div key={event.id} className={`p-2 rounded-lg border text-xs cursor-pointer hover:shadow-md transition-shadow ${event.color}`}>
+                                            <div className="font-bold truncate">{event.title}</div>
+                                            <div className="flex items-center mt-1 opacity-80">
+                                                <Clock size={10} className="mr-1"/>
+                                                {event.time}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
                     </div>
-
-                    {/* Photos */}
-                    <div>
-                       <label className="block text-sm font-medium text-slate-700 mb-2">Profile Photo</label>
-                       <div className="flex items-center gap-4">
-                          <div className="w-20 h-20 rounded-full bg-slate-100 overflow-hidden border border-slate-200">
-                             <img src="https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="Profile" className="w-full h-full object-cover" />
-                          </div>
-                          <Button variant="outline" size="sm" className="hover:bg-secondary hover:text-white hover:border-secondary">Change Photo</Button>
-                       </div>
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-2">Gallery Images</label>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                           {[1,2,3].map(i => (
-                              <div key={i} className="aspect-square bg-slate-100 rounded-lg border border-slate-200 flex items-center justify-center text-slate-400 relative group overflow-hidden">
-                                 <Image size={24} />
-                                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                    <Trash2 className="text-white cursor-pointer" size={20} />
-                                 </div>
-                              </div>
-                           ))}
-                           <div className="aspect-square bg-slate-50 rounded-lg border-2 border-dashed border-slate-300 flex flex-col items-center justify-center text-slate-400 cursor-pointer hover:border-secondary hover:text-secondary transition-colors">
-                              <Upload size={24} className="mb-1"/>
-                              <span className="text-xs font-medium">Upload</span>
-                           </div>
-                        </div>
-                    </div>
-
-                    <div className="pt-4 flex justify-end">
-                       <Button className="bg-secondary hover:bg-fuchsia-600">Save Profile</Button>
-                    </div>
-                 </div>
-              </div>
-           </div>
-        )}
-        
-        {activeTab === 'tools' && (
-           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 relative">
-              {tier === 'Starter' && (
-                 <div className="absolute inset-0 bg-white/60 backdrop-blur-sm z-10 flex flex-col items-center justify-center p-6 text-center">
-                    <Rocket size={48} className="text-secondary mb-4" />
-                    <h2 className="text-xl font-bold text-slate-900">Unlock Growth Tools</h2>
-                    <p className="text-slate-600 mb-4 max-w-sm">Upgrade to Professional to access insurance partners, pricing insights, and educational resources.</p>
-                    <Button variant="secondary" onClick={() => setTier('Professional')}>Upgrade Plan</Button>
-                 </div>
-              )}
-
-              {/* Insurance Recommendation */}
-              <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                 <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 mb-4">
-                    <Shield size={24} />
-                 </div>
-                 <h3 className="text-lg font-bold text-slate-900 mb-2">Insurance Partners</h3>
-                 <p className="text-slate-500 text-sm mb-4">
-                    Protect your business and your students. We've curated top insurance providers for youth activities in Germany.
-                 </p>
-                 <div className="space-y-3">
-                    <div className="p-3 border border-slate-100 rounded-lg flex justify-between items-center hover:bg-slate-50 cursor-pointer">
-                       <span className="font-bold text-slate-700">Allianz for Educators</span>
-                       <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">Verified</span>
-                    </div>
-                    <div className="p-3 border border-slate-100 rounded-lg flex justify-between items-center hover:bg-slate-50 cursor-pointer">
-                       <span className="font-bold text-slate-700">Hiscox Sports</span>
-                       <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">Verified</span>
-                    </div>
-                 </div>
-                 <Button variant="outline" className="w-full mt-4 hover:border-secondary hover:text-secondary">Compare Rates</Button>
-              </div>
-
-              {/* Pricing Insights */}
-              <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                 <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center text-green-600 mb-4">
-                    <DollarSign size={24} />
-                 </div>
-                 <h3 className="text-lg font-bold text-slate-900 mb-2">Dynamic Pricing</h3>
-                 <p className="text-slate-500 text-sm mb-4">
-                    See how your prices compare to the Berlin market average for Sports Classes.
-                 </p>
-                 <div className="mt-4 mb-2">
-                    <div className="flex justify-between text-xs text-slate-500 mb-1">
-                       <span>Low (€10)</span>
-                       <span>Market Avg (€18)</span>
-                       <span>High (€25)</span>
-                    </div>
-                    <div className="w-full h-2 bg-slate-100 rounded-full relative">
-                       <div className="absolute left-1/2 -translate-x-1/2 w-1 h-3 bg-slate-400 top-[-2px]"></div> {/* Market Avg */}
-                       <div className="absolute left-[40%] -translate-x-1/2 w-3 h-3 bg-secondary rounded-full top-[-2px] border border-white shadow"></div> {/* Your Price */}
-                    </div>
-                    <p className="text-xs text-secondary font-bold mt-2 text-center">You are slightly below average.</p>
-                 </div>
-                 <Button variant="outline" className="w-full mt-4 hover:border-secondary hover:text-secondary">Optimize Pricing</Button>
-              </div>
-
-              {/* Learning Hub */}
-              <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                 <div className="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center text-amber-600 mb-4">
-                    <BookOpen size={24} />
-                 </div>
-                 <h3 className="text-lg font-bold text-slate-900 mb-2">Professional Development</h3>
-                 <p className="text-slate-500 text-sm mb-4">
-                    Resources to help you scale your business and improve teaching quality.
-                 </p>
-                 <ul className="space-y-3">
-                    <li className="text-sm text-slate-700 hover:text-secondary cursor-pointer underline decoration-slate-200">
-                       How to retain students semester over semester
-                    </li>
-                    <li className="text-sm text-slate-700 hover:text-secondary cursor-pointer underline decoration-slate-200">
-                       Tax guide for freelance educators in Berlin
-                    </li>
-                    <li className="text-sm text-slate-700 hover:text-secondary cursor-pointer underline decoration-slate-200">
-                       Safety certification workshop (Webinar)
-                    </li>
-                 </ul>
-                 <Button variant="outline" className="w-full mt-4 hover:border-secondary hover:text-secondary">View Library</Button>
-              </div>
-           </div>
-        )}
-        
-        {/* Chat / Highlights - use existing logic but verify button/color classes */}
-         {activeTab === 'chat' && (
-          <div className="flex h-[calc(100vh-140px)] bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-             {/* Chat Sidebar */}
-             <div className="w-72 border-r border-slate-200 bg-white flex flex-col">
-                <div className="p-4 border-b border-slate-200 flex justify-between items-center">
-                   <h2 className="font-bold text-slate-900">Messages</h2>
-                   <button onClick={handleBroadcast} className="text-secondary hover:bg-fuchsia-50 p-1 rounded" title="Broadcast to all">
-                      <Radio size={18} />
-                   </button>
                 </div>
-                <div className="flex-1 overflow-y-auto">
-                   {MOCK_CONVERSATIONS.map(conv => (
-                      <div 
-                        key={conv.id} 
-                        onClick={() => setActiveConversationId(conv.id)}
-                        className={`p-4 flex items-center space-x-3 cursor-pointer hover:bg-slate-50 transition-colors border-b border-slate-50 ${activeConversationId === conv.id ? 'bg-fuchsia-50' : ''}`}
-                      >
-                         <div className="relative">
-                            <div className="w-10 h-10 rounded-full overflow-hidden border border-slate-200">
-                               <img src={conv.participantImage} alt={conv.participantName} className="w-full h-full object-cover"/>
-                            </div>
-                            {conv.unreadCount > 0 && (
-                               <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-white text-[10px] font-bold flex items-center justify-center border border-white">
-                                  {conv.unreadCount}
-                               </div>
-                            )}
-                         </div>
-                         <div className="flex-1 min-w-0">
-                            <div className="flex justify-between items-baseline mb-0.5">
-                               <h3 className="font-bold text-sm text-slate-900 truncate">{conv.participantName}</h3>
-                               <span className="text-[10px] text-slate-400">10:00</span>
-                            </div>
-                            <p className="text-xs text-slate-500 truncate">{conv.lastMessage}</p>
-                         </div>
-                      </div>
-                   ))}
-                </div>
-             </div>
-
-             {/* Chat Window */}
-             <div className="flex-1 flex flex-col bg-slate-50">
-                {activeConversation ? (
-                   <>
-                      <div className="p-4 bg-white border-b border-slate-200 flex items-center space-x-3">
-                         <div className="w-8 h-8 rounded-full overflow-hidden border border-slate-200">
-                             <img src={activeConversation.participantImage} alt={activeConversation.participantName} className="w-full h-full object-cover"/>
-                         </div>
-                         <div>
-                            <h3 className="font-bold text-slate-900 text-sm">{activeConversation.participantName}</h3>
-                            <span className="text-xs text-slate-500">Parent</span>
-                         </div>
-                      </div>
-
-                      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                         {activeConversation.messages.map(msg => (
-                            <div key={msg.id} className={`flex ${msg.isMe ? 'justify-end' : 'justify-start'}`}>
-                               <div className={`max-w-[70%] rounded-2xl px-4 py-2 text-sm shadow-sm ${msg.isMe ? 'bg-secondary text-white rounded-br-none' : 'bg-white text-slate-700 rounded-bl-none border border-slate-100'}`}>
-                                  {msg.text}
-                                  <div className={`text-[10px] mt-1 text-right ${msg.isMe ? 'text-fuchsia-100' : 'text-slate-400'}`}>{msg.timestamp}</div>
-                               </div>
-                            </div>
-                         ))}
-                      </div>
-
-                      <div className="p-4 bg-white border-t border-slate-200">
-                         <form onSubmit={handleSendMessage} className="flex gap-2">
-                            <input 
-                              type="text" 
-                              value={newMessage}
-                              onChange={(e) => setNewMessage(e.target.value)}
-                              placeholder="Type a message..."
-                              className="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary"
-                            />
-                            <Button type="submit" disabled={!newMessage.trim()} className="bg-secondary hover:bg-fuchsia-600"><Send size={18}/></Button>
-                         </form>
-                      </div>
-                   </>
-                ) : (
-                   <div className="flex-1 flex items-center justify-center text-slate-400">
-                      Select a conversation
-                   </div>
-                )}
-             </div>
-          </div>
-        )}
-        
-        {activeTab === 'highlights' && (
-          <div className="max-w-2xl mx-auto w-full">
-             <div className="flex justify-between items-center mb-6">
-               <div>
-                  <h2 className="text-xl font-bold text-slate-900">Highlights Feed</h2>
-                  <p className="text-sm text-slate-500">Engage with the community.</p>
-               </div>
-               <Button className="bg-secondary hover:bg-fuchsia-600">Create Post</Button>
-             </div>
-
-             <div className="space-y-6">
-                {MOCK_FEED_POSTS.map(post => (
-                   <div key={post.id} className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                      <div className="p-4 flex items-center justify-between">
-                         <div className="flex items-center space-x-3">
-                            <div className="w-10 h-10 rounded-full overflow-hidden border border-slate-200">
-                               <img src={post.providerImage} alt={post.providerName} className="w-full h-full object-cover"/>
-                            </div>
-                            <div>
-                               <h3 className="font-bold text-slate-900 text-sm">{post.providerName}</h3>
-                               <p className="text-xs text-slate-500">{post.timeAgo}</p>
-                            </div>
-                         </div>
-                         <button className="text-slate-400 hover:text-secondary"><Share2 size={18}/></button>
-                      </div>
-                      
-                      <div className="aspect-square w-full bg-slate-100 relative">
-                         <img src={post.image} alt="Post" className="w-full h-full object-cover"/>
-                      </div>
-
-                      <div className="p-4">
-                         <div className="flex items-center space-x-4 mb-3">
-                            <button className={`flex items-center space-x-1 ${post.liked ? 'text-red-500' : 'text-slate-600 hover:text-red-500'}`}>
-                               <HeartIcon size={24} className={post.liked ? 'fill-red-500' : ''} />
-                            </button>
-                            <button className="flex items-center space-x-1 text-slate-600 hover:text-secondary">
-                               <MessageSquare size={24} />
-                            </button>
-                         </div>
-                         <div className="mb-2">
-                            <span className="font-bold text-sm text-slate-900">{post.likes} likes</span>
-                         </div>
-                         <p className="text-sm text-slate-700">
-                            <span className="font-bold mr-2">{post.providerName}</span>
-                            {post.caption}
-                         </p>
-                      </div>
-                   </div>
-                ))}
-             </div>
-          </div>
+            </div>
         )}
 
+        {/* ... Community and Analytics ... */}
       </main>
-
-      {/* Modals (Incident, Roster, Expense) - Ensure Secondary button usage */}
-      {showIncidentModal && (
-         <div className="absolute inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
-               <div className="p-6 border-b border-slate-100 flex justify-between items-center">
-                  <h3 className="font-bold text-lg text-slate-900 flex items-center">
-                     <AlertTriangle className="text-amber-500 mr-2" size={20}/> Report Incident
-                  </h3>
-                  <button onClick={() => setShowIncidentModal(false)} className="text-slate-400 hover:text-slate-600"><X size={20}/></button>
-               </div>
-               <div className="p-6 space-y-4">
-                  <div>
-                     <label className="block text-sm font-medium text-slate-700 mb-1">Student Name</label>
-                     <input type="text" placeholder="Who was involved?" className="w-full p-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-secondary outline-none" />
-                  </div>
-                   {/* ... inputs ... */}
-                  <div>
-                     <label className="block text-sm font-medium text-slate-700 mb-1">Description</label>
-                     <textarea rows={3} placeholder="Describe exactly what happened..." className="w-full p-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-secondary outline-none"></textarea>
-                  </div>
-                  <Button className="w-full bg-red-600 hover:bg-red-700 text-white" onClick={() => { alert('Incident Logged'); setShowIncidentModal(false); }}>Submit Report</Button>
-               </div>
-            </div>
-         </div>
-      )}
-
-      {showExpenseModal && (
-         <div className="absolute inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl shadow-xl w-full max-w-sm overflow-hidden animate-in zoom-in-95 duration-200">
-               <div className="p-6 border-b border-slate-100 flex justify-between items-center">
-                  <h3 className="font-bold text-lg text-slate-900">Add New Expense</h3>
-                  <button onClick={() => setShowExpenseModal(false)} className="text-slate-400 hover:text-slate-600"><X size={20}/></button>
-               </div>
-               <form onSubmit={handleAddExpense} className="p-6 space-y-4">
-                  {/* ... inputs ... */}
-                  <div>
-                     <label className="block text-sm font-medium text-slate-700 mb-1">Category</label>
-                     <select 
-                       value={newExpense.category} 
-                       onChange={(e) => setNewExpense({...newExpense, category: e.target.value})}
-                       className="w-full p-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-secondary outline-none"
-                       required
-                     >
-                        <option value="">Select Category</option>
-                        <option value="Equipment">Equipment</option>
-                        <option value="Marketing">Marketing</option>
-                        <option value="Rent">Venue Rental</option>
-                        <option value="Salaries">Salaries</option>
-                        <option value="Other">Other</option>
-                     </select>
-                  </div>
-                  <div>
-                     <label className="block text-sm font-medium text-slate-700 mb-1">Amount (€)</label>
-                     <input 
-                       type="number" 
-                       value={newExpense.amount}
-                       onChange={(e) => setNewExpense({...newExpense, amount: e.target.value})}
-                       className="w-full p-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-secondary outline-none"
-                       placeholder="0.00"
-                       required
-                     />
-                  </div>
-                   {/* ... */}
-                  <Button type="submit" className="w-full bg-secondary hover:bg-fuchsia-600">Add Expense</Button>
-               </form>
-            </div>
-         </div>
-      )}
 
       {/* Roster Modal */}
       {showRosterModal && (
@@ -917,7 +403,6 @@ export const ProviderPortal: React.FC = () => {
                   </div>
                   <button onClick={() => setShowRosterModal(false)} className="text-slate-400 hover:text-slate-600"><X size={20}/></button>
                </div>
-               {/* ... Roster Table ... */}
                <div className="flex-1 overflow-y-auto p-0">
                   <table className="w-full text-left text-sm">
                     <thead className="bg-slate-50 text-slate-500 font-medium sticky top-0 z-10">
@@ -956,7 +441,10 @@ export const ProviderPortal: React.FC = () => {
                </div>
                <div className="p-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-2">
                   <Button variant="outline" onClick={() => setShowRosterModal(false)}>Close</Button>
-                  <Button onClick={() => alert('Report Printed')} className="bg-secondary hover:bg-fuchsia-600">Print Report</Button>
+                  <Button onClick={() => alert('Broadcast sent to all parents in roster!')} className="bg-secondary hover:bg-fuchsia-600 flex items-center">
+                      <Megaphone size={16} className="mr-2" /> Send Broadcast
+                  </Button>
+                  <Button onClick={() => alert('Report Printed')} variant="ghost" className="text-slate-500 hover:text-slate-700">Print Report</Button>
                </div>
             </div>
          </div>

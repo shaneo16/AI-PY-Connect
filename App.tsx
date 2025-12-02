@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { UserRole } from './types';
 import { Navigation } from './components/Navigation';
@@ -5,8 +6,9 @@ import { LandingPage } from './components/LandingPage';
 import { ParentPortal } from './components/ParentPortal';
 import { ProviderPortal } from './components/ProviderPortal';
 import { AboutPage } from './components/AboutPage';
+import { PublicPrograms } from './components/PublicPrograms';
 
-type View = 'HOME' | 'ABOUT' | 'DASHBOARD';
+type View = 'HOME' | 'ABOUT' | 'DASHBOARD' | 'PROGRAMS';
 
 const App: React.FC = () => {
   const [role, setRole] = useState<UserRole>(UserRole.GUEST);
@@ -22,14 +24,11 @@ const App: React.FC = () => {
     setView('HOME');
   };
 
-  const handleNavigate = (page: 'home' | 'about') => {
+  const handleNavigate = (page: 'home' | 'about' | 'programs') => {
     if (role !== UserRole.GUEST) {
-      // If logged in, navigating home logs out or goes to dashboard? 
-      // Typically clicking logo goes to dashboard if logged in. 
-      // For now, let's keep it simple: if logged in, you stay in dashboard unless logout.
       return; 
     }
-    setView(page === 'home' ? 'HOME' : 'ABOUT');
+    setView(page === 'home' ? 'HOME' : page === 'about' ? 'ABOUT' : 'PROGRAMS');
   };
 
   const renderContent = () => {
@@ -48,11 +47,13 @@ const App: React.FC = () => {
     switch (view) {
       case 'ABOUT':
         return <AboutPage onContact={() => setView('HOME')} />;
+      case 'PROGRAMS':
+        return <PublicPrograms onLoginRequest={() => handleLogin(UserRole.PARENT)} />;
       case 'HOME':
       default:
         return (
           <LandingPage 
-            onGetStarted={() => handleLogin(UserRole.PARENT)}
+            onGetStarted={() => setView('PROGRAMS')}
             onLogin={() => handleLogin(UserRole.PROVIDER)}
           />
         );

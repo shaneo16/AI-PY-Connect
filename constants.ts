@@ -437,8 +437,8 @@ export const MOCK_EXPENSES: Expense[] = [
 
 export const FAQ_ITEMS = [
   {
-    question: "How are providers vetted?",
-    answer: "Every provider on Prime Youth Connect undergoes a rigorous verification process. We check their identity, certifications, and safety records. We also interview them to ensure they align with our educational and safety standards."
+    question: "How does the 4-step provider vetting process work?",
+    answer: "We ensure safety through a strict process: 1) Identity Verification: Confirming legal identity. 2) Background Check: Requiring a valid 'Polizeiliches Führungszeugnis' (Police Clearance). 3) Certification Review: Validating first aid and educational qualifications. 4) Personal Interview: A video or in-person interview to assess suitability and values."
   },
   {
     question: "Is there a free trial for the Active Family plan?",

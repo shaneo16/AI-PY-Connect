@@ -1,6 +1,7 @@
+
 import React from 'react';
 import { Button } from './Button';
-import { ShieldCheck, Leaf, Heart } from 'lucide-react';
+import { ShieldCheck, Leaf, Heart, Search, FileCheck, UserCheck, Video } from 'lucide-react';
 
 interface AboutPageProps {
   onContact: () => void;
@@ -60,8 +61,50 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onContact }) => {
         </div>
       </section>
 
-      {/* Team */}
+      {/* Detailed Vetting Process */}
       <section className="py-20 bg-slate-50">
+        <div className="max-w-7xl mx-auto px-6">
+           <div className="text-center mb-16">
+              <h2 className="text-3xl font-bold text-slate-900 mb-4">Our 4-Step Vetting Process</h2>
+              <p className="text-slate-600 max-w-2xl mx-auto">
+                 We take safety seriously. Every provider on Prime Youth Connect must pass our rigorous verification process before they can list a single program.
+              </p>
+           </div>
+           
+           <div className="grid md:grid-cols-4 gap-8">
+              <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm relative text-center">
+                 <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">1</div>
+                 <UserCheck className="mx-auto mb-4 text-slate-400" size={32}/>
+                 <h3 className="font-bold text-lg mb-2">Identity Verification</h3>
+                 <p className="text-sm text-slate-500">We verify the legal identity of every provider using government-issued ID.</p>
+              </div>
+
+              <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm relative text-center">
+                 <div className="w-16 h-16 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">2</div>
+                 <Search className="mx-auto mb-4 text-slate-400" size={32}/>
+                 <h3 className="font-bold text-lg mb-2">Background Check</h3>
+                 <p className="text-sm text-slate-500">Mandatory "Polizeiliches Führungszeugnis" (Police Clearance) check for all youth workers.</p>
+              </div>
+
+              <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm relative text-center">
+                 <div className="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">3</div>
+                 <FileCheck className="mx-auto mb-4 text-slate-400" size={32}/>
+                 <h3 className="font-bold text-lg mb-2">Qualifications</h3>
+                 <p className="text-sm text-slate-500">Verification of First Aid certificates and relevant educational degrees or coaching licenses.</p>
+              </div>
+
+              <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm relative text-center">
+                 <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">4</div>
+                 <Video className="mx-auto mb-4 text-slate-400" size={32}/>
+                 <h3 className="font-bold text-lg mb-2">Personal Interview</h3>
+                 <p className="text-sm text-slate-500">Our team conducts interviews to ensure providers align with our safety and educational values.</p>
+              </div>
+           </div>
+        </div>
+      </section>
+
+      {/* Team */}
+      <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-6">
            <h2 className="text-3xl font-bold text-center text-slate-900 mb-16">The Founding Team</h2>
            <div className="grid md:grid-cols-3 gap-8">
@@ -105,7 +148,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onContact }) => {
       </section>
 
       {/* Footer CTA */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-slate-50">
         <div className="max-w-4xl mx-auto text-center px-6">
           <h2 className="text-3xl font-bold text-slate-900 mb-6">Ready to join the movement?</h2>
           <Button size="lg" onClick={onContact}>Get Started Today</Button>
