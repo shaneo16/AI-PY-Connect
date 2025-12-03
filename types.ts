@@ -61,6 +61,15 @@ export interface Program {
   isOnline?: boolean;
   schoolId?: string; 
   recommended?: boolean; 
+  seasons?: ProgramSeason[];
+}
+
+export interface ProgramSeason {
+    id: string;
+    name: string; // e.g., "Fall Term 2024"
+    startDate: string;
+    endDate: string;
+    price: number;
 }
 
 export interface PricingTier {
@@ -120,6 +129,7 @@ export interface Conversation {
   lastMessage: string;
   unreadCount: number;
   messages: ChatMessage[];
+  isGroup?: boolean; // For broadcast
 }
 
 export interface IncidentReport {
@@ -162,6 +172,16 @@ export interface Invoice {
   status: 'Paid' | 'Pending';
 }
 
+export interface ClientInvoice {
+    id: string;
+    studentName: string;
+    programName: string;
+    amount: number;
+    commission: number;
+    date: string;
+    status: 'Paid' | 'Pending';
+}
+
 export interface Student {
   id: string;
   name: string;
@@ -185,4 +205,16 @@ export interface Job {
   datePosted: string;
   category: string;
   budget?: string;
+  interviewRequired?: boolean;
+}
+
+export interface BlogPost {
+  id: string;
+  title: string;
+  excerpt: string;
+  content: string; // Simplified for demo
+  author: string;
+  date: string;
+  image: string;
+  tags: string[];
 }

@@ -1,5 +1,5 @@
 
-import { PricingTier, Program, ProviderStat, School, Badge, ReferralStats, FeedPost, Conversation, IncidentReport, Student, ProviderProfile, Expense, Job } from './types';
+import { PricingTier, Program, ProviderStat, School, Badge, ReferralStats, FeedPost, Conversation, IncidentReport, Student, ProviderProfile, Expense, Job, BlogPost } from './types';
 
 export const MOCK_SCHOOLS: School[] = [
   { id: 's1', name: 'Berlin International School', district: 'Dahlem', logo: 'BIS' },
@@ -123,7 +123,7 @@ export const MOCK_PROVIDERS: ProviderProfile[] = [
     reviewCount: 15,
     location: 'Neukölln, Berlin',
     joinedDate: '2023',
-    verifications: ['background_check', 'first_aid'],
+    verifications: ['background_check', 'first_aid', 'child_safeguarding'],
     responseRate: '1 hr',
   }
 ];
@@ -177,7 +177,8 @@ export const MOCK_CONVERSATIONS: Conversation[] = [
       { id: 'm2', senderId: 'me', text: 'Thanks! What time should we arrive?', timestamp: '10:05 AM', isMe: true },
       { id: 'm3', senderId: 'p1', text: 'Please be there by 9:30 AM for warm-ups.', timestamp: '10:06 AM', isMe: false },
       { id: 'm4', senderId: 'p1', text: 'Don\'t forget shin guards for tomorrow!', timestamp: '10:07 AM', isMe: false },
-    ]
+    ],
+    isGroup: false
   },
   {
     id: 'c2',
@@ -189,7 +190,20 @@ export const MOCK_CONVERSATIONS: Conversation[] = [
     messages: [
       { id: 'm1', senderId: 'p2', text: 'Leo is making great progress with fractions.', timestamp: 'Yesterday', isMe: false },
       { id: 'm2', senderId: 'me', text: 'That is wonderful to hear! Thanks Sarah.', timestamp: 'Yesterday', isMe: true },
-    ]
+    ],
+    isGroup: false
+  },
+  {
+    id: 'c3',
+    participantName: 'Junior Soccer Academy',
+    participantRole: 'Provider',
+    participantImage: 'https://images.unsplash.com/photo-1517466787929-bc90951d0974?ixlib=rb-4.0.3&auto=format&fit=crop&w=256&h=256&q=80',
+    lastMessage: 'Practice canceled due to rain.',
+    unreadCount: 2,
+    messages: [
+       { id: 'm1', senderId: 'p1', text: 'Practice canceled due to rain today.', timestamp: '12:00 PM', isMe: true }
+    ],
+    isGroup: true
   }
 ];
 
@@ -313,6 +327,10 @@ export const MOCK_PROGRAMS: Program[] = [
     isOnline: false,
     nextSession: 'Thu, 14:00',
     schoolId: 's2',
+    seasons: [
+        { id: 'S1', name: 'Summer Term', startDate: '2024-06-01', endDate: '2024-08-30', price: 450 },
+        { id: 'S2', name: 'Autumn Term', startDate: '2024-09-01', endDate: '2024-12-15', price: 500 }
+    ]
   },
   {
     id: '6',
@@ -482,4 +500,57 @@ export const MOCK_JOBS: Job[] = [
   { id: 'j1', title: 'Math Tutor for 10yr old', description: 'Looking for a patient math tutor for my son Leo. He needs help with fractions and geometry.', parentName: 'Sarah Schmidt', location: 'Zehlendorf', datePosted: '2 days ago', category: 'Education', budget: '€20-25/hr' },
   { id: 'j2', title: 'Soccer Coach for Birthday Party', description: 'Need a fun coach to organize a soccer game for a 9th birthday party.', parentName: 'Mark Fischer', location: 'Mitte', datePosted: '5 days ago', category: 'Sports', budget: '€100 fixed' },
   { id: 'j3', title: 'Weekend Babysitter', description: 'Seeking a reliable babysitter for Saturday evenings.', parentName: 'Julia Weber', location: 'Prenzlauer Berg', datePosted: '1 week ago', category: 'Life Skills', budget: '€15/hr' },
+];
+
+export const BLOG_POSTS: BlogPost[] = [
+  {
+    id: 'b1',
+    title: 'Freelancing as an Educator in Berlin: The Basics',
+    excerpt: 'Navigating the "Kleinunternehmer" status, health insurance, and finding your first clients in the city.',
+    content: 'Berlin is a hub for freelancers, but the bureaucracy can be daunting. Here is your starter guide...',
+    author: 'Prime Team',
+    date: 'Jun 1, 2024',
+    image: 'https://images.unsplash.com/photo-1544367563-12123d8965cd?auto=format&fit=crop&w=800&q=80',
+    tags: ['Freelance', 'Berlin']
+  },
+  {
+    id: 'b2',
+    title: 'Working with Kids: Safety & Communication',
+    excerpt: 'Best practices for managing groups, handling conflicts, and communicating effectively with parents.',
+    content: 'Building trust with parents is key to retention. Here are effective strategies for communication and safety...',
+    author: 'Laurie Camargo',
+    date: 'May 28, 2024',
+    image: 'https://images.unsplash.com/photo-1557426272-fc759fdf7a8d?auto=format&fit=crop&w=800&q=80',
+    tags: ['Safety', 'Communication']
+  },
+  {
+    id: 'b3',
+    title: 'Navigating After-School (Hort) Regulations',
+    excerpt: 'Understanding the specific requirements for providing extra-curricular activities in German schools.',
+    content: 'The Ganztagsschulen mandate is changing the landscape. Here is what you need to know about partnering with schools...',
+    author: 'Legal Team',
+    date: 'May 15, 2024',
+    image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80',
+    tags: ['Schools', 'Legal']
+  },
+  {
+    id: 'b4',
+    title: 'Marketing Your Kids Program on a Budget',
+    excerpt: 'How to use local community groups and Prime Youth Connect to fill your classes without spending a fortune.',
+    content: 'You don\'t need a huge budget to attract new students. Start with community engagement...',
+    author: 'Marketing Pro',
+    date: 'May 10, 2024',
+    image: 'https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?auto=format&fit=crop&w=800&q=80',
+    tags: ['Marketing', 'Growth']
+  },
+  {
+    id: 'b5',
+    title: 'Financial Guide for Berlin Gig Workers',
+    excerpt: 'Invoicing, taxes, and expense tracking for tutors and coaches in Germany.',
+    content: 'Keeping your finances in order is crucial. We break down the basics of German tax law for freelancers...',
+    author: 'Konstantin Pergl',
+    date: 'Apr 22, 2024',
+    image: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=800&q=80',
+    tags: ['Finance', 'Taxes']
+  }
 ];
