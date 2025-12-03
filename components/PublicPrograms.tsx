@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
-import { Search, MapPin, List, Map as MapIcon, Lock, X, ArrowLeft } from 'lucide-react';
-import { MOCK_PROGRAMS, MOCK_SCHOOLS } from '../constants';
+import { Search, MapPin, List, Map as MapIcon, Lock, X, ArrowLeft, ArrowUpDown, Filter } from 'lucide-react';
+import { MOCK_PROGRAMS, TRENDING_SEARCHES } from '../constants';
 import { Program } from '../types';
 import { Button } from './Button';
 import { ProgramCard } from './ParentPortal';
@@ -13,18 +13,29 @@ interface PublicProgramsProps {
 export const PublicPrograms: React.FC<PublicProgramsProps> = ({ onLoginRequest }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
-  const [selectedSchool, setSelectedSchool] = useState<string>('All');
+  const [sortBy, setSortBy] = useState<'recommended' | 'price_low' | 'price_high' | 'recent' | 'distance'>('recommended');
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
   const [selectedProgram, setSelectedProgram] = useState<Program | null>(null);
 
-  const filteredPrograms = MOCK_PROGRAMS.filter(prog => {
+  // Filter Logic
+  let filteredPrograms = MOCK_PROGRAMS.filter(prog => {
     const matchesSearch = prog.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           prog.provider.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           prog.category.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === 'All' || prog.category === selectedCategory;
-    const matchesSchool = selectedSchool === 'All' || (prog.schoolId === selectedSchool);
     
-    return matchesSearch && matchesCategory && matchesSchool;
+    return matchesSearch && matchesCategory;
+  });
+
+  // Sort Logic
+  filteredPrograms = filteredPrograms.sort((a, b) => {
+      switch (sortBy) {
+          case 'price_low': return a.price - b.price;
+          case 'price_high': return b.price - a.price;
+          case 'recent': return b.id.localeCompare(a.id); // Mock recency by ID
+          case 'distance': return 0; // Mock distance (would need user location)
+          default: return (b.rating || 0) - (a.rating || 0); // Default to rating/recommended
+      }
   });
 
   const categories = ['All', 'Sports', 'Arts', 'Music', 'Education', 'Life Skills', 'Camps', 'Workshops'];
@@ -44,33 +55,67 @@ export const PublicPrograms: React.FC<PublicProgramsProps> = ({ onLoginRequest }
             </div>
          </div>
 
-         {/* Filters */}
-         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-            <div className="relative">
+         {/* Search & Trending */}
+         <div className="mb-8">
+            <div className="relative max-w-2xl">
                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                <input 
                  type="text" 
-                 placeholder="Search activities..." 
-                 className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                 placeholder="Search activities (e.g. Soccer, Math, Piano)..." 
+                 className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary shadow-sm"
                  value={searchTerm}
                  onChange={(e) => setSearchTerm(e.target.value)}
                />
             </div>
-            <select 
-              value={selectedCategory} 
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white"
-            >
-               {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
-            </select>
-            <select 
-              value={selectedSchool} 
-              onChange={(e) => setSelectedSchool(e.target.value)}
-              className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white"
-            >
-               <option value="All">All Schools</option>
-               {MOCK_SCHOOLS.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-            </select>
+            {/* Trending Chips Below Search */}
+            <div className="flex flex-wrap gap-2 mt-3">
+                  <span className="text-xs font-bold uppercase tracking-wider text-slate-500 mt-1.5 mr-1">Trending:</span>
+                  {TRENDING_SEARCHES.map(t => (
+                      <button 
+                        key={t} 
+                        onClick={() => setSearchTerm(t)} 
+                        className="text-xs bg-white border border-slate-200 px-3 py-1 rounded-full hover:bg-cyan-50 hover:border-cyan-200 hover:text-primaryDark transition-colors"
+                      >
+                        {t}
+                      </button>
+                  ))}
+            </div>
+         </div>
+
+         {/* Filters & Tags */}
+         <div className="flex flex-col md:flex-row gap-6 mb-8 items-start md:items-center justify-between">
+            {/* Category Tags */}
+            <div className="flex flex-wrap gap-2">
+               {categories.map(cat => (
+                   <button 
+                      key={cat} 
+                      onClick={() => setSelectedCategory(cat)}
+                      className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                          selectedCategory === cat 
+                          ? 'bg-slate-900 text-white shadow-md' 
+                          : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+                      }`}
+                   >
+                      {cat}
+                   </button>
+               ))}
+            </div>
+
+            {/* Sort Dropdown */}
+            <div className="flex items-center gap-2 min-w-[200px]">
+                <ArrowUpDown size={16} className="text-slate-400"/>
+                <select 
+                    value={sortBy} 
+                    onChange={(e) => setSortBy(e.target.value as any)}
+                    className="w-full p-2 bg-transparent font-medium text-slate-700 border-none outline-none cursor-pointer hover:text-primaryDark"
+                >
+                    <option value="recommended">Recommended</option>
+                    <option value="recent">Recently Posted</option>
+                    <option value="price_low">Price: Low to High</option>
+                    <option value="price_high">Price: High to Low</option>
+                    <option value="distance">Distance (Nearest)</option>
+                </select>
+            </div>
          </div>
 
          {/* Content */}
@@ -84,6 +129,12 @@ export const PublicPrograms: React.FC<PublicProgramsProps> = ({ onLoginRequest }
                  onProviderClick={onLoginRequest} // Guest cannot view full provider profile without login
                />
              ))}
+             {filteredPrograms.length === 0 && (
+                 <div className="col-span-full text-center py-20 text-slate-400">
+                     <p>No programs found matching your criteria.</p>
+                     <Button variant="ghost" onClick={() => {setSearchTerm(''); setSelectedCategory('All');}} className="mt-2">Clear Filters</Button>
+                 </div>
+             )}
            </div>
          ) : (
            <div className="bg-slate-200 rounded-xl h-[500px] flex items-center justify-center relative overflow-hidden border border-slate-300 shadow-inner">

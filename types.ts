@@ -1,4 +1,5 @@
 
+
 export enum UserRole {
   GUEST = 'GUEST',
   PARENT = 'PARENT',
@@ -62,6 +63,7 @@ export interface Program {
   schoolId?: string; 
   recommended?: boolean; 
   seasons?: ProgramSeason[];
+  assignedTo?: string; // ID of the team member assigned to this program
 }
 
 export interface ProgramSeason {
@@ -157,11 +159,12 @@ export interface Expense {
   status: 'Pending' | 'Approved';
 }
 
-export interface Worker {
+export interface TeamMember {
   id: string;
   name: string;
   role: string;
   status: 'Active' | 'Inactive';
+  email?: string;
 }
 
 export interface Invoice {
@@ -218,3 +221,5 @@ export interface BlogPost {
   image: string;
   tags: string[];
 }
+
+export type PaymentRouting = 'POOL' | 'SPLIT';

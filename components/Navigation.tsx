@@ -9,13 +9,13 @@ interface NavigationProps {
   role: UserRole;
   onLogout: () => void;
   onLogin: (role: UserRole) => void;
-  onNavigate: (page: 'home' | 'about' | 'programs' | 'resources') => void;
+  onNavigate: (page: 'home' | 'about' | 'programs' | 'resources' | 'parents_resources') => void;
 }
 
 export const Navigation: React.FC<NavigationProps> = ({ role, onLogout, onLogin, onNavigate }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const handleMobileNavigate = (page: 'home' | 'about' | 'programs' | 'resources') => {
+  const handleMobileNavigate = (page: 'home' | 'about' | 'programs' | 'resources' | 'parents_resources') => {
     onNavigate(page);
     setIsMobileMenuOpen(false);
   };
@@ -39,6 +39,7 @@ export const Navigation: React.FC<NavigationProps> = ({ role, onLogout, onLogin,
             <>
               <div className="flex items-center space-x-6 text-sm font-medium text-slate-600 mr-4">
                 <button onClick={() => onNavigate('programs')} className="hover:text-primary transition-colors">Programs</button>
+                <button onClick={() => onNavigate('parents_resources')} className="hover:text-primary transition-colors">For Parents</button>
                 <button onClick={() => onNavigate('resources')} className="hover:text-secondary transition-colors">For Providers</button>
                 <button onClick={() => onNavigate('about')} className="hover:text-primary transition-colors">About</button>
               </div>
@@ -81,6 +82,7 @@ export const Navigation: React.FC<NavigationProps> = ({ role, onLogout, onLogin,
            {role === UserRole.GUEST ? (
              <>
                <button onClick={() => handleMobileNavigate('programs')} className="text-left px-4 py-2 hover:bg-slate-50 rounded-lg">Programs</button>
+               <button onClick={() => handleMobileNavigate('parents_resources')} className="text-left px-4 py-2 hover:bg-slate-50 rounded-lg">For Parents</button>
                <button onClick={() => handleMobileNavigate('resources')} className="text-left px-4 py-2 hover:bg-slate-50 rounded-lg">For Providers</button>
                <button onClick={() => handleMobileNavigate('about')} className="text-left px-4 py-2 hover:bg-slate-50 rounded-lg">About Us</button>
                <div className="border-t border-slate-100 pt-4 flex flex-col gap-2">

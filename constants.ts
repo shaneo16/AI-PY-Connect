@@ -1,5 +1,6 @@
 
-import { PricingTier, Program, ProviderStat, School, Badge, ReferralStats, FeedPost, Conversation, IncidentReport, Student, ProviderProfile, Expense, Job, BlogPost } from './types';
+
+import { PricingTier, Program, ProviderStat, School, Badge, ReferralStats, FeedPost, Conversation, IncidentReport, Student, ProviderProfile, Expense, Job, BlogPost, TeamMember } from './types';
 
 export const MOCK_SCHOOLS: School[] = [
   { id: 's1', name: 'Berlin International School', district: 'Dahlem', logo: 'BIS' },
@@ -416,10 +417,10 @@ export const PROVIDER_PRICING: PricingTier[] = [
     tagline: 'Full Business Control',
     features: [
       'Unlimited Program listings',
-      '8% platform commission',
+      '3 Premium Team Seats Included',
+      'Add more for €5/mo/user',
+      'Split Payments & Commission',
       'School & Enterprise Integration',
-      'Cancellation Protection',
-      'Advanced Marketing Tools',
     ],
   },
 ];
@@ -482,10 +483,10 @@ export const PRODUCTS = [
   { id: 'p3', name: 'Water Bottle', price: 12, image: 'https://images.unsplash.com/photo-1602143407151-cd111ca4a302?auto=format&fit=crop&w=200&q=80' },
 ];
 
-export const MOCK_WORKERS = [
-  { id: 'w1', name: 'Coach Mike', role: 'Head Coach', status: 'Active' },
-  { id: 'w2', name: 'Sarah L.', role: 'Assistant', status: 'Active' },
-  { id: 'w3', name: 'Tom B.', role: 'Intern', status: 'Inactive' },
+export const MOCK_TEAM_MEMBERS: TeamMember[] = [
+  { id: 'w1', name: 'Coach Mike', role: 'Head Coach', status: 'Active', email: 'mike@berlinkickers.de' },
+  { id: 'w2', name: 'Sarah L.', role: 'Assistant', status: 'Active', email: 'sarah@berlinkickers.de' },
+  { id: 'w3', name: 'Tom B.', role: 'Intern', status: 'Inactive', email: 'tom@berlinkickers.de' },
 ];
 
 export const MOCK_STUDENTS: Student[] = [
@@ -554,3 +555,38 @@ export const BLOG_POSTS: BlogPost[] = [
     tags: ['Finance', 'Taxes']
   }
 ];
+
+export const BLOG_POSTS_PARENTS: BlogPost[] = [
+    {
+      id: 'p1',
+      title: 'Top 10 Weekend Activities for Kids in Berlin',
+      excerpt: 'From Tempelhof picnics to indoor climbing, discover the best spots for family fun.',
+      content: 'Berlin offers endless possibilities...',
+      author: 'Prime Team',
+      date: 'Jun 10, 2024',
+      image: 'https://images.unsplash.com/photo-1472162072942-cd5147eb3902?auto=format&fit=crop&w=800&q=80',
+      tags: ['Activities', 'Berlin']
+    },
+    {
+      id: 'p2',
+      title: 'Choosing the Right Tutor for Your Child',
+      excerpt: 'What to look for in a private educator: qualifications, personality, and teaching style.',
+      content: 'Finding the right match is crucial...',
+      author: 'Sarah J.',
+      date: 'Jun 05, 2024',
+      image: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=800&q=80',
+      tags: ['Education', 'Tips']
+    },
+    {
+      id: 'p3',
+      title: 'Balancing Screen Time and Outdoor Play',
+      excerpt: 'Strategies for modern parents to encourage healthy digital habits.',
+      content: 'Screens are part of life, but balance is key...',
+      author: 'Dr. Mueller',
+      date: 'May 20, 2024',
+      image: 'https://images.unsplash.com/photo-1516627145497-ae6968895b74?auto=format&fit=crop&w=800&q=80',
+      tags: ['Health', 'Lifestyle']
+    }
+];
+
+export const TRENDING_SEARCHES = ['Swimming', 'Math Tutor', 'Summer Camp', 'Piano', 'Soccer'];

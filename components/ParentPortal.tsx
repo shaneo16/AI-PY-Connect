@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Search, Filter, Calendar as CalendarIcon, MapPin, Star, Heart, CheckCircle, ShieldCheck, List, Map as MapIcon, X, Lock, MessageCircle, Home, Award, User, Settings, Users, Sparkles, Copy, Share2, Heart as HeartIcon, MessageSquare, FileCheck, Shield, Send, ArrowLeft, Instagram, Globe, PlayCircle, Briefcase, Plus, Video, Mic, MicOff, VideoOff, PhoneOff, UserCheck, Clock, Check, Bell, Mail, FileText, Trophy } from 'lucide-react';
-import { MOCK_PROGRAMS, MOCK_SCHOOLS, MOCK_BADGES, MOCK_REFERRAL_STATS, MOCK_FEED_POSTS, MOCK_CONVERSATIONS, MOCK_PROVIDERS, PRODUCTS, MOCK_JOBS } from '../constants';
+import { MOCK_PROGRAMS, MOCK_SCHOOLS, MOCK_BADGES, MOCK_REFERRAL_STATS, MOCK_FEED_POSTS, MOCK_CONVERSATIONS, MOCK_PROVIDERS, PRODUCTS, MOCK_JOBS, TRENDING_SEARCHES } from '../constants';
 import { Program, VerificationType, Conversation, ChatMessage, ProviderProfile, Job } from '../types';
 import { Button } from './Button';
 
@@ -277,7 +277,6 @@ export const ParentPortal: React.FC = () => {
   // ... (Other state - keep existing)
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
-  const [selectedSchool, setSelectedSchool] = useState<string>('All');
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
   const [selectedProgram, setSelectedProgram] = useState<Program | null>(null);
   const [myJobs, setMyJobs] = useState<Job[]>(MOCK_JOBS.filter(j => j.parentName === 'Sarah Schmidt'));
@@ -312,8 +311,8 @@ export const ParentPortal: React.FC = () => {
                           prog.provider.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           prog.category.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === 'All' || prog.category === selectedCategory;
-    const matchesSchool = selectedSchool === 'All' || (prog.schoolId === selectedSchool);
-    return matchesSearch && matchesCategory && matchesSchool;
+    // Removed school filter as requested - default to show relevant
+    return matchesSearch && matchesCategory;
   });
   const categories = ['All', 'Sports', 'Arts', 'Music', 'Education', 'Life Skills', 'Camps', 'Workshops'];
   const saveSettings = (e: React.FormEvent) => { e.preventDefault(); setShowToast(true); setTimeout(() => setShowToast(false), 3000); }
@@ -338,10 +337,10 @@ export const ParentPortal: React.FC = () => {
 
   return (
     <div className="flex h-[calc(100vh-64px)] bg-slate-50 relative">
-      {/* Video Call Overlay */}
+      {/* ... (Video Call Modal - Keep existing) ... */}
       {showVideoCall && <VideoCallModal onClose={() => setShowVideoCall(false)} />}
       
-      {/* Schedule Interview Modal */}
+      {/* ... (Schedule Interview Modal - Keep existing) ... */}
       {showScheduleInterview && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
            <div className="bg-white rounded-xl max-w-md w-full p-6 animate-in zoom-in-95">
@@ -368,7 +367,7 @@ export const ParentPortal: React.FC = () => {
         </div>
       )}
 
-      {/* Sidebar (Desktop) */}
+      {/* ... (Sidebar - Keep existing) ... */}
       <aside className="hidden md:flex flex-col w-64 bg-white border-r border-slate-200 p-6 space-y-6 shrink-0 z-10 overflow-y-auto">
         <div>
           <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">Dashboard</h2>
@@ -418,7 +417,7 @@ export const ParentPortal: React.FC = () => {
       {/* Main Content */}
       <main className="flex-1 flex flex-col min-w-0 overflow-y-auto mb-16 md:mb-0">
         
-        {/* HOME TAB */}
+        {/* ... (Home Tab - Keep existing) ... */}
         {activeTab === 'home' && (
           <div className="p-6 md:p-8 space-y-8 max-w-6xl mx-auto w-full">
             {/* 1. Children Overview */}
@@ -524,7 +523,7 @@ export const ParentPortal: React.FC = () => {
           </div>
         )}
 
-        {/* EXPLORE TAB (Keep existing logic) */}
+        {/* EXPLORE TAB */}
         {activeTab === 'explore' && (
            <div className="p-6 md:p-8 space-y-6">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -537,7 +536,7 @@ export const ParentPortal: React.FC = () => {
               
               {/* Filters */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4 bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-                  <div className="relative">
+                  <div className="relative md:col-span-2">
                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                      <input 
                        type="text" 
@@ -550,18 +549,18 @@ export const ParentPortal: React.FC = () => {
                   <select 
                     value={selectedCategory} 
                     onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white"
+                    className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white md:col-span-2"
                   >
                      {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
                   </select>
-                  <select 
-                    value={selectedSchool} 
-                    onChange={(e) => setSelectedSchool(e.target.value)}
-                    className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white"
-                  >
-                     <option value="All">All Schools</option>
-                     {MOCK_SCHOOLS.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-                  </select>
+              </div>
+
+              {/* Trending Chips */}
+              <div className="flex flex-wrap gap-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-slate-500 mt-1">Trending:</span>
+                  {TRENDING_SEARCHES.map(t => (
+                      <button key={t} onClick={() => setSearchTerm(t)} className="text-xs bg-white border border-slate-200 px-2 py-1 rounded-full hover:bg-slate-50">{t}</button>
+                  ))}
               </div>
 
               {/* List vs Map View */}
@@ -594,7 +593,7 @@ export const ParentPortal: React.FC = () => {
            </div>
         )}
 
-        {/* COMMUNITY TAB (Keep existing) */}
+        {/* ... (Community Tab - Keep existing) ... */}
         {activeTab === 'community' && (
             <div className="p-6 md:p-8 h-full flex flex-col md:flex-row gap-8 overflow-hidden">
                 <div className="flex-1 md:w-2/3 overflow-y-auto pr-2">
@@ -655,7 +654,7 @@ export const ParentPortal: React.FC = () => {
             </div>
         )}
 
-        {/* CHAT TAB (Keep existing) */}
+        {/* ... (Chat Tab - Keep existing) ... */}
         {activeTab === 'chat' && (
            <div className="flex h-full bg-white">
               <div className="w-24 md:w-80 border-r border-slate-200 flex flex-col">
@@ -714,13 +713,13 @@ export const ParentPortal: React.FC = () => {
            </div>
         )}
 
-        {/* PLANNER & SETTINGS (Keep existing) */}
+        {/* ... (Planner & Settings - Keep existing) ... */}
         {activeTab === 'planner' && <div className="p-8"><h1 className="text-2xl font-bold">My Planner</h1><p>Calendar view goes here.</p></div>}
         {activeTab === 'settings' && <div className="p-8"><h1 className="text-2xl font-bold">Settings</h1><p>Preferences go here.</p></div>}
         
       </main>
 
-      {/* Mobile Bottom Navigation */}
+      {/* ... (Mobile Nav, Modals, Toast - Keep existing) ... */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex justify-around p-2 z-50 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
         {['home', 'explore', 'community', 'chat', 'planner'].map((tab) => (
             <button 

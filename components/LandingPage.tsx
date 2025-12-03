@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { ShieldCheck, Calendar, Users, Star, CheckCircle2, ChevronDown, ChevronUp, MapPin, Edit, MessageCircle, TrendingUp, Search } from 'lucide-react';
 import { Button } from './Button';
-import { PARENT_PRICING, PROVIDER_PRICING, FAQ_ITEMS, MOCK_PROGRAMS } from '../constants';
+import { PARENT_PRICING, PROVIDER_PRICING, FAQ_ITEMS, MOCK_PROGRAMS, TRENDING_SEARCHES } from '../constants';
 import { VerificationIcon } from './ParentPortal';
 
 interface LandingPageProps {
@@ -40,7 +40,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onLogin 
           </p>
           
           {/* Simplified Search Bar */}
-          <div className="max-w-xl mx-auto bg-white p-2 rounded-full shadow-xl shadow-slate-200/50 flex items-center mb-8 border border-slate-100 relative z-10">
+          <div className="max-w-xl mx-auto bg-white p-2 rounded-full shadow-xl shadow-slate-200/50 flex items-center mb-4 border border-slate-100 relative z-10">
              <div className="flex-1 relative">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-primaryDark" size={24} />
                 <input 
@@ -52,6 +52,16 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onLogin 
              <Button onClick={onGetStarted} className="rounded-full px-8 py-3 h-auto text-lg shadow-lg bg-primary hover:bg-primaryDark text-slate-900 hover:text-white transition-all font-bold">
                 Search
              </Button>
+          </div>
+          
+          {/* Trending Searches */}
+          <div className="flex flex-wrap justify-center gap-2 mb-8 relative z-10">
+              <span className="text-xs text-slate-500 font-bold uppercase tracking-wider mt-1.5">Trending:</span>
+              {TRENDING_SEARCHES.map(term => (
+                  <button key={term} onClick={onGetStarted} className="px-3 py-1 bg-white/60 hover:bg-white border border-slate-200 rounded-full text-xs text-slate-600 transition-colors shadow-sm">
+                      {term}
+                  </button>
+              ))}
           </div>
         </div>
       </section>

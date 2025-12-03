@@ -8,8 +8,9 @@ import { ProviderPortal } from './components/ProviderPortal';
 import { AboutPage } from './components/AboutPage';
 import { PublicPrograms } from './components/PublicPrograms';
 import { ResourcesPage } from './components/ResourcesPage';
+import { ParentsResourcesPage } from './components/ParentsResourcesPage';
 
-type View = 'HOME' | 'ABOUT' | 'DASHBOARD' | 'PROGRAMS' | 'RESOURCES';
+type View = 'HOME' | 'ABOUT' | 'DASHBOARD' | 'PROGRAMS' | 'RESOURCES' | 'PARENTS_RESOURCES';
 
 const App: React.FC = () => {
   const [role, setRole] = useState<UserRole>(UserRole.GUEST);
@@ -25,11 +26,15 @@ const App: React.FC = () => {
     setView('HOME');
   };
 
-  const handleNavigate = (page: 'home' | 'about' | 'programs' | 'resources') => {
+  const handleNavigate = (page: 'home' | 'about' | 'programs' | 'resources' | 'parents_resources') => {
     if (role !== UserRole.GUEST) {
       return; 
     }
-    setView(page === 'home' ? 'HOME' : page === 'about' ? 'ABOUT' : page === 'programs' ? 'PROGRAMS' : 'RESOURCES');
+    if (page === 'home') setView('HOME');
+    else if (page === 'about') setView('ABOUT');
+    else if (page === 'programs') setView('PROGRAMS');
+    else if (page === 'resources') setView('RESOURCES');
+    else if (page === 'parents_resources') setView('PARENTS_RESOURCES');
   };
 
   const renderContent = () => {
@@ -52,6 +57,8 @@ const App: React.FC = () => {
         return <PublicPrograms onLoginRequest={() => handleLogin(UserRole.PARENT)} />;
       case 'RESOURCES':
         return <ResourcesPage />;
+      case 'PARENTS_RESOURCES':
+        return <ParentsResourcesPage />;
       case 'HOME':
       default:
         return (
