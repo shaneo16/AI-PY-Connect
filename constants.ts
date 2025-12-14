@@ -1,6 +1,6 @@
 
 
-import { PricingTier, Program, ProviderStat, School, Badge, ReferralStats, FeedPost, Conversation, IncidentReport, Student, ProviderProfile, Expense, Job, BlogPost, TeamMember } from './types';
+import { PricingTier, Program, ProviderStat, School, Badge, ReferralStats, FeedPost, Conversation, IncidentReport, Student, ProviderProfile, Expense, Job, BlogPost, TeamMember, Invoice } from './types';
 
 export const MOCK_SCHOOLS: School[] = [
   { id: 's1', name: 'Berlin International School', district: 'Dahlem', logo: 'BIS' },
@@ -39,7 +39,7 @@ export const MOCK_PROVIDERS: ProviderProfile[] = [
     reviewCount: 124,
     location: 'Mitte, Berlin',
     joinedDate: '2019',
-    verifications: ['background_check', 'first_aid', 'child_safeguarding'],
+    verifications: ['business_registration', 'insurance'],
     responseRate: '1 hr',
     gallery: [
       'https://images.unsplash.com/photo-1526232761682-d26e03ac148e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
@@ -47,7 +47,8 @@ export const MOCK_PROVIDERS: ProviderProfile[] = [
       'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
     ],
     video: 'https://www.w3schools.com/html/mov_bbb.mp4', // Placeholder
-    socialLinks: { instagram: '@berlinkickers', website: 'www.berlinkickers.de' }
+    socialLinks: { instagram: '@berlinkickers', website: 'www.berlinkickers.de' },
+    isVerified: true
   },
   {
     id: 'pr2',
@@ -67,7 +68,8 @@ export const MOCK_PROVIDERS: ProviderProfile[] = [
       'https://images.unsplash.com/photo-1513364776144-60967b0f800f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
       'https://images.unsplash.com/photo-1460661631041-83824193b58d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
     ],
-    socialLinks: { instagram: '@themakery_berlin' }
+    socialLinks: { instagram: '@themakery_berlin' },
+    isVerified: true
   },
   {
     id: 'pr3',
@@ -82,6 +84,7 @@ export const MOCK_PROVIDERS: ProviderProfile[] = [
     joinedDate: '2022',
     verifications: ['background_check', 'child_safeguarding'],
     responseRate: '24 hrs',
+    isVerified: true
   },
   {
     id: 'pr4',
@@ -97,6 +100,7 @@ export const MOCK_PROVIDERS: ProviderProfile[] = [
     joinedDate: '2018',
     verifications: ['background_check', 'child_safeguarding', 'insurance'],
     responseRate: '12 hrs',
+    isVerified: true
   },
   {
     id: 'pr5',
@@ -112,6 +116,7 @@ export const MOCK_PROVIDERS: ProviderProfile[] = [
     joinedDate: '2021',
     verifications: ['background_check'],
     responseRate: '2 hrs',
+    isVerified: true
   },
   {
     id: 'pr6',
@@ -126,6 +131,7 @@ export const MOCK_PROVIDERS: ProviderProfile[] = [
     joinedDate: '2023',
     verifications: ['background_check', 'first_aid', 'child_safeguarding'],
     responseRate: '1 hr',
+    isVerified: true
   }
 ];
 
@@ -249,6 +255,11 @@ export const MOCK_PROGRAMS: Program[] = [
     isOnline: true,
     nextSession: 'Tue, 16:00',
     schoolId: 's3',
+    assignedTo: 'w1',
+    assignedToName: 'Coach Mike',
+    assignedToImage: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80',
+    enrolledCount: 16,
+    maxSpots: 20
   },
   {
     id: '2',
@@ -269,6 +280,11 @@ export const MOCK_PROGRAMS: Program[] = [
     isOnline: false,
     nextSession: 'Wed, 15:30',
     recommended: true,
+    assignedTo: 'w2',
+    assignedToName: 'Sarah L.',
+    assignedToImage: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80',
+    enrolledCount: 8,
+    maxSpots: 12
   },
   {
     id: '3',
@@ -289,6 +305,8 @@ export const MOCK_PROGRAMS: Program[] = [
     isOnline: true,
     nextSession: 'Flexible Schedule',
     schoolId: 's1',
+    enrolledCount: 2,
+    maxSpots: 1
   },
   {
     id: '4',
@@ -308,6 +326,8 @@ export const MOCK_PROGRAMS: Program[] = [
     verifications: ['background_check', 'child_safeguarding', 'insurance'],
     isOnline: false,
     nextSession: 'July 15 - 20',
+    enrolledCount: 24,
+    maxSpots: 40
   },
   {
     id: '5',
@@ -331,7 +351,9 @@ export const MOCK_PROGRAMS: Program[] = [
     seasons: [
         { id: 'S1', name: 'Summer Term', startDate: '2024-06-01', endDate: '2024-08-30', price: 450 },
         { id: 'S2', name: 'Autumn Term', startDate: '2024-09-01', endDate: '2024-12-15', price: 500 }
-    ]
+    ],
+    enrolledCount: 4,
+    maxSpots: 5
   },
   {
     id: '6',
@@ -352,6 +374,8 @@ export const MOCK_PROGRAMS: Program[] = [
     isOnline: true,
     nextSession: 'By Request',
     recommended: true,
+    enrolledCount: 0,
+    maxSpots: 1
   },
 ];
 
@@ -433,13 +457,13 @@ export const PROVIDER_STATS: ProviderStat[] = [
 ];
 
 export const ANALYTICS_DATA = [
-  { name: 'Jan', revenue: 4000, bookings: 24 },
-  { name: 'Feb', revenue: 3000, bookings: 13 },
-  { name: 'Mar', revenue: 2000, bookings: 58 },
-  { name: 'Apr', revenue: 2780, bookings: 39 },
-  { name: 'May', revenue: 1890, bookings: 48 },
-  { name: 'Jun', revenue: 2390, bookings: 38 },
-  { name: 'Jul', revenue: 3490, bookings: 43 },
+  { name: 'Jan', revenue: 4000, bookings: 24, expenses: 1200 },
+  { name: 'Feb', revenue: 3000, bookings: 13, expenses: 900 },
+  { name: 'Mar', revenue: 2000, bookings: 58, expenses: 800 },
+  { name: 'Apr', revenue: 2780, bookings: 39, expenses: 1100 },
+  { name: 'May', revenue: 1890, bookings: 48, expenses: 600 },
+  { name: 'Jun', revenue: 2390, bookings: 38, expenses: 1400 },
+  { name: 'Jul', revenue: 3490, bookings: 43, expenses: 1000 },
 ];
 
 export const PROGRAM_PERFORMANCE = [
@@ -449,9 +473,14 @@ export const PROGRAM_PERFORMANCE = [
 ];
 
 export const MOCK_EXPENSES: Expense[] = [
-   { id: 'e1', category: 'Equipment', amount: 350, date: '2024-06-01', status: 'Approved' },
-   { id: 'e2', category: 'Marketing', amount: 120, date: '2024-06-05', status: 'Approved' },
-   { id: 'e3', category: 'Venue Rental', amount: 800, date: '2024-06-10', status: 'Pending' },
+   { id: 'e1', programId: '1', programName: 'Junior Soccer Academy', category: 'Equipment', description: 'New Cones and Balls', amount: 350, date: '2024-06-01', status: 'Approved' },
+   { id: 'e2', programId: '2', programName: 'Summer Camp', category: 'Marketing', description: 'Facebook Ads', amount: 120, date: '2024-06-05', status: 'Approved' },
+   { id: 'e3', programId: '1', programName: 'Junior Soccer Academy', category: 'Venue Rental', description: 'Pitch Booking June', amount: 800, date: '2024-06-10', status: 'Pending' },
+];
+
+export const MOCK_INVOICES: Invoice[] = [
+    { id: 'inv1', staffId: 'w1', staffName: 'Coach Mike', amount: 850, dateGenerated: '2024-06-30', dueDate: '2024-07-15', status: 'Paid', items: [{description: 'June Coaching Hours', amount: 850}] },
+    { id: 'inv2', staffId: 'w2', staffName: 'Sarah L.', amount: 420, dateGenerated: '2024-06-30', dueDate: '2024-07-15', status: 'Sent', items: [{description: 'Art Workshop Assistance', amount: 420}] },
 ];
 
 export const FAQ_ITEMS = [
@@ -472,8 +501,8 @@ export const FAQ_ITEMS = [
     answer: "Currently, our primary focus is on youth education and recreation (ages 4-18). However, we are exploring adult programs and family workshops for our future expansion."
   },
   {
-    question: "What are Prime Points?",
-    answer: "Prime Points is our loyalty program. You earn points for every booking, review, and referral. Points can be redeemed for discounts, premium subscriptions, and exclusive access to events."
+    question: "What are Klass Points?",
+    answer: "Klass Points is our loyalty program. You earn points for every booking, review, and referral. Points can be redeemed for discounts, premium subscriptions, and exclusive access to events."
   }
 ];
 
@@ -484,9 +513,28 @@ export const PRODUCTS = [
 ];
 
 export const MOCK_TEAM_MEMBERS: TeamMember[] = [
-  { id: 'w1', name: 'Coach Mike', role: 'Head Coach', status: 'Active', email: 'mike@berlinkickers.de' },
-  { id: 'w2', name: 'Sarah L.', role: 'Assistant', status: 'Active', email: 'sarah@berlinkickers.de' },
-  { id: 'w3', name: 'Tom B.', role: 'Intern', status: 'Inactive', email: 'tom@berlinkickers.de' },
+  { 
+      id: 'w1', 
+      name: 'Coach Mike', 
+      role: 'Head Coach', 
+      status: 'Active', 
+      email: 'mike@berlinkickers.de',
+      image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80',
+      bio: 'Former Bundesliga youth player with 10 years coaching experience.',
+      qualifications: ['UEFA B License', 'First Aid'],
+      hourlyRate: 45
+  },
+  { 
+      id: 'w2', 
+      name: 'Sarah L.', 
+      role: 'Assistant', 
+      status: 'Active', 
+      email: 'sarah@berlinkickers.de',
+      image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80',
+      bio: 'Specializes in early childhood development and fun movement.',
+      qualifications: ['Child Care Cert', 'Safeguarding'],
+      hourlyRate: 30
+  },
 ];
 
 export const MOCK_STUDENTS: Student[] = [
@@ -509,7 +557,7 @@ export const BLOG_POSTS: BlogPost[] = [
     title: 'Freelancing as an Educator in Berlin: The Basics',
     excerpt: 'Navigating the "Kleinunternehmer" status, health insurance, and finding your first clients in the city.',
     content: 'Berlin is a hub for freelancers, but the bureaucracy can be daunting. Here is your starter guide...',
-    author: 'Prime Team',
+    author: 'Klass Team',
     date: 'Jun 1, 2024',
     image: 'https://images.unsplash.com/photo-1544367563-12123d8965cd?auto=format&fit=crop&w=800&q=80',
     tags: ['Freelance', 'Berlin']
@@ -537,7 +585,7 @@ export const BLOG_POSTS: BlogPost[] = [
   {
     id: 'b4',
     title: 'Marketing Your Kids Program on a Budget',
-    excerpt: 'How to use local community groups and Prime Youth Connect to fill your classes without spending a fortune.',
+    excerpt: 'How to use local community groups and Klass Hero to fill your classes without spending a fortune.',
     content: 'You don\'t need a huge budget to attract new students. Start with community engagement...',
     author: 'Marketing Pro',
     date: 'May 10, 2024',
@@ -562,7 +610,7 @@ export const BLOG_POSTS_PARENTS: BlogPost[] = [
       title: 'Top 10 Weekend Activities for Kids in Berlin',
       excerpt: 'From Tempelhof picnics to indoor climbing, discover the best spots for family fun.',
       content: 'Berlin offers endless possibilities...',
-      author: 'Prime Team',
+      author: 'Klass Team',
       date: 'Jun 10, 2024',
       image: 'https://images.unsplash.com/photo-1472162072942-cd5147eb3902?auto=format&fit=crop&w=800&q=80',
       tags: ['Activities', 'Berlin']

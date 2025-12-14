@@ -3,31 +3,61 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Prime Youth Connect</title>
+    <title>Klass Hero</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
         theme: {
           extend: {
             colors: {
-              primary: '#0cf2f2', // Logo Cyan
-              primaryDark: '#089191', // Darker version for text readability
-              secondary: '#f909a6', // Logo Magenta
-              accent: '#fbf222', // Logo Yellow
-              dark: '#0f172a', // Slate 900
-              peach: '#fff9f5', // Very Light Peach/Off-white
+              primary: 'rgb(15, 195, 255)', // Blue
+              primaryDark: 'rgb(10, 160, 215)', // Darker Blue for hovers
+              secondary: 'rgb(255, 255, 54)', // Yellow
+              accent: 'rgb(199, 199, 199)', // Grey (Borders/Accents)
+              dark: 'rgb(0, 0, 0)', // Black
+              peach: 'rgb(255, 234, 201)', // Pale Pink Background
+              slate: {
+                50: '#ffffff', // Forcing cards to be white-ish if needed, or keep slate scale but mapped to greys
+                100: 'rgb(245, 245, 245)',
+                200: 'rgb(229, 229, 229)',
+                300: 'rgb(199, 199, 199)', // Matching accent
+                400: '#9ca3af',
+                500: '#6b7280',
+                600: '#4b5563',
+                700: '#374151',
+                800: '#1f2937',
+                900: 'rgb(0, 0, 0)', // Force dark slate to black
+              }
             },
             fontFamily: {
               sans: ['Inter', 'sans-serif'],
+              display: ['"Skaters Demo"', 'Impact', 'sans-serif'],
             },
           },
         },
       }
     </script>
     <style>
+      /* Fallback for Skaters Demo if local file not present, 
+         using a bold distinct look to match the vibe */
+      @font-face {
+        font-family: 'Skaters Demo';
+        src: local('Skaters Demo'), local('SkatersDemo'), url('https://fonts.cdnfonts.com/s/92576/SkatersDemo.woff') format('woff');
+        font-display: swap;
+      }
+
       body {
         font-family: 'Inter', sans-serif;
+        background-color: rgb(255, 234, 201);
+        color: rgb(0, 0, 0);
       }
+      
+      h1, h2, h3, .font-display {
+        font-family: 'Skaters Demo', 'Inter', sans-serif;
+        font-weight: 400 !important; /* Force normal weight to prevent faux-bolding making it too thick */
+      }
+      
+      /* Scrollbar hiding */
       .hide-scrollbar::-webkit-scrollbar {
         display: none;
       }
@@ -48,7 +78,7 @@
 }
 </script>
 </head>
-  <body class="bg-slate-50 text-slate-900 antialiased">
+  <body class="antialiased selection:bg-secondary selection:text-black">
     <div id="root"></div>
   </body>
 </html>

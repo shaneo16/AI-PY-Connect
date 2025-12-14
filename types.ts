@@ -21,7 +21,7 @@ export interface Badge {
   earnedDate?: string;
 }
 
-export type VerificationType = 'background_check' | 'first_aid' | 'child_safeguarding' | 'insurance';
+export type VerificationType = 'background_check' | 'first_aid' | 'child_safeguarding' | 'insurance' | 'business_registration';
 
 export interface ProviderProfile {
   id: string;
@@ -40,14 +40,15 @@ export interface ProviderProfile {
   video?: string; // Premium
   socialLinks?: { instagram?: string; website?: string }; // Premium
   responseRate?: string;
+  isVerified?: boolean; // Platform Admin Approval Status
 }
 
 export interface Program {
   id: string;
-  providerId: string; // Link to provider
+  providerId: string; // Link to provider/business
   title: string;
-  provider: string;
-  providerImage: string;
+  provider: string; // Business Name
+  providerImage: string; // Business Logo
   category: 'Sports' | 'Arts' | 'Education' | 'Camps' | 'Music' | 'Life Skills';
   type: 'class' | 'workshop' | 'service' | 'camp';
   price: number;
@@ -64,6 +65,10 @@ export interface Program {
   recommended?: boolean; 
   seasons?: ProgramSeason[];
   assignedTo?: string; // ID of the team member assigned to this program
+  assignedToName?: string; // Name of the team member for display
+  assignedToImage?: string; // Image of the team member for display
+  enrolledCount?: number;
+  maxSpots?: number;
 }
 
 export interface ProgramSeason {
@@ -153,7 +158,10 @@ export interface Product {
 
 export interface Expense {
   id: string;
+  programId?: string; // Optional: link to specific program
+  programName?: string;
   category: string;
+  description: string;
   amount: number;
   date: string;
   status: 'Pending' | 'Approved';
@@ -165,14 +173,21 @@ export interface TeamMember {
   role: string;
   status: 'Active' | 'Inactive';
   email?: string;
+  image?: string;
+  bio?: string;
+  qualifications?: string[];
+  hourlyRate?: number; // Internal for invoice calculation
 }
 
 export interface Invoice {
   id: string;
-  workerId: string;
+  staffId: string;
+  staffName: string;
   amount: number;
-  date: string;
-  status: 'Paid' | 'Pending';
+  dateGenerated: string;
+  dueDate: string;
+  status: 'Draft' | 'Sent' | 'Paid';
+  items: { description: string; amount: number }[];
 }
 
 export interface ClientInvoice {
