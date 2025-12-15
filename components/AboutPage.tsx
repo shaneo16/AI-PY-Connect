@@ -13,7 +13,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onContact }) => {
       {/* Header */}
       <div className="bg-black text-white py-20 px-6 border-b-4 border-secondary">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6 font-display uppercase">Our Mission</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-6 uppercase">Our Mission</h1>
           <p className="text-xl text-slate-300 font-medium">
             To modernize how families discover children's programs by creating a vetted, safe, and community-driven marketplace.
           </p>

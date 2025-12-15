@@ -28,7 +28,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onLogin 
            <div className="max-w-6xl mx-auto p-6 md:p-12">
                <div className="flex justify-between items-center mb-8">
                    <div>
-                       <h2 className="text-3xl font-bold text-slate-900 font-display">Feature Comparison</h2>
+                       <h2 className="text-3xl font-bold text-slate-900">Feature Comparison</h2>
                        <p className="text-slate-500 font-sans">Detailed breakdown of all plan features.</p>
                    </div>
                    <button onClick={() => setShowCompareModal(false)} className="p-2 hover:bg-white rounded-full transition-colors">
@@ -151,13 +151,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onLogin 
       {/* Hero Section */}
       <section className="relative pt-24 pb-24 px-6 lg:px-8 overflow-hidden bg-peach">
         <div className="relative z-10 max-w-7xl mx-auto text-center">
-          <h1 className="text-5xl md:text-7xl mb-6 text-slate-900 relative inline-block font-display uppercase drop-shadow-sm leading-tight">
-            Connecting Families with <br />
-            <span className="relative z-10 text-primary drop-shadow-[2px_2px_0px_rgba(0,0,0,1)]" style={{ webkitTextStroke: '1.5px black' }}>Trusted Youth Heroes</span>
+          <h1 className="text-4xl md:text-6xl mb-6 font-extrabold tracking-tight leading-tight font-sans">
+            <span className="text-slate-500">Connecting Families with Trusted</span> <br />
+            <span className="text-black">Heroes for Our Youth</span>
           </h1>
           <p className="text-lg md:text-xl text-slate-800 max-w-3xl mx-auto mb-10 mt-4 relative z-10 font-medium font-sans">
-            Klass Hero modernizes how families discover and book children's programs. 
-            A safety-first, vetted two-way marketplace for education and recreation.
+            Klass Hero is Berlin's leading marketplace for <strong>youth education, sports, and recreational activities</strong>. 
+            Find verified tutors, coaches, and camps near you.
           </p>
           
           {/* Simplified Search Bar */}
@@ -166,7 +166,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onLogin 
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-black" size={24} />
                 <input 
                   type="text" 
-                  placeholder="Find Programs (e.g. Soccer, Math)" 
+                  placeholder="Find Programs (e.g. Soccer, Math, Swimming)" 
                   className="w-full pl-12 pr-4 py-3 bg-transparent text-slate-900 placeholder:text-slate-400 outline-none rounded-full font-bold font-sans"
                 />
              </div>
@@ -177,7 +177,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onLogin 
           
           {/* Trending Searches */}
           <div className="flex flex-wrap justify-center gap-2 mb-8 relative z-10 font-sans">
-              <span className="text-xs text-slate-700 font-bold uppercase tracking-wider mt-1.5">Trending:</span>
+              <span className="text-xs text-slate-700 font-bold uppercase tracking-wider mt-1.5">Trending in Berlin:</span>
               {TRENDING_SEARCHES.map(term => (
                   <button key={term} onClick={onGetStarted} className="px-3 py-1 bg-white border-2 border-black rounded-lg text-xs text-black font-bold hover:bg-secondary transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-0.5 active:shadow-none">
                       {term}
@@ -192,19 +192,19 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onLogin 
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="flex justify-between items-center mb-10">
              <div>
-                <h2 className="text-3xl font-bold text-slate-900 uppercase font-display">Featured Programs</h2>
-                <p className="text-slate-500 mt-2 font-medium font-sans">Explore top-rated activities for your children</p>
+                <h2 className="text-3xl font-bold text-slate-900 uppercase">Featured Kids Programs</h2>
+                <p className="text-slate-500 mt-2 font-medium font-sans">Top-rated after-school activities, sports clubs, and tutoring in your area.</p>
              </div>
              <button onClick={onGetStarted} className="text-primaryDark font-black uppercase hover:underline font-sans">View All Programs</button>
           </div>
           <div className="flex overflow-x-auto gap-6 pb-8 hide-scrollbar snap-x font-sans">
             {MOCK_PROGRAMS.map((program) => (
-              <div key={program.id} className="min-w-[320px] bg-white border-2 border-black rounded-2xl overflow-hidden shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] snap-start hover:-translate-y-1 transition-transform duration-300">
-                 <div className="h-48 w-full overflow-hidden relative border-b-2 border-black">
+              <div key={program.id} className="min-w-[320px] bg-white border border-slate-200 rounded-xl overflow-hidden snap-start hover:shadow-md transition-shadow duration-300">
+                 <div className="h-48 w-full overflow-hidden relative border-b border-slate-100">
                     <img src={program.image} alt={program.title} className="w-full h-full object-cover" />
                     <div className="absolute top-3 left-3 flex gap-1">
                       {program.verifications.map(type => (
-                        <div key={type} className="bg-white border border-black p-1 rounded-full shadow-sm" title={type.replace('_', ' ')}>
+                        <div key={type} className="bg-white border border-slate-200 p-1 rounded-full shadow-sm" title={type.replace('_', ' ')}>
                            <VerificationIcon type={type} size={12} />
                         </div>
                       ))}
@@ -221,15 +221,16 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onLogin 
                       <span className="text-sm text-slate-400">({program.reviews})</span>
                     </div>
 
-                    <h3 className="font-bold text-slate-900 truncate text-lg mb-1">{program.title}</h3>
+                    {/* Keep font-display on Program Title */}
+                    <h3 className="font-bold text-slate-900 truncate text-lg mb-1 font-display">{program.title}</h3>
                     <p className="text-sm text-slate-500 mb-3 truncate font-medium">{program.provider}</p>
                     <div className="flex items-center text-xs text-slate-400 mb-4">
                        <MapPin size={14} className="mr-1" />
                        <span className="truncate">{program.location}</span>
                     </div>
-                    <div className="flex justify-between items-center pt-4 border-t-2 border-black/10">
+                    <div className="flex justify-between items-center pt-4 border-t border-slate-100">
                        <span className="font-black text-xl text-black">€{program.price}</span>
-                       <Button size="sm" variant="primary" onClick={onGetStarted} className="rounded-lg px-4 font-bold border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">Book Now</Button>
+                       <Button size="sm" variant="primary" onClick={onGetStarted} className="rounded-lg px-4 font-bold border border-slate-200 shadow-sm">Book Now</Button>
                     </div>
                  </div>
               </div>
@@ -239,51 +240,53 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onLogin 
       </section>
 
       {/* Provider "How It Works" */}
-      <section className="py-24 bg-black text-white overflow-hidden relative border-t-2 border-black">
+      <section className="py-24 bg-slate-300 text-slate-900 overflow-hidden relative border-t-2 border-black">
          <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
             <div className="text-center mb-20">
-               <span className="text-black font-bold uppercase tracking-wider text-sm bg-secondary px-3 py-1 rounded border-2 border-white font-sans">For Providers</span>
-               <h2 className="text-4xl font-bold mt-4 uppercase font-display">Grow Your Passion Business</h2>
-               <p className="text-slate-400 mt-4 max-w-2xl mx-auto font-sans">We provide the tools you need to focus on what you love—teaching.</p>
+               <span className="text-black font-bold uppercase tracking-wider text-sm bg-secondary px-3 py-1 rounded border-2 border-black font-sans">For Providers</span>
+               <h2 className="text-4xl font-bold mt-4 uppercase text-black">Grow Your Passion Business</h2>
+               <p className="text-slate-700 mt-4 max-w-2xl mx-auto font-sans font-medium">
+                 Are you a kids' coach, music teacher, or tutor? We provide the tools you need to manage bookings, payments, and marketing so you can focus on teaching.
+               </p>
             </div>
             
             <div className="grid md:grid-cols-3 gap-12 relative font-sans">
                {/* Step 1 */}
                <div className="relative z-10 flex flex-col items-center text-center group">
-                  <div className="w-24 h-24 bg-white rounded-xl flex items-center justify-center border-4 border-secondary mb-8 shadow-[6px_6px_0px_0px_#FFFF36] group-hover:scale-110 transition-transform duration-300">
+                  <div className="w-24 h-24 bg-white rounded-xl flex items-center justify-center border-4 border-black mb-8 shadow-[6px_6px_0px_0px_#FFFF36] group-hover:scale-110 transition-transform duration-300">
                      <Edit className="text-black" size={40} />
                   </div>
-                  <h3 className="text-2xl font-bold mb-4 text-secondary">1. Create a Program</h3>
-                  <p className="text-slate-300 leading-relaxed font-medium">
-                    Sign up, build your verified profile, and list your programs or services. We handle the SEO and marketing.
+                  <h3 className="text-2xl font-bold mb-4 text-black">1. Create a Program</h3>
+                  <p className="text-slate-800 leading-relaxed font-medium">
+                    Sign up, build your verified profile, and list your programs or services. We handle the SEO and marketing to reach Berlin families.
                   </p>
                </div>
 
                {/* Step 2 */}
                <div className="relative z-10 flex flex-col items-center text-center group">
-                  <div className="w-24 h-24 bg-white rounded-xl flex items-center justify-center border-4 border-primary mb-8 shadow-[6px_6px_0px_0px_#0FC3FF] group-hover:scale-110 transition-transform duration-300">
+                  <div className="w-24 h-24 bg-white rounded-xl flex items-center justify-center border-4 border-black mb-8 shadow-[6px_6px_0px_0px_#0FC3FF] group-hover:scale-110 transition-transform duration-300">
                      <MessageCircle className="text-black" size={40} />
                   </div>
-                  <h3 className="text-2xl font-bold mb-4 text-primary">2. Deliver Quality</h3>
-                  <p className="text-slate-300 leading-relaxed font-medium">
+                  <h3 className="text-2xl font-bold mb-4 text-black">2. Deliver Quality</h3>
+                  <p className="text-slate-800 leading-relaxed font-medium">
                     Communicate with families, manage rosters, and deliver outstanding experiences that earn 5-star reviews.
                   </p>
                </div>
 
                {/* Step 3 */}
                <div className="relative z-10 flex flex-col items-center text-center group">
-                  <div className="w-24 h-24 bg-white rounded-xl flex items-center justify-center border-4 border-white mb-8 shadow-[6px_6px_0px_0px_#ffffff] group-hover:scale-110 transition-transform duration-300">
+                  <div className="w-24 h-24 bg-white rounded-xl flex items-center justify-center border-4 border-black mb-8 shadow-[6px_6px_0px_0px_#ffffff] group-hover:scale-110 transition-transform duration-300">
                      <TrendingUp className="text-black" size={40} />
                   </div>
-                  <h3 className="text-2xl font-bold mb-4 text-white">3. Get Paid & Grow</h3>
-                  <p className="text-slate-300 leading-relaxed font-medium">
+                  <h3 className="text-2xl font-bold mb-4 text-black">3. Get Paid & Grow</h3>
+                  <p className="text-slate-800 leading-relaxed font-medium">
                     Receive payments on time. Use our invoicing and analytics tools to track your growth and build your brand.
                   </p>
                </div>
             </div>
 
             <div className="mt-20 text-center">
-               <Button size="lg" onClick={onLogin} className="bg-secondary hover:bg-yellow-300 text-black font-black uppercase rounded-xl px-10 py-4 text-lg border-2 border-white shadow-[4px_4px_0px_0px_#ffffff]">Start Teaching Today</Button>
+               <Button size="lg" onClick={onLogin} className="bg-secondary hover:bg-yellow-300 text-black font-black uppercase rounded-xl px-10 py-4 text-lg border-2 border-black shadow-[4px_4px_0px_0px_#000000]">Start Teaching Today</Button>
             </div>
          </div>
       </section>
@@ -292,12 +295,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onLogin 
       <section className="py-24 bg-peach border-t-2 border-black">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-black text-slate-900 uppercase font-display">Why Klass Hero?</h2>
+            <span className="text-black font-bold uppercase tracking-wider text-sm bg-primary px-3 py-1 rounded border-2 border-black font-sans">For Families</span>
+            <h2 className="text-3xl font-black text-slate-900 uppercase mt-4">Why Klass Hero?</h2>
             <p className="mt-4 text-slate-700 font-bold font-sans">Safety, quality, and convenience for modern families.</p>
           </div>
           
           <div className="grid md:grid-cols-3 gap-8 font-sans">
-            <div className="flex flex-col items-center text-center p-8 bg-white rounded-3xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-transform">
+            <div className="flex flex-col items-center text-center p-8 bg-white rounded-3xl border-2 border-slate-300 shadow-[4px_4px_0px_0px_#cbd5e1] hover:-translate-y-1 transition-transform">
               <div className="h-16 w-16 bg-cyan-100 text-black rounded-2xl flex items-center justify-center mb-6 border-2 border-black">
                 <ShieldCheck size={32} />
               </div>
@@ -307,7 +311,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onLogin 
               </p>
             </div>
             
-            <div className="flex flex-col items-center text-center p-8 bg-white rounded-3xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-transform">
+            <div className="flex flex-col items-center text-center p-8 bg-white rounded-3xl border-2 border-slate-300 shadow-[4px_4px_0px_0px_#cbd5e1] hover:-translate-y-1 transition-transform">
               <div className="h-16 w-16 bg-fuchsia-100 text-black rounded-2xl flex items-center justify-center mb-6 border-2 border-black">
                 <Calendar size={32} />
               </div>
@@ -317,7 +321,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onLogin 
               </p>
             </div>
 
-            <div className="flex flex-col items-center text-center p-8 bg-white rounded-3xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-transform">
+            <div className="flex flex-col items-center text-center p-8 bg-white rounded-3xl border-2 border-slate-300 shadow-[4px_4px_0px_0px_#cbd5e1] hover:-translate-y-1 transition-transform">
               <div className="h-16 w-16 bg-yellow-100 text-black rounded-2xl flex items-center justify-center mb-6 border-2 border-black">
                 <Users size={32} />
               </div>
@@ -334,12 +338,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onLogin 
       <section className="py-24 bg-white border-t-2 border-black">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-black text-slate-900 uppercase font-display">Simple, Transparent Pricing</h2>
-            <div className="mt-8 inline-flex p-1 bg-black rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-sans">
+            <h2 className="text-3xl font-black text-slate-900 uppercase">Simple, Transparent Pricing</h2>
+            <div className="mt-8 inline-flex p-1 bg-slate-200 rounded-xl border-2 border-slate-300 shadow-[4px_4px_0px_0px_#cbd5e1] font-sans">
               <button
                 onClick={() => setPricingMode('families')}
                 className={`px-8 py-2.5 rounded-lg text-sm font-bold transition-all ${
-                  pricingMode === 'families' ? 'bg-primary text-black border-2 border-black' : 'bg-black text-white hover:text-primary'
+                  pricingMode === 'families' ? 'bg-primary text-black border-2 border-black' : 'text-slate-600 hover:bg-white/50'
                 }`}
               >
                 For Families
@@ -347,7 +351,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onLogin 
               <button
                 onClick={() => setPricingMode('providers')}
                 className={`px-8 py-2.5 rounded-lg text-sm font-bold transition-all ${
-                  pricingMode === 'providers' ? 'bg-secondary text-black border-2 border-black' : 'bg-black text-white hover:text-secondary'
+                  pricingMode === 'providers' ? 'bg-secondary text-black border-2 border-black' : 'text-slate-600 hover:bg-white/50'
                 }`}
               >
                 For Providers
@@ -435,7 +439,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onLogin 
       <section className="py-24 bg-white border-t-2 border-black">
         <div className="max-w-3xl mx-auto px-6">
            <div className="text-center mb-16">
-             <h2 className="text-3xl font-black text-slate-900 uppercase font-display">Frequently Asked Questions</h2>
+             <h2 className="text-3xl font-black text-slate-900 uppercase">Frequently Asked Questions</h2>
            </div>
            <div className="space-y-4 font-sans">
              {FAQ_ITEMS.map((item, idx) => (
@@ -462,7 +466,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onLogin 
       <footer className="bg-black text-white py-16 border-t-4 border-primary">
         <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 font-sans">
           <div>
-            <h3 className="text-primary font-bold mb-4 text-lg uppercase font-display">Klass Hero</h3>
+            <h3 className="text-primary font-bold mb-4 text-lg uppercase">Klass Hero</h3>
             <p className="text-sm leading-relaxed text-slate-300">Building the future of youth education by connecting communities.</p>
           </div>
           <div>

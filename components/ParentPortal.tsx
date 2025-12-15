@@ -1,5 +1,4 @@
 
-
 import React, { useState } from 'react';
 import { Search, Filter, Calendar as CalendarIcon, MapPin, Star, Heart, CheckCircle, ShieldCheck, List, Map as MapIcon, X, Lock, MessageCircle, Home, Award, User, Settings, Users, Sparkles, Copy, Share2, Heart as HeartIcon, MessageSquare, FileCheck, Shield, Send, ArrowLeft, Instagram, Globe, PlayCircle, Briefcase, Plus, Video, Mic, MicOff, VideoOff, PhoneOff, UserCheck, Clock, Check, Bell, Mail, FileText, Trophy, ArrowRight, LayoutDashboard } from 'lucide-react';
 import { MOCK_PROGRAMS, MOCK_SCHOOLS, MOCK_BADGES, MOCK_REFERRAL_STATS, MOCK_FEED_POSTS, MOCK_CONVERSATIONS, MOCK_PROVIDERS, PRODUCTS, MOCK_JOBS, TRENDING_SEARCHES } from '../constants';
@@ -70,7 +69,7 @@ export const ProgramCard: React.FC<{
   showBadges?: boolean;
 }> = ({ program, onClick, onProviderClick, showBadges = true }) => (
     <div 
-      className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all cursor-pointer group flex flex-col h-full"
+      className="bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-md hover:border-slate-300 transition-all cursor-pointer group flex flex-col h-full"
       onClick={onClick}
     >
         <div className="h-48 w-full overflow-hidden relative">
@@ -115,7 +114,8 @@ export const ProgramCard: React.FC<{
                  </span>
             </div>
 
-            <h3 className="font-bold text-slate-900 text-lg mb-1 leading-tight">{program.title}</h3>
+            {/* Keep font-display on Program Title */}
+            <h3 className="font-bold text-slate-900 text-lg mb-1 leading-tight font-display tracking-wide">{program.title}</h3>
             
             {/* Provider Info + Assigned Staff Logic */}
             <div className="mb-3">
@@ -518,7 +518,8 @@ export const ParentPortal: React.FC = () => {
                                      {p.nextSession.split(' ')[0]}
                                  </div>
                                  <div>
-                                     <h4 className="font-bold text-slate-900">{p.title}</h4>
+                                     {/* Keep font-display on program title */}
+                                     <h4 className="font-bold text-slate-900 font-display">{p.title}</h4>
                                      <p className="text-sm text-slate-500">{p.nextSession}</p>
                                  </div>
                              </div>
@@ -738,7 +739,8 @@ export const ParentPortal: React.FC = () => {
                        <div className="flex gap-2 mb-3">
                           <span className="px-2 py-1 bg-cyan-50 text-primaryDark text-xs font-bold uppercase rounded-md tracking-wider border border-primary/20">{selectedProgram.category}</span>
                        </div>
-                       <h2 className="text-3xl font-bold text-slate-900 mb-2">{selectedProgram.title}</h2>
+                       {/* Keep font-display on Program Title */}
+                       <h2 className="text-3xl font-bold text-slate-900 mb-2 font-display">{selectedProgram.title}</h2>
                        <div className="flex items-center text-slate-600 mb-4">
                           <MapPin size={16} className="mr-1" /> {selectedProgram.location}
                        </div>

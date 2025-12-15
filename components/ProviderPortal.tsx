@@ -25,7 +25,7 @@ const UpgradeOverlay: React.FC<OverlayProps> = ({ title, description, targetTier
             <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg text-black">
                 <Lock size={32} />
             </div>
-            <h3 className="text-2xl font-bold text-slate-900 mb-2 font-display">{title}</h3>
+            <h3 className="text-2xl font-bold text-slate-900 mb-2">{title}</h3>
             <p className="text-slate-600 mb-8 leading-relaxed font-sans">{description}</p>
             <Button onClick={() => onUpgrade(targetTier)} className="w-full py-4 text-lg bg-secondary hover:bg-yellow-300 text-black shadow-xl shadow-secondary/20">
                 Upgrade to {targetTier}
@@ -216,7 +216,7 @@ export const ProviderPortal: React.FC = () => {
         <div>
           <div className="flex items-center space-x-3 mb-8 px-2">
              <div className="w-8 h-8 bg-secondary rounded-lg flex items-center justify-center text-slate-900 font-bold shadow shadow-secondary/50">P</div>
-             <span className="text-white font-bold text-lg tracking-tight font-display">Prime Business</span>
+             <span className="text-white font-bold text-lg tracking-tight">Prime Business</span>
           </div>
           <nav className="space-y-1 font-sans">
             <SidebarLink icon={<LayoutDashboard size={20} />} label="Overview" active={activeTab === 'overview'} onClick={() => setActiveTab('overview')} />
@@ -243,7 +243,7 @@ export const ProviderPortal: React.FC = () => {
       <main className="flex-1 overflow-y-auto p-4 md:p-8 relative mb-16 lg:mb-0 font-sans">
         <header className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900 font-display">Berlin Kickers Dashboard</h1>
+            <h1 className="text-2xl font-bold text-slate-900">Berlin Kickers Dashboard</h1>
             <div className="flex items-center space-x-2 mt-1">
                <span className={`text-xs px-2 py-0.5 rounded font-bold uppercase tracking-wide text-white ${tier === 'Starter' ? 'bg-slate-500' : tier === 'Professional' ? 'bg-secondary text-black' : 'bg-cyan-600'}`}>
                   {tier} Plan

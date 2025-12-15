@@ -20,7 +20,7 @@ export const Navigation: React.FC<NavigationProps> = ({ role, onLogout, onLogin,
   };
 
   return (
-    <nav className="bg-white/90 backdrop-blur-md border-b-2 border-accent sticky top-0 z-50 h-16 transition-all shadow-sm">
+    <nav className="bg-slate-200/95 backdrop-blur-md border-b-2 border-slate-300 sticky top-0 z-50 h-16 transition-all shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center cursor-pointer group" onClick={() => onNavigate('home')}>
@@ -36,7 +36,7 @@ export const Navigation: React.FC<NavigationProps> = ({ role, onLogout, onLogin,
         <div className="hidden md:flex items-center gap-4">
           {role === UserRole.GUEST ? (
             <>
-              <div className="flex items-center space-x-6 text-sm font-bold text-slate-700 mr-4 font-sans">
+              <div className="flex items-center space-x-6 text-sm font-bold text-black mr-4 font-sans">
                 <button onClick={() => onNavigate('programs')} className="hover:text-primary transition-colors uppercase tracking-wide">Programs</button>
                 <button onClick={() => onNavigate('parents_resources')} className="hover:text-primary transition-colors uppercase tracking-wide">For Parents</button>
                 <button onClick={() => onNavigate('resources')} className="hover:text-secondary transition-colors uppercase tracking-wide">For Providers</button>
@@ -49,13 +49,13 @@ export const Navigation: React.FC<NavigationProps> = ({ role, onLogout, onLogin,
             </>
           ) : (
             <div className="flex items-center gap-4">
-              <span className="text-sm font-bold text-slate-600 hidden md:block uppercase font-sans">
+              <span className="text-sm font-bold text-slate-900 hidden md:block uppercase font-sans">
                 {role === UserRole.PARENT ? 'Explorer Family' : 'Professional Account'}
               </span>
               <div className={`h-8 w-8 rounded-full flex items-center justify-center border-2 border-black text-black ${role === UserRole.PARENT ? 'bg-primary' : 'bg-secondary'}`}>
                 <User size={18} />
               </div>
-              <Button variant="ghost" size="sm" onClick={onLogout} className="text-slate-500 hover:text-red-500">
+              <Button variant="ghost" size="sm" onClick={onLogout} className="text-slate-600 hover:text-red-500">
                 <LogOut size={18} />
               </Button>
             </div>
@@ -69,7 +69,7 @@ export const Navigation: React.FC<NavigationProps> = ({ role, onLogout, onLogin,
                    <LogOut size={18} />
                 </Button>
             )}
-            <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2 text-slate-900">
+            <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2 text-black">
                 {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
         </div>
@@ -77,14 +77,14 @@ export const Navigation: React.FC<NavigationProps> = ({ role, onLogout, onLogin,
 
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
-        <div className="md:hidden absolute top-16 left-0 w-full bg-peach border-b border-accent shadow-xl p-4 flex flex-col space-y-4 animate-in slide-in-from-top-5">
+        <div className="md:hidden absolute top-16 left-0 w-full bg-slate-200 border-b border-slate-300 shadow-xl p-4 flex flex-col space-y-4 animate-in slide-in-from-top-5">
            {role === UserRole.GUEST ? (
              <>
-               <button onClick={() => handleMobileNavigate('programs')} className="text-left px-4 py-2 hover:bg-white rounded-lg font-bold font-sans">Programs</button>
-               <button onClick={() => handleMobileNavigate('parents_resources')} className="text-left px-4 py-2 hover:bg-white rounded-lg font-bold font-sans">For Parents</button>
-               <button onClick={() => handleMobileNavigate('resources')} className="text-left px-4 py-2 hover:bg-white rounded-lg font-bold font-sans">For Providers</button>
-               <button onClick={() => handleMobileNavigate('about')} className="text-left px-4 py-2 hover:bg-white rounded-lg font-bold font-sans">About Us</button>
-               <div className="border-t border-accent pt-4 flex flex-col gap-2">
+               <button onClick={() => handleMobileNavigate('programs')} className="text-left px-4 py-2 hover:bg-white rounded-lg font-bold font-sans text-black">Programs</button>
+               <button onClick={() => handleMobileNavigate('parents_resources')} className="text-left px-4 py-2 hover:bg-white rounded-lg font-bold font-sans text-black">For Parents</button>
+               <button onClick={() => handleMobileNavigate('resources')} className="text-left px-4 py-2 hover:bg-white rounded-lg font-bold font-sans text-black">For Providers</button>
+               <button onClick={() => handleMobileNavigate('about')} className="text-left px-4 py-2 hover:bg-white rounded-lg font-bold font-sans text-black">About Us</button>
+               <div className="border-t border-slate-300 pt-4 flex flex-col gap-2">
                   <Button variant="ghost" onClick={() => { onLogin(UserRole.PARENT); setIsMobileMenuOpen(false); }} className="w-full justify-start text-black">Parent Log In</Button>
                   <Button onClick={() => { onLogin(UserRole.PROVIDER); setIsMobileMenuOpen(false); }} className="w-full bg-secondary text-black">Provider Log In</Button>
                </div>
