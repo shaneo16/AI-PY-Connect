@@ -69,7 +69,7 @@ export const ProgramCard: React.FC<{
   showBadges?: boolean;
 }> = ({ program, onClick, onProviderClick, showBadges = true }) => (
     <div 
-      className="bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-md hover:border-slate-300 transition-all cursor-pointer group flex flex-col h-full"
+      className="bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-lg transition-all cursor-pointer group flex flex-col h-full"
       onClick={onClick}
     >
         <div className="h-48 w-full overflow-hidden relative">
@@ -77,7 +77,7 @@ export const ProgramCard: React.FC<{
            {showBadges && (
                <div className="absolute top-3 left-3 flex gap-1">
                  {program.verifications.map(type => (
-                   <div key={type} className="bg-white/90 backdrop-blur p-1 rounded-full shadow-sm" title={type.replace('_', ' ')}>
+                   <div key={type} className="bg-white/90 backdrop-blur border border-slate-200 p-1 rounded-full shadow-sm" title={type.replace('_', ' ')}>
                       <VerificationIcon type={type} size={12} />
                    </div>
                  ))}
@@ -114,10 +114,8 @@ export const ProgramCard: React.FC<{
                  </span>
             </div>
 
-            {/* Keep font-display on Program Title */}
             <h3 className="font-bold text-slate-900 text-lg mb-1 leading-tight font-display tracking-wide">{program.title}</h3>
             
-            {/* Provider Info + Assigned Staff Logic */}
             <div className="mb-3">
                  <p className="text-sm text-slate-500 font-medium">{program.provider}</p>
                  {program.assignedToName && (
@@ -518,7 +516,6 @@ export const ParentPortal: React.FC = () => {
                                      {p.nextSession.split(' ')[0]}
                                  </div>
                                  <div>
-                                     {/* Keep font-display on program title */}
                                      <h4 className="font-bold text-slate-900 font-display">{p.title}</h4>
                                      <p className="text-sm text-slate-500">{p.nextSession}</p>
                                  </div>
@@ -717,7 +714,6 @@ export const ParentPortal: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* Sidebar / Desktop Nav could be added here if not using top nav only */}
       <div className="p-4 md:p-8">
         {renderContent()}
       </div>
@@ -739,7 +735,6 @@ export const ParentPortal: React.FC = () => {
                        <div className="flex gap-2 mb-3">
                           <span className="px-2 py-1 bg-cyan-50 text-primaryDark text-xs font-bold uppercase rounded-md tracking-wider border border-primary/20">{selectedProgram.category}</span>
                        </div>
-                       {/* Keep font-display on Program Title */}
                        <h2 className="text-3xl font-bold text-slate-900 mb-2 font-display">{selectedProgram.title}</h2>
                        <div className="flex items-center text-slate-600 mb-4">
                           <MapPin size={16} className="mr-1" /> {selectedProgram.location}
@@ -769,7 +764,6 @@ export const ParentPortal: React.FC = () => {
                     <ArrowRight size={16} className="ml-auto text-slate-400"/>
                  </div>
 
-                 {/* Assigned Staff Display in Detail Modal */}
                  {selectedProgram.assignedToName && (
                      <div className="flex items-center gap-4 mb-8 p-4 bg-slate-50 rounded-xl border border-slate-100">
                          <div className="w-12 h-12 rounded-full bg-slate-200 overflow-hidden shrink-0 border-2 border-white shadow-sm">
