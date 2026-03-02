@@ -1,6 +1,7 @@
+
 import React, { useState } from 'react';
 import { UserRole } from '../types';
-import { LogOut, User, Menu, X } from 'lucide-react';
+import { LogOut, User, Menu, X, Presentation } from 'lucide-react';
 import { Button } from './Button';
 import { Logo } from './Logo';
 
@@ -8,13 +9,13 @@ interface NavigationProps {
   role: UserRole;
   onLogout: () => void;
   onLogin: (role: UserRole) => void;
-  onNavigate: (page: 'home' | 'about' | 'programs' | 'resources' | 'parents_resources') => void;
+  onNavigate: (page: 'home' | 'about' | 'programs' | 'resources' | 'parents_resources' | 'pitch_deck' | 'trust_safety') => void;
 }
 
 export const Navigation: React.FC<NavigationProps> = ({ role, onLogout, onLogin, onNavigate }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const handleMobileNavigate = (page: 'home' | 'about' | 'programs' | 'resources' | 'parents_resources') => {
+  const handleMobileNavigate = (page: 'home' | 'about' | 'programs' | 'resources' | 'parents_resources' | 'pitch_deck' | 'trust_safety') => {
     onNavigate(page);
     setIsMobileMenuOpen(false);
   };
@@ -40,9 +41,13 @@ export const Navigation: React.FC<NavigationProps> = ({ role, onLogout, onLogin,
                 <button onClick={() => onNavigate('programs')} className="hover:text-primary transition-colors uppercase tracking-wide">Programs</button>
                 <button onClick={() => onNavigate('parents_resources')} className="hover:text-primary transition-colors uppercase tracking-wide">For Parents</button>
                 <button onClick={() => onNavigate('resources')} className="hover:text-secondary transition-colors uppercase tracking-wide">For Providers</button>
+                <button onClick={() => onNavigate('trust_safety')} className="hover:text-primary transition-colors uppercase tracking-wide">Trust & Safety</button>
                 <button onClick={() => onNavigate('about')} className="hover:text-primary transition-colors uppercase tracking-wide">About</button>
               </div>
               <div className="flex items-center gap-2">
+                 <Button variant="ghost" onClick={() => onNavigate('pitch_deck')} className="text-black hover:text-primary border-2 border-transparent">
+                   <Presentation size={18} className="mr-2"/> Pitch Deck
+                 </Button>
                  <Button variant="ghost" onClick={() => onLogin(UserRole.PARENT)} className="text-black hover:text-black hover:bg-white border-2 border-transparent">Parent Log In</Button>
                  <Button onClick={() => onLogin(UserRole.PROVIDER)} variant="secondary">Provider Log In</Button>
               </div>
@@ -83,7 +88,11 @@ export const Navigation: React.FC<NavigationProps> = ({ role, onLogout, onLogin,
                <button onClick={() => handleMobileNavigate('programs')} className="text-left px-4 py-2 hover:bg-white rounded-lg font-bold font-sans text-black">Programs</button>
                <button onClick={() => handleMobileNavigate('parents_resources')} className="text-left px-4 py-2 hover:bg-white rounded-lg font-bold font-sans text-black">For Parents</button>
                <button onClick={() => handleMobileNavigate('resources')} className="text-left px-4 py-2 hover:bg-white rounded-lg font-bold font-sans text-black">For Providers</button>
+               <button onClick={() => handleMobileNavigate('trust_safety')} className="text-left px-4 py-2 hover:bg-white rounded-lg font-bold font-sans text-black">Trust & Safety</button>
                <button onClick={() => handleMobileNavigate('about')} className="text-left px-4 py-2 hover:bg-white rounded-lg font-bold font-sans text-black">About Us</button>
+               <button onClick={() => handleMobileNavigate('pitch_deck')} className="text-left px-4 py-2 hover:bg-white rounded-lg font-bold font-sans text-black flex items-center">
+                 <Presentation size={18} className="mr-2"/> Investor Pitch Deck
+               </button>
                <div className="border-t border-slate-300 pt-4 flex flex-col gap-2">
                   <Button variant="ghost" onClick={() => { onLogin(UserRole.PARENT); setIsMobileMenuOpen(false); }} className="w-full justify-start text-black">Parent Log In</Button>
                   <Button onClick={() => { onLogin(UserRole.PROVIDER); setIsMobileMenuOpen(false); }} className="w-full bg-secondary text-black">Provider Log In</Button>

@@ -9,8 +9,10 @@ import { AboutPage } from './components/AboutPage';
 import { PublicPrograms } from './components/PublicPrograms';
 import { ResourcesPage } from './components/ResourcesPage';
 import { ParentsResourcesPage } from './components/ParentsResourcesPage';
+import { PitchDeck } from './components/PitchDeck';
+import { TrustSafetyPage } from './components/TrustSafetyPage';
 
-type View = 'HOME' | 'ABOUT' | 'DASHBOARD' | 'PROGRAMS' | 'RESOURCES' | 'PARENTS_RESOURCES';
+type View = 'HOME' | 'ABOUT' | 'DASHBOARD' | 'PROGRAMS' | 'RESOURCES' | 'PARENTS_RESOURCES' | 'PITCH_DECK' | 'TRUST_SAFETY';
 
 const App: React.FC = () => {
   const [role, setRole] = useState<UserRole>(UserRole.GUEST);
@@ -26,7 +28,7 @@ const App: React.FC = () => {
     setView('HOME');
   };
 
-  const handleNavigate = (page: 'home' | 'about' | 'programs' | 'resources' | 'parents_resources') => {
+  const handleNavigate = (page: 'home' | 'about' | 'programs' | 'resources' | 'parents_resources' | 'pitch_deck' | 'trust_safety') => {
     if (role !== UserRole.GUEST) {
       return; 
     }
@@ -35,6 +37,8 @@ const App: React.FC = () => {
     else if (page === 'programs') setView('PROGRAMS');
     else if (page === 'resources') setView('RESOURCES');
     else if (page === 'parents_resources') setView('PARENTS_RESOURCES');
+    else if (page === 'pitch_deck') setView('PITCH_DECK');
+    else if (page === 'trust_safety') setView('TRUST_SAFETY');
   };
 
   const renderContent = () => {
@@ -59,12 +63,17 @@ const App: React.FC = () => {
         return <ResourcesPage />;
       case 'PARENTS_RESOURCES':
         return <ParentsResourcesPage />;
+      case 'PITCH_DECK':
+        return <PitchDeck onClose={() => setView('HOME')} />;
+      case 'TRUST_SAFETY':
+        return <TrustSafetyPage />;
       case 'HOME':
       default:
         return (
           <LandingPage 
             onGetStarted={() => setView('PROGRAMS')}
             onLogin={() => handleLogin(UserRole.PROVIDER)}
+            onLoginDirect={() => handleLogin(UserRole.PROVIDER)}
           />
         );
     }

@@ -1,5 +1,4 @@
 
-
 export enum UserRole {
   GUEST = 'GUEST',
   PARENT = 'PARENT',
@@ -238,3 +237,15 @@ export interface BlogPost {
 }
 
 export type PaymentRouting = 'POOL' | 'SPLIT';
+
+export type GoalType = 'ATTENDANCE' | 'FEEDBACK' | 'VARIETY' | 'MASTERY';
+
+export interface ParentGoal {
+  id: string;
+  type: GoalType;
+  title: string;
+  currentValue: number;
+  targetValue: number;
+  childName: string;
+  rewardPoints: number;
+}

@@ -1,8 +1,8 @@
 
-import React, { useState } from 'react';
-import { Search, Filter, Calendar as CalendarIcon, MapPin, Star, Heart, CheckCircle, ShieldCheck, List, Map as MapIcon, X, Lock, MessageCircle, Home, Award, User, Settings, Users, Sparkles, Copy, Share2, Heart as HeartIcon, MessageSquare, FileCheck, Shield, Send, ArrowLeft, Instagram, Globe, PlayCircle, Briefcase, Plus, Video, Mic, MicOff, VideoOff, PhoneOff, UserCheck, Clock, Check, Bell, Mail, FileText, Trophy, ArrowRight, LayoutDashboard } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Search, Filter, Calendar as CalendarIcon, MapPin, Star, Heart, CheckCircle, ShieldCheck, List, Map as MapIcon, X, Lock, MessageCircle, Home, Award, User, Settings, Users, Sparkles, Copy, Share2, Heart as HeartIcon, MessageSquare, FileCheck, Shield, Send, ArrowLeft, Instagram, Globe, PlayCircle, Briefcase, Plus, Video, Mic, MicOff, VideoOff, PhoneOff, UserCheck, Clock, Check, Bell, Mail, FileText, Trophy, ArrowRight, LayoutDashboard, Target, Zap } from 'lucide-react';
 import { MOCK_PROGRAMS, MOCK_SCHOOLS, MOCK_BADGES, MOCK_REFERRAL_STATS, MOCK_FEED_POSTS, MOCK_CONVERSATIONS, MOCK_PROVIDERS, PRODUCTS, MOCK_JOBS, TRENDING_SEARCHES } from '../constants';
-import { Program, VerificationType, Conversation, ChatMessage, ProviderProfile, Job } from '../types';
+import { Program, VerificationType, Conversation, ChatMessage, ProviderProfile, Job, ParentGoal, GoalType } from '../types';
 import { Button } from './Button';
 
 // Export VerificationIcon for reuse
@@ -291,6 +291,20 @@ export const ParentPortal: React.FC = () => {
   const [selectedProvider, setSelectedProvider] = useState<ProviderProfile | null>(null);
   const [showVideoCall, setShowVideoCall] = useState(false);
   
+  // Goals State
+  const [goals, setGoals] = useState<ParentGoal[]>([
+      { id: 'g1', type: 'ATTENDANCE', title: 'Weekly Soccer Attendance', currentValue: 3, targetValue: 4, childName: 'Leo', rewardPoints: 100 },
+      { id: 'g2', type: 'FEEDBACK', title: 'Request Feedback Reports', currentValue: 1, targetValue: 2, childName: 'Leo', rewardPoints: 50 }
+  ]);
+  const [showGoalModal, setShowGoalModal] = useState(false);
+
+  // Computed Goals Progress
+  const overallGoalProgress = useMemo(() => {
+    if (goals.length === 0) return 0;
+    const totalCurrent = goals.reduce((acc, g) => acc + (g.currentValue / g.targetValue), 0);
+    return Math.round((totalCurrent / goals.length) * 100);
+  }, [goals]);
+
   // Jobs State
   const [showJobModal, setShowJobModal] = useState(false);
   const [jobs, setJobs] = useState<Job[]>(MOCK_JOBS.filter(j => j.parentName === 'Sarah Schmidt')); // Mock current user jobs
@@ -303,6 +317,34 @@ export const ParentPortal: React.FC = () => {
   });
 
   const categories = ['All', 'Sports', 'Arts', 'Music', 'Education', 'Life Skills', 'Camps'];
+
+  const handleAddGoal = (e: React.FormEvent) => {
+    e.preventDefault();
+    const form = e.target as HTMLFormElement;
+    const type = (form.elements.namedItem('type') as HTMLSelectElement).value as GoalType;
+    const target = parseInt((form.elements.namedItem('target') as HTMLInputElement).value);
+    const child = (form.elements.namedItem('child') as HTMLSelectElement).value;
+
+    const titles: Record<GoalType, string> = {
+        ATTENDANCE: 'Class Attendance Target',
+        FEEDBACK: 'Request Progress Feedback',
+        VARIETY: 'Try New Categories',
+        MASTERY: 'Earn Skill Badges'
+    };
+
+    const newGoal: ParentGoal = {
+        id: `g${Date.now()}`,
+        type,
+        title: titles[type],
+        currentValue: 0,
+        targetValue: target,
+        childName: child,
+        rewardPoints: target * 25
+    };
+
+    setGoals([...goals, newGoal]);
+    setShowGoalModal(false);
+  };
 
   const renderContent = () => {
     // If viewing a provider profile
@@ -332,18 +374,65 @@ export const ParentPortal: React.FC = () => {
                 </button>
              </div>
 
-             {/* Weekly Activity Goal */}
-             <div className="bg-gradient-to-r from-primaryDark to-primary p-6 rounded-2xl text-white shadow-lg relative overflow-hidden">
-                <div className="absolute right-0 top-0 opacity-10"><Trophy size={140} /></div>
+             {/* Dynamic Weekly Activity Goal */}
+             <div className="bg-gradient-to-r from-primaryDark to-primary p-6 rounded-2xl text-white shadow-lg relative overflow-hidden border-4 border-black">
+                <div className="absolute right-0 top-0 opacity-10 rotate-12"><Trophy size={160} /></div>
                 <div className="relative z-10">
                     <div className="flex justify-between items-center mb-2">
-                        <h2 className="text-xl font-bold flex items-center"><Trophy size={20} className="mr-2 text-yellow-300"/> Weekly Activity Goal</h2>
-                        <span className="font-bold text-2xl">80%</span>
+                        <h2 className="text-xl font-display uppercase flex items-center tracking-wide"><Target size={24} className="mr-3 text-secondary"/> Progress to Rewards</h2>
+                        <span className="font-black text-3xl font-display">{overallGoalProgress}%</span>
                     </div>
-                    <div className="w-full bg-black/20 rounded-full h-3 mb-2">
-                        <div className="bg-yellow-300 h-3 rounded-full transition-all duration-1000" style={{ width: '80%' }}></div>
+                    <div className="w-full bg-black/20 rounded-full h-5 mb-4 border-2 border-black/30 overflow-hidden">
+                        <div className="bg-secondary h-full rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(255,255,54,0.5)]" style={{ width: `${overallGoalProgress}%` }}></div>
                     </div>
-                    <p className="text-sm text-cyan-50 font-medium">You're doing great! Just 1 more activity to reach your goal!</p>
+                    <div className="flex justify-between items-end">
+                        <p className="text-sm text-cyan-50 font-black uppercase tracking-widest">
+                            {overallGoalProgress === 100 ? "Goal Smashed! Points Awarded!" : "Keep pushing to earn Prime Points!"}
+                        </p>
+                        <Button size="sm" onClick={() => setShowGoalModal(true)} className="bg-white text-primaryDark border-2 border-black h-8 text-[10px] shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">Adjust Goals</Button>
+                    </div>
+                </div>
+             </div>
+
+             {/* Detailed Goals Tracker */}
+             <div className="bg-white p-6 rounded-2xl border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                <div className="flex justify-between items-center mb-6">
+                    <h3 className="font-display text-2xl text-slate-900 uppercase">Active Goals</h3>
+                    <button onClick={() => setShowGoalModal(true)} className="text-primaryDark hover:underline text-sm font-black uppercase tracking-widest flex items-center"><Plus size={16} className="mr-1"/> Set New Target</button>
+                </div>
+                <div className="grid md:grid-cols-2 gap-4">
+                    {goals.map(goal => (
+                        <div key={goal.id} className="p-4 bg-slate-50 border-2 border-slate-100 rounded-xl relative group hover:border-black transition-all">
+                            <div className="flex justify-between items-start mb-3">
+                                <div>
+                                    <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest bg-white px-2 py-0.5 rounded border border-slate-100 mb-1 inline-block">{goal.childName} • {goal.type}</span>
+                                    <h4 className="font-bold text-slate-900">{goal.title}</h4>
+                                </div>
+                                <div className="text-right">
+                                    <div className="text-xs font-black text-primaryDark">+{goal.rewardPoints} PTS</div>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <div className="flex-1 bg-slate-200 h-2 rounded-full overflow-hidden">
+                                    <div className="bg-primary h-full" style={{ width: `${(goal.currentValue / goal.targetValue) * 100}%` }}></div>
+                                </div>
+                                <span className="text-xs font-black text-slate-600">{goal.currentValue}/{goal.targetValue}</span>
+                            </div>
+                            <button 
+                                onClick={() => setGoals(goals.filter(g => g.id !== goal.id))}
+                                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity text-slate-300 hover:text-red-500"
+                            >
+                                <X size={14}/>
+                            </button>
+                        </div>
+                    ))}
+                    {goals.length === 0 && (
+                        <div className="col-span-full py-12 text-center bg-slate-50 rounded-xl border-2 border-dashed border-slate-200">
+                            <Target size={48} className="mx-auto text-slate-200 mb-3"/>
+                            <p className="text-slate-500 font-bold">No active goals set. Start tracking to earn rewards!</p>
+                            <Button size="sm" variant="outline" className="mt-4" onClick={() => setShowGoalModal(true)}>Create Your First Goal</Button>
+                        </div>
+                    )}
                 </div>
              </div>
 
@@ -380,29 +469,29 @@ export const ParentPortal: React.FC = () => {
              </div>
 
              {/* Refer & Earn */}
-             <div className="bg-slate-900 text-white p-6 rounded-2xl shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
+             <div className="bg-slate-900 text-white p-6 rounded-2xl shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 border-4 border-black">
                  <div>
-                     <h3 className="text-xl font-bold flex items-center mb-2"><Users className="mr-2 text-primary"/> Refer & Earn</h3>
+                     <h3 className="text-xl font-display uppercase flex items-center mb-2"><Users className="mr-2 text-primary"/> Refer & Earn</h3>
                      <p className="text-slate-400 text-sm mb-4">Invite friends and earn Prime Points towards free bookings!</p>
                      <div className="flex items-center gap-4 text-sm">
                          <div>
-                             <div className="font-bold text-2xl text-primary">{MOCK_REFERRAL_STATS.totalReferrals}</div>
-                             <div className="text-slate-500">Referrals</div>
+                             <div className="font-black text-2xl text-primary">{MOCK_REFERRAL_STATS.totalReferrals}</div>
+                             <div className="text-slate-500 font-bold uppercase text-[10px] tracking-widest">Referrals</div>
                          </div>
                          <div className="w-px h-8 bg-slate-700"></div>
                          <div>
-                             <div className="font-bold text-2xl text-accent">{MOCK_REFERRAL_STATS.earnedPoints}</div>
-                             <div className="text-slate-500">Points</div>
+                             <div className="font-black text-2xl text-secondary">{MOCK_REFERRAL_STATS.earnedPoints}</div>
+                             <div className="text-slate-500 font-bold uppercase text-[10px] tracking-widest">Points</div>
                          </div>
                      </div>
                  </div>
                  <div className="bg-white/10 p-4 rounded-xl border border-white/10 w-full md:w-auto min-w-[250px]">
-                     <div className="text-xs text-slate-400 mb-1 uppercase tracking-wider font-bold">Your Code</div>
+                     <div className="text-[10px] text-slate-400 mb-1 uppercase tracking-widest font-black">Your Hero Code</div>
                      <div className="flex items-center justify-between bg-black/30 rounded-lg p-2 border border-white/10">
                          <code className="font-mono text-lg font-bold text-primary tracking-widest">{MOCK_REFERRAL_STATS.code}</code>
                          <button className="p-2 hover:bg-white/10 rounded-md transition-colors"><Copy size={16}/></button>
                      </div>
-                     <Button size="sm" className="w-full mt-3 bg-primary hover:bg-primaryDark text-slate-900 font-bold">Share Code</Button>
+                     <Button size="sm" className="w-full mt-3 bg-primary hover:bg-primaryDark text-slate-900 font-black">Copy & Share</Button>
                  </div>
              </div>
           </div>
@@ -624,7 +713,7 @@ export const ParentPortal: React.FC = () => {
                    <div className="flex-1 p-6 space-y-4 overflow-y-auto">
                        {MOCK_CONVERSATIONS[0].messages.map(msg => (
                            <div key={msg.id} className={`flex ${msg.isMe ? 'justify-end' : 'justify-start'}`}>
-                               <div className={`max-w-[70%] p-3 rounded-2xl text-sm ${msg.isMe ? 'bg-primary text-slate-900 rounded-tr-none' : 'bg-white border border-slate-200 rounded-tl-none shadow-sm'}`}>
+                               <div className={`max-w-[70%] p-3 rounded-2xl text-sm ${msg.isMe ? 'bg-primary text-slate-900' : 'bg-white border border-slate-200 rounded-tl-none shadow-sm'}`}>
                                    {msg.text}
                                </div>
                            </div>
@@ -713,10 +802,75 @@ export const ParentPortal: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <div className="p-4 md:p-8">
+    <div className="min-h-screen bg-slate-50 flex">
+      {/* Desktop Sidebar */}
+      <aside className="hidden lg:flex flex-col w-64 bg-slate-900 text-slate-300 p-6 space-y-6 shrink-0 h-screen sticky top-0 border-r-4 border-black">
+        <div>
+          <div className="flex items-center space-x-3 mb-8 px-2">
+             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-slate-900 font-bold shadow shadow-primary/50 border border-black">E</div>
+             <span className="text-white font-bold text-lg tracking-tight font-display uppercase">Explorer Hub</span>
+          </div>
+          <nav className="space-y-1 font-sans">
+            <NavSidebarLink icon={<Home size={20} />} label="Home" active={activeTab === 'home'} onClick={() => setActiveTab('home')} />
+            <NavSidebarLink icon={<Search size={20} />} label="Explore" active={activeTab === 'explore'} onClick={() => setActiveTab('explore')} />
+            <NavSidebarLink icon={<CalendarIcon size={20} />} label="Planner" active={activeTab === 'planner'} onClick={() => setActiveTab('planner')} />
+            <NavSidebarLink icon={<Users size={20} />} label="Community" active={activeTab === 'community'} onClick={() => setActiveTab('community')} />
+            <NavSidebarLink icon={<MessageSquare size={20} />} label="Messages" active={activeTab === 'chat'} onClick={() => setActiveTab('chat')} />
+            <NavSidebarLink icon={<Settings size={20} />} label="Settings" active={activeTab === 'settings'} onClick={() => setActiveTab('settings')} />
+          </nav>
+        </div>
+        <div className="mt-auto p-4 bg-primary/10 rounded-xl border-2 border-primary/20">
+            <div className="flex items-center gap-2 mb-2">
+                <Sparkles size={16} className="text-primary"/>
+                <span className="text-[10px] font-black text-white uppercase tracking-widest">Klass Rewards</span>
+            </div>
+            <p className="text-[10px] text-slate-400 mb-2 font-bold uppercase tracking-wider">You have 600 points available!</p>
+            <Button size="sm" className="w-full text-[10px] h-7 bg-primary border-none text-slate-900 font-black">View Rewards</Button>
+        </div>
+      </aside>
+
+      <main className="flex-1 p-4 md:p-8">
         {renderContent()}
-      </div>
+      </main>
+
+      {/* Goal Setting Modal */}
+      {showGoalModal && (
+          <div className="fixed inset-0 z-[60] bg-black/50 flex items-center justify-center p-4">
+              <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-in zoom-in-95 border-4 border-black">
+                  <div className="flex justify-between items-center mb-6">
+                      <h2 className="text-2xl font-display uppercase tracking-wide">Set New Goal</h2>
+                      <button onClick={() => setShowGoalModal(false)} className="p-2 hover:bg-slate-100 rounded-full transition-colors"><X/></button>
+                  </div>
+                  <form onSubmit={handleAddGoal} className="space-y-6">
+                      <div>
+                          <label className="block text-xs font-black uppercase text-slate-400 tracking-widest mb-2">Which Child?</label>
+                          <select name="child" className="w-full p-3 border-2 border-slate-100 rounded-xl bg-white font-bold text-slate-900">
+                              <option value="Leo">Leo</option>
+                              <option value="Emma">Emma</option>
+                          </select>
+                      </div>
+                      <div>
+                          <label className="block text-xs font-black uppercase text-slate-400 tracking-widest mb-2">Goal Category</label>
+                          <select name="type" className="w-full p-3 border-2 border-slate-100 rounded-xl bg-white font-bold text-slate-900">
+                              <option value="ATTENDANCE">Class Attendance</option>
+                              <option value="FEEDBACK">Provider Feedback Requests</option>
+                              <option value="VARIETY">Explore New Subjects</option>
+                              <option value="MASTERY">Skill Mastery (Badges)</option>
+                          </select>
+                      </div>
+                      <div>
+                          <label className="block text-xs font-black uppercase text-slate-400 tracking-widest mb-2">Target Number</label>
+                          <input name="target" type="number" defaultValue={4} min={1} className="w-full p-3 border-2 border-slate-100 rounded-xl font-bold text-slate-900" />
+                          <p className="text-[10px] text-slate-400 mt-2 font-bold uppercase">Hit this target to earn Prime Points!</p>
+                      </div>
+                      <div className="flex gap-4 pt-2">
+                          <Button variant="ghost" type="button" onClick={() => setShowGoalModal(false)} className="flex-1">Cancel</Button>
+                          <Button type="submit" className="flex-1 bg-primary text-slate-900 font-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">Create Goal</Button>
+                      </div>
+                  </form>
+              </div>
+          </div>
+      )}
 
       {/* Program Detail Modal */}
       {selectedProgram && (
@@ -735,7 +889,7 @@ export const ParentPortal: React.FC = () => {
                        <div className="flex gap-2 mb-3">
                           <span className="px-2 py-1 bg-cyan-50 text-primaryDark text-xs font-bold uppercase rounded-md tracking-wider border border-primary/20">{selectedProgram.category}</span>
                        </div>
-                       <h2 className="text-3xl font-bold text-slate-900 mb-2 font-display">{selectedProgram.title}</h2>
+                       <h2 className="text-3xl font-bold text-slate-900 mb-2 font-display uppercase tracking-wide">{selectedProgram.title}</h2>
                        <div className="flex items-center text-slate-600 mb-4">
                           <MapPin size={16} className="mr-1" /> {selectedProgram.location}
                        </div>
@@ -747,7 +901,7 @@ export const ParentPortal: React.FC = () => {
                     </div>
                  </div>
 
-                 <div className="flex items-center gap-4 mb-8 p-4 bg-slate-50 rounded-xl border border-slate-100 cursor-pointer hover:bg-slate-100 transition-colors" 
+                 <div className="flex items-center gap-4 mb-8 p-4 bg-slate-50 rounded-xl border-2 border-slate-100 cursor-pointer hover:border-black transition-colors" 
                       onClick={() => {
                           const provider = MOCK_PROVIDERS.find(p => p.id === selectedProgram.providerId);
                           if (provider) {
@@ -759,7 +913,7 @@ export const ParentPortal: React.FC = () => {
                     <img src={selectedProgram.providerImage} className="w-12 h-12 rounded-full border-2 border-white shadow-sm" alt="" />
                     <div>
                        <div className="font-bold text-slate-900">{selectedProgram.provider}</div>
-                       <div className="text-xs text-slate-500">View Provider Profile</div>
+                       <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">View Provider Profile</div>
                     </div>
                     <ArrowRight size={16} className="ml-auto text-slate-400"/>
                  </div>
@@ -770,7 +924,7 @@ export const ParentPortal: React.FC = () => {
                              {selectedProgram.assignedToImage && <img src={selectedProgram.assignedToImage} alt="" className="w-full h-full object-cover"/>}
                          </div>
                          <div>
-                             <div className="text-xs font-bold uppercase text-slate-500 mb-1">Your Instructor</div>
+                             <div className="text-xs font-black uppercase text-slate-500 mb-1 tracking-widest">Your Instructor</div>
                              <div className="font-bold text-slate-900">{selectedProgram.assignedToName}</div>
                          </div>
                      </div>
@@ -791,7 +945,7 @@ export const ParentPortal: React.FC = () => {
                        </div>
                     </div>
 
-                    <Button className="w-full py-4 text-lg font-bold bg-primary hover:bg-primaryDark text-slate-900 shadow-lg shadow-primary/20">Book Now</Button>
+                    <Button className="w-full py-4 text-lg font-black bg-primary hover:bg-primaryDark text-slate-900 shadow-lg shadow-primary/20 border-2 border-black uppercase tracking-widest">Book Now</Button>
                  </div>
               </div>
            </div>
@@ -801,28 +955,28 @@ export const ParentPortal: React.FC = () => {
       {/* Post Job Modal */}
       {showJobModal && (
           <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-             <div className="bg-white rounded-xl shadow-xl w-full max-w-lg p-6 animate-in zoom-in-95">
-                 <h2 className="text-xl font-bold mb-4">Post a New Job</h2>
+             <div className="bg-white rounded-xl shadow-xl w-full max-w-lg p-6 animate-in zoom-in-95 border-4 border-black">
+                 <h2 className="text-2xl font-display uppercase tracking-wide mb-4">Post a New Job</h2>
                  <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); setShowJobModal(false); }}>
-                     <input required placeholder="Job Title (e.g. Math Tutor)" className="w-full border p-2 rounded" />
+                     <input required placeholder="Job Title (e.g. Math Tutor)" className="w-full border-2 border-slate-100 p-3 rounded-xl font-bold" />
                      <div className="grid grid-cols-2 gap-4">
-                         <select className="border p-2 rounded">
+                         <select className="border-2 border-slate-100 p-3 rounded-xl bg-white font-bold">
                              <option>Education</option>
                              <option>Sports</option>
                              <option>Care</option>
                          </select>
-                         <input placeholder="Budget (Optional)" className="w-full border p-2 rounded" />
+                         <input placeholder="Budget (Optional)" className="w-full border-2 border-slate-100 p-3 rounded-xl font-bold" />
                      </div>
-                     <textarea placeholder="Description of needs..." rows={4} className="w-full border p-2 rounded" />
+                     <textarea placeholder="Description of needs..." rows={4} className="w-full border-2 border-slate-100 p-3 rounded-xl font-bold" />
                      
                      <div className="flex items-center gap-2">
-                        <input type="checkbox" id="vidReq" className="rounded text-primary focus:ring-primary"/>
-                        <label htmlFor="vidReq" className="text-sm text-slate-700">Require Video Interview before hiring</label>
+                        <input type="checkbox" id="vidReq" className="rounded text-primary focus:ring-primary w-5 h-5 border-2 border-slate-300"/>
+                        <label htmlFor="vidReq" className="text-sm text-slate-700 font-bold">Require Video Interview before hiring</label>
                      </div>
 
                      <div className="flex justify-end gap-2 pt-2">
                          <Button type="button" variant="ghost" onClick={() => setShowJobModal(false)}>Cancel</Button>
-                         <Button type="submit">Post Job</Button>
+                         <Button type="submit" className="shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-primary text-slate-900 font-black">Post Job</Button>
                      </div>
                  </form>
              </div>
@@ -830,7 +984,7 @@ export const ParentPortal: React.FC = () => {
       )}
 
       {/* Mobile Bottom Navigation */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex justify-around p-2 z-40 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t-2 border-black flex justify-around p-2 z-40 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
         {['home', 'explore', 'planner', 'community', 'chat', 'settings'].map((tab) => (
             <button 
               key={tab}
@@ -843,10 +997,20 @@ export const ParentPortal: React.FC = () => {
                {tab === 'community' && <Users size={22} />}
                {tab === 'chat' && <MessageSquare size={22} />}
                {tab === 'settings' && <Settings size={22} />}
-               <span className="text-[10px] mt-1 capitalize">{tab}</span>
+               <span className="text-[10px] mt-1 capitalize font-black tracking-widest">{tab}</span>
             </button>
         ))}
       </div>
     </div>
   );
 };
+
+const NavSidebarLink: React.FC<{ icon: React.ReactNode; label: string; active?: boolean; onClick?: () => void }> = ({ icon, label, active, onClick }) => (
+  <button 
+    onClick={onClick}
+    className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors ${active ? 'bg-primary text-slate-900 font-black shadow-lg shadow-primary/40 border border-black' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}`}
+  >
+    {icon}
+    <span className="font-bold uppercase tracking-widest text-sm">{label}</span>
+  </button>
+);
