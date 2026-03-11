@@ -114,7 +114,7 @@ export const ProgramCard: React.FC<{
                  </span>
             </div>
 
-            <h3 className="font-bold text-slate-900 text-lg mb-1 leading-tight font-display tracking-wide">{program.title}</h3>
+            <h3 className="font-bold text-slate-900 text-lg mb-1 leading-tight font-display tracking-wide uppercase">{program.title}</h3>
             
             <div className="mb-3">
                  <p className="text-sm text-slate-500 font-medium">{program.provider}</p>
@@ -174,9 +174,9 @@ export const ProviderProfileView: React.FC<{ provider: ProviderProfile; onBack: 
                        <div className="flex-1 pt-2">
                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
                                <div>
-                                   <h1 className="text-2xl font-bold text-slate-900 flex items-center">
+                                   <h1 className="text-3xl font-display uppercase tracking-tight text-slate-900 flex items-center">
                                        {provider.name}
-                                       {isPremium && <CheckCircle size={20} className="text-secondary ml-2 fill-secondary/10" />}
+                                       {isPremium && <CheckCircle size={24} className="text-secondary ml-2 fill-current/10" />}
                                    </h1>
                                    <p className="text-slate-500 font-medium">{provider.tagline}</p>
                                </div>
@@ -209,7 +209,24 @@ export const ProviderProfileView: React.FC<{ provider: ProviderProfile; onBack: 
                 {/* Left Column: Bio & Details */}
                 <div className="md:col-span-2 space-y-8">
                     <section className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                        <h3 className="font-bold text-lg mb-4 text-slate-900">About Us</h3>
+                        <h3 className="font-display uppercase tracking-wider text-lg mb-4 text-slate-900 flex items-center">
+                            <Shield size={20} className="mr-2 text-primary"/> Safety & Verification
+                        </h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            {provider.verifications.map(v => (
+                                <div key={v} className="flex items-center p-3 bg-slate-50 rounded-lg border border-slate-100">
+                                    <VerificationIcon type={v as VerificationType} size={20} className="mr-3"/>
+                                    <div>
+                                        <div className="text-xs font-black uppercase text-slate-900 tracking-tight">{v.replace('_', ' ')}</div>
+                                        <div className="text-[10px] text-slate-500">Verified by Klass Hero</div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+
+                    <section className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                        <h3 className="font-display uppercase tracking-wider text-lg mb-4 text-slate-900">About Us</h3>
                         <p className="text-slate-600 leading-relaxed whitespace-pre-wrap">{provider.bio}</p>
                         
                         {isPremium && provider.socialLinks && (
@@ -359,19 +376,33 @@ export const ParentPortal: React.FC = () => {
              {/* Children Overview */}
              <div className="flex gap-4 overflow-x-auto pb-4 hide-scrollbar">
                 {['Leo (10) - JFK School', 'Emma (8) - BIS'].map((child, i) => (
-                   <div key={i} className="flex items-center p-3 bg-white border border-slate-200 rounded-xl shadow-sm min-w-[200px]">
-                      <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center mr-3 font-bold text-slate-500">
+                   <div key={i} className="flex items-center p-3 bg-white border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] min-w-[220px]">
+                      <div className="w-10 h-10 bg-peach rounded-full flex items-center justify-center mr-3 font-black text-primaryDark border-2 border-black">
                           {child[0]}
                       </div>
                       <div>
-                          <div className="font-bold text-sm text-slate-900">{child.split(' - ')[0]}</div>
-                          <div className="text-xs text-slate-500 truncate">{child.split(' - ')[1]}</div>
+                          <div className="font-black text-sm text-slate-900 uppercase tracking-tight">{child.split(' - ')[0]}</div>
+                          <div className="text-[10px] font-bold text-slate-500 truncate uppercase">{child.split(' - ')[1]}</div>
                       </div>
                    </div>
                 ))}
-                <button className="flex items-center justify-center w-10 h-10 rounded-full border border-dashed border-slate-300 text-slate-400 hover:bg-slate-50 shrink-0 self-center ml-2">
+                <button className="flex items-center justify-center w-10 h-10 rounded-full border-2 border-dashed border-slate-300 text-slate-400 hover:bg-slate-50 shrink-0 self-center ml-2">
                     <Plus size={20}/>
                 </button>
+             </div>
+
+             {/* Safety Verified Banner */}
+             <div className="bg-cyan-50 border-2 border-cyan-200 p-4 rounded-xl flex items-center justify-between">
+                 <div className="flex items-center">
+                     <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center mr-4 shadow-sm">
+                         <ShieldCheck size={24} className="text-primary"/>
+                     </div>
+                     <div>
+                         <h4 className="font-display uppercase text-sm text-primaryDark tracking-wide">Trust & Safety First</h4>
+                         <p className="text-xs text-slate-600">All providers on Klass Hero undergo a multi-layered verification process.</p>
+                     </div>
+                 </div>
+                 <Button variant="outline" size="sm" className="border-primary text-primary hover:bg-primary/10 h-8 text-[10px] uppercase font-black">Learn More</Button>
              </div>
 
              {/* Dynamic Weekly Activity Goal */}
@@ -452,7 +483,12 @@ export const ParentPortal: React.FC = () => {
              
              {/* Recommendations */}
              <div>
-                <h3 className="font-bold text-lg text-slate-900 mb-4 flex items-center"><Sparkles className="mr-2 text-fuchsia-500"/> Recommended for Leo</h3>
+                <div className="flex justify-between items-center mb-4">
+                    <h3 className="font-bold text-lg text-slate-900 flex items-center"><Sparkles className="mr-2 text-fuchsia-500"/> Recommended for Leo</h3>
+                    <div className="flex items-center text-[10px] font-black uppercase text-slate-400 bg-white px-2 py-1 rounded border border-slate-200">
+                        <Shield size={12} className="mr-1 text-primary"/> 100% Vetted Providers
+                    </div>
+                </div>
                 <div className="grid md:grid-cols-3 gap-6">
                     {MOCK_PROGRAMS.slice(0,3).map(p => (
                         <ProgramCard 
@@ -787,8 +823,9 @@ export const ParentPortal: React.FC = () => {
 
              {/* Legal */}
              <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                 <h3 className="font-bold text-lg mb-4 flex items-center"><FileText size={20} className="mr-2 text-slate-400"/> Legal & Compliance</h3>
+                 <h3 className="font-bold text-lg mb-4 flex items-center"><FileText size={20} className="mr-2 text-slate-400"/> Legal & Trust</h3>
                  <div className="space-y-2">
+                     <button className="text-sm text-primaryDark hover:underline block">Trust & Safety Standards</button>
                      <button className="text-sm text-primaryDark hover:underline block">Terms of Service</button>
                      <button className="text-sm text-primaryDark hover:underline block">Privacy Policy</button>
                  </div>

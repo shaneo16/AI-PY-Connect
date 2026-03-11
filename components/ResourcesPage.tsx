@@ -16,7 +16,7 @@ import {
   Video,
   GraduationCap,
   Award,
-  Insurance
+  ShieldCheck
 } from 'lucide-react';
 import { Button } from './Button';
 
@@ -66,15 +66,6 @@ export const ResourcesPage: React.FC = () => {
                   <div>
                     <h3 className="font-bold text-slate-900">Get Paid Faster</h3>
                     <p className="text-slate-600">Secure payments upfront through our Stripe integration. No more chasing invoices or dealing with no-shows.</p>
-                  </div>
-                </div>
-                <div className="flex gap-4">
-                  <div className="bg-primary/10 p-3 rounded-lg h-fit text-primary">
-                    <FileText size={24} />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-slate-900">Professional Invoicing</h3>
-                    <p className="text-slate-600">Automated, VAT-compliant invoicing and monthly tax statements help you stay organized for the Finanzamt.</p>
                   </div>
                 </div>
                 <div className="flex gap-4">
@@ -244,8 +235,4 @@ const PricingCard = ({ title, price, commission, desc, highlighted = false }: { 
     <div className="text-sm font-bold text-slate-700 mb-2 uppercase tracking-wide">{commission}</div>
     <p className="text-sm text-slate-600">{desc}</p>
   </div>
-);
-
-const ShieldCheck = ({ className, size }: { className?: string, size?: number }) => (
-  <Shield className={className} size={size} />
 );

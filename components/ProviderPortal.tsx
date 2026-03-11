@@ -4,7 +4,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Legend
 } from 'recharts';
 import { 
-  LayoutDashboard, List, Users, TrendingUp, Plus, Edit, Share2, Upload, Send, X, Megaphone, Printer, Download, Clock, Briefcase, MapPin, User, Video, Shield, DollarSign, Rocket, BookOpen, MessageSquare, FileText, Settings, CreditCard, UserPlus, Eye, CheckCircle, AlertTriangle, Search, Filter, Copy, FileCheck, Calendar, Receipt, Lock, Info, Landmark, Calculator
+  LayoutDashboard, List, Users, TrendingUp, Plus, Edit, Share2, Upload, Send, X, Megaphone, Printer, Download, Clock, Briefcase, MapPin, User, Video, Shield, DollarSign, Rocket, BookOpen, MessageSquare, FileText, Settings, CreditCard, UserPlus, Eye, CheckCircle, AlertTriangle, Search, Filter, Copy, FileCheck, Calendar, Receipt, Lock, Info
 } from 'lucide-react';
 import { PROVIDER_STATS, ANALYTICS_DATA, MOCK_PROGRAMS, MOCK_CONVERSATIONS, MOCK_STUDENTS, MOCK_EXPENSES, MOCK_TEAM_MEMBERS, MOCK_INVOICES } from '../constants';
 import { Button } from './Button';
@@ -178,7 +178,6 @@ export const ProviderPortal: React.FC = () => {
   const totalRevenue = ANALYTICS_DATA.reduce((acc, curr) => acc + curr.revenue, 0);
   const totalExpenses = ANALYTICS_DATA.reduce((acc, curr) => acc + (curr.expenses || 0), 0);
   const netProfit = totalRevenue - totalExpenses;
-  const estimatedTax = netProfit * 0.15; // Simple 15% placeholder for Gewerbesteuer/Income tax estimation
 
   return (
     <div className="flex h-[calc(100vh-64px)] bg-slate-50 relative">
@@ -478,7 +477,7 @@ export const ProviderPortal: React.FC = () => {
                 {!hasAccessToFinance && (
                     <UpgradeOverlay 
                         title="Financial Suite Locked" 
-                        description="Track revenue vs expenses and manage tax readiness. Upgrade to Business Plus to access these tools."
+                        description="Track revenue vs expenses. Upgrade to Business Plus to access these tools."
                         targetTier="Business"
                         onUpgrade={setTier}
                     />
@@ -487,7 +486,7 @@ export const ProviderPortal: React.FC = () => {
                 <div className="flex justify-between items-center">
                     <div>
                         <h2 className="text-2xl font-bold text-slate-900">Financial Performance</h2>
-                        <p className="text-slate-500">Revenue, expenses, and tax management.</p>
+                        <p className="text-slate-500">Revenue and expenses tracking.</p>
                     </div>
                     <div className="flex gap-2">
                         <Button variant="outline" size="sm"><Download size={16} className="mr-2"/> Export CSV</Button>
@@ -514,7 +513,7 @@ export const ProviderPortal: React.FC = () => {
                 </div>
 
                 {/* FINANCIAL "RECIPE" (Summary and P&L Breakdown) */}
-                <div className="grid lg:grid-cols-2 gap-8">
+                <div className="grid lg:grid-cols-1 gap-8">
                     <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
                         <h3 className="font-bold text-lg mb-4 flex items-center"><TrendingUp className="mr-2 text-primaryDark"/> Profit & Loss Summary</h3>
                         <div className="space-y-4">
@@ -530,29 +529,6 @@ export const ProviderPortal: React.FC = () => {
                                 <span className="font-bold text-slate-900 text-lg uppercase font-display">Net Profit</span>
                                 <span className="font-bold text-green-600 text-2xl">€{netProfit.toLocaleString()}</span>
                             </div>
-                        </div>
-                    </div>
-
-                    {/* TAX CENTER */}
-                    <div className="bg-slate-900 text-white p-6 rounded-xl shadow-xl relative overflow-hidden">
-                        <div className="absolute top-0 right-0 p-4 opacity-10"><Landmark size={80}/></div>
-                        <h3 className="font-bold text-lg mb-4 flex items-center text-primary"><Calculator size={18} className="mr-2"/> Tax Readiness</h3>
-                        <div className="space-y-4 relative z-10">
-                             <div className="p-3 bg-white/5 rounded-lg border border-white/10">
-                                <div className="flex justify-between items-center mb-1">
-                                    <span className="text-xs text-slate-400 font-bold uppercase">Estimated VAT (19%)</span>
-                                    <span className="font-bold text-primary">€{(totalRevenue * 0.19).toLocaleString()}</span>
-                                </div>
-                                <div className="text-[10px] text-slate-500 italic">Self-calculated estimate based on gross bookings.</div>
-                             </div>
-                             <div className="p-3 bg-white/5 rounded-lg border border-white/10">
-                                <div className="flex justify-between items-center mb-1">
-                                    <span className="text-xs text-slate-400 font-bold uppercase">Gewerbesteuer Reserve</span>
-                                    <span className="font-bold text-secondary">€{estimatedTax.toLocaleString()}</span>
-                                </div>
-                                <div className="text-[10px] text-slate-500 italic">Recommended reserve based on 15% net profit.</div>
-                             </div>
-                             <Button variant="ghost" size="sm" className="w-full text-xs text-slate-300 border border-white/10 hover:bg-white/5 uppercase font-black"><Info size={14} className="mr-2"/> View Tax Documents</Button>
                         </div>
                     </div>
                 </div>

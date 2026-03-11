@@ -79,7 +79,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onLogin,
                     </div>
                     
                     <div className="flex items-center mb-2">
-                      <Star size={18} className="text-secondary fill-secondary mr-1" />
+                      <Star size={18} className="text-secondary fill-current mr-1" />
                       <span className="font-black text-slate-900 mr-1">{program.rating}</span>
                       <span className="text-xs font-bold text-slate-400">({program.reviews})</span>
                     </div>
