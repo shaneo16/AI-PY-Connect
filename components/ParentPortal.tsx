@@ -1,6 +1,7 @@
 
-import React, { useState, useMemo } from 'react';
-import { Search, Filter, Calendar as CalendarIcon, MapPin, Star, Heart, CheckCircle, ShieldCheck, List, Map as MapIcon, X, Lock, MessageCircle, Home, Award, User, Settings, Users, Sparkles, Copy, Share2, Heart as HeartIcon, MessageSquare, FileCheck, Shield, Send, ArrowLeft, Instagram, Globe, PlayCircle, Briefcase, Plus, Video, Mic, MicOff, VideoOff, PhoneOff, UserCheck, Clock, Check, Bell, Mail, FileText, Trophy, ArrowRight, LayoutDashboard, Target, Zap } from 'lucide-react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Search, Filter, Calendar as CalendarIcon, MapPin, Star, Heart, CheckCircle, ShieldCheck, List, Map as MapIcon, X, Lock, MessageCircle, Home, Award, User, Settings, Users, Sparkles, Copy, Share2, Heart as HeartIcon, MessageSquare, FileCheck, Shield, Send, ArrowLeft, Instagram, Globe, PlayCircle, Briefcase, Plus, Video, Mic, MicOff, VideoOff, PhoneOff, UserCheck, Clock, Check, Bell, Mail, FileText, Trophy, ArrowRight, LayoutDashboard, Target, Zap, AlertTriangle, Info, Palette, Dumbbell, Book, Coffee, Car, Smile, Music } from 'lucide-react';
 import { MOCK_PROGRAMS, MOCK_SCHOOLS, MOCK_BADGES, MOCK_REFERRAL_STATS, MOCK_FEED_POSTS, MOCK_CONVERSATIONS, MOCK_PROVIDERS, PRODUCTS, MOCK_JOBS, TRENDING_SEARCHES } from '../constants';
 import { Program, VerificationType, Conversation, ChatMessage, ProviderProfile, Job, ParentGoal, GoalType } from '../types';
 import { Button } from './Button';
@@ -300,6 +301,18 @@ export const ProviderProfileView: React.FC<{ provider: ProviderProfile; onBack: 
     );
 };
 
+interface PlannerActivity {
+    id: string;
+    title: string;
+    childName: string;
+    day: number; // 0-6 (Mon-Sun)
+    startTime: string; // "HH:mm"
+    duration: number; // minutes
+    type: 'PROGRAM' | 'CUSTOM';
+    icon?: string;
+    location?: string;
+}
+
 export const ParentPortal: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'home' | 'explore' | 'planner' | 'community' | 'chat' | 'settings'>('home');
   const [searchTerm, setSearchTerm] = useState('');
@@ -307,6 +320,17 @@ export const ParentPortal: React.FC = () => {
   const [selectedProgram, setSelectedProgram] = useState<Program | null>(null);
   const [selectedProvider, setSelectedProvider] = useState<ProviderProfile | null>(null);
   const [showVideoCall, setShowVideoCall] = useState(false);
+  
+  // Planner State
+  const [activities, setActivities] = useState<PlannerActivity[]>([
+      { id: 'a1', title: 'Soccer Practice', childName: 'Leo', day: 1, startTime: '16:00', duration: 90, type: 'PROGRAM', location: 'JFK School Pitch' },
+      { id: 'a2', title: 'Art Class', childName: 'Emma', day: 2, startTime: '15:30', duration: 60, type: 'PROGRAM', location: 'Kreativ Studio' },
+      { id: 'a3', title: 'Swimming', childName: 'Emma', day: 1, startTime: '17:00', duration: 45, type: 'PROGRAM', location: 'Stadtbad Mitte' },
+      { id: 'a4', title: 'Piano Lesson', childName: 'Leo', day: 3, startTime: '15:00', duration: 45, type: 'CUSTOM', icon: 'Music', location: 'Home' }
+  ]);
+  const [showActivityModal, setShowActivityModal] = useState(false);
+  const [editingActivity, setEditingActivity] = useState<PlannerActivity | null>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
   
   // Goals State
   const [goals, setGoals] = useState<ParentGoal[]>([
@@ -599,53 +623,291 @@ export const ParentPortal: React.FC = () => {
         );
 
       case 'planner':
+        const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        const timeToMinutes = (time: string) => {
+            const [h, m] = time.split(':').map(Number);
+            return h * 60 + m;
+        };
+
+        const checkConflicts = (activity: PlannerActivity) => {
+            return activities.filter(a => {
+                if (a.id === activity.id || a.day !== activity.day || a.childName !== activity.childName) return false;
+                const start1 = timeToMinutes(activity.startTime);
+                const end1 = start1 + activity.duration;
+                const start2 = timeToMinutes(a.startTime);
+                const end2 = start2 + a.duration;
+                return (start1 < end2 && end1 > start2);
+            });
+        };
+
+        const checkTravelBuffer = (activity: PlannerActivity) => {
+            const BUFFER_MINS = 30;
+            return activities.filter(a => {
+                if (a.id === activity.id || a.day !== activity.day || a.childName !== activity.childName) return false;
+                const start1 = timeToMinutes(activity.startTime);
+                const end1 = start1 + activity.duration;
+                const start2 = timeToMinutes(a.startTime);
+                const end2 = start2 + a.duration;
+                
+                const gapBefore = start1 - end2;
+                const gapAfter = start2 - end1;
+                
+                return (gapBefore >= 0 && gapBefore < BUFFER_MINS) || (gapAfter >= 0 && gapAfter < BUFFER_MINS);
+            });
+        };
+
+        const handleAddActivity = (e: React.FormEvent) => {
+            e.preventDefault();
+            const form = e.target as HTMLFormElement;
+            const title = (form.elements.namedItem('title') as HTMLInputElement).value;
+            const childName = (form.elements.namedItem('childName') as HTMLSelectElement).value;
+            const day = parseInt((form.elements.namedItem('day') as HTMLSelectElement).value);
+            const startTime = (form.elements.namedItem('startTime') as HTMLInputElement).value;
+            const duration = parseInt((form.elements.namedItem('duration') as HTMLInputElement).value);
+            const icon = (form.elements.namedItem('icon') as HTMLSelectElement).value;
+
+            const newActivity: PlannerActivity = {
+                id: editingActivity?.id || `a${Date.now()}`,
+                title,
+                childName,
+                day,
+                startTime,
+                duration,
+                type: 'CUSTOM',
+                icon,
+                location: 'Custom Location'
+            };
+
+            if (editingActivity) {
+                setActivities(activities.map(a => a.id === editingActivity.id ? newActivity : a));
+            } else {
+                setActivities([...activities, newActivity]);
+            }
+            setShowActivityModal(false);
+            setEditingActivity(null);
+        };
+
+        const handleDragEnd = (event: any, info: any, activity: PlannerActivity) => {
+            if (!gridRef.current) return;
+            const gridWidth = gridRef.current.offsetWidth;
+            const colWidth = gridWidth / 7;
+            const xOffset = info.offset.x;
+            const dayDelta = Math.round(xOffset / colWidth);
+            let newDay = activity.day + dayDelta;
+            
+            // Clamp to 0-6
+            newDay = Math.max(0, Math.min(6, newDay));
+            
+            if (newDay !== activity.day) {
+                setActivities(prev => prev.map(a => a.id === activity.id ? { ...a, day: newDay } : a));
+            }
+        };
+
         return (
-          <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in pb-20">
-             <div className="flex justify-between items-center">
-                 <h2 className="text-2xl font-bold text-slate-900">My Planner</h2>
-                 <Button variant="outline"><Share2 size={16} className="mr-2"/> Sync Calendar</Button>
+          <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in pb-20">
+             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                 <div>
+                    <h2 className="text-3xl font-display uppercase tracking-tight text-slate-900">Parent Planner</h2>
+                    <p className="text-slate-500 text-sm font-medium">Coordinate schedules, detect conflicts, and plan travel buffers.</p>
+                 </div>
+                 <div className="flex gap-2">
+                    <Button variant="outline" onClick={() => { setEditingActivity(null); setShowActivityModal(true); }} className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-white">
+                        <Plus size={18} className="mr-2"/> Add Custom Activity
+                    </Button>
+                    <Button variant="outline" className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-white">
+                        <Share2 size={18} className="mr-2"/> Sync Calendar
+                    </Button>
+                 </div>
              </div>
              
-             {/* Simple Calendar View */}
-             <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                 <div className="grid grid-cols-7 border-b border-slate-200 bg-slate-50">
-                     {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
-                         <div key={day} className="p-4 text-center text-sm font-bold text-slate-500">{day}</div>
-                     ))}
+             {/* Legend & Info */}
+             <div className="flex flex-wrap gap-4 px-2">
+                 <div className="flex items-center gap-2 text-[10px] font-black uppercase text-slate-400 tracking-widest">
+                     <div className="w-3 h-3 bg-red-100 border border-red-200 rounded"></div>
+                     Conflict Detected
                  </div>
-                 <div className="grid grid-cols-7 min-h-[400px]">
-                     {/* Mock Schedule items */}
-                     <div className="border-r border-b border-slate-100 p-2 min-h-[100px]"></div>
-                     <div className="border-r border-b border-slate-100 p-2 min-h-[100px]">
-                         <div className="bg-cyan-100 text-cyan-800 p-2 rounded text-xs font-bold mb-1">Soccer 16:00</div>
-                     </div>
-                     <div className="border-r border-b border-slate-100 p-2 min-h-[100px]">
-                         <div className="bg-fuchsia-100 text-secondary p-2 rounded text-xs font-bold mb-1">Art 15:30</div>
-                     </div>
-                     <div className="border-r border-b border-slate-100 p-2 min-h-[100px]"></div>
-                     <div className="border-r border-b border-slate-100 p-2 min-h-[100px]"></div>
-                     <div className="border-r border-b border-slate-100 p-2 min-h-[100px]">
-                         <div className="bg-amber-100 text-amber-800 p-2 rounded text-xs font-bold mb-1">Babysitter 18:00</div>
-                     </div>
-                     <div className="border-b border-slate-100 p-2 min-h-[100px]"></div>
+                 <div className="flex items-center gap-2 text-[10px] font-black uppercase text-slate-400 tracking-widest">
+                     <div className="w-3 h-3 bg-amber-50 border border-amber-200 rounded"></div>
+                     Travel Buffer Suggestion
+                 </div>
+                 <div className="flex items-center gap-2 text-[10px] font-black uppercase text-slate-400 tracking-widest ml-auto">
+                     <Info size={12} className="text-primary"/>
+                     Drag activities horizontally to change days
                  </div>
              </div>
 
-             <div>
-                 <h3 className="font-bold text-lg mb-4">Upcoming This Week</h3>
-                 <div className="space-y-4">
-                     {MOCK_PROGRAMS.slice(0, 2).map(p => (
-                         <div key={p.id} className="bg-white p-4 rounded-xl border border-slate-200 flex justify-between items-center">
-                             <div className="flex items-center gap-4">
-                                 <div className="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center font-bold text-slate-400">
-                                     {p.nextSession.split(' ')[0]}
+             {/* Weekly Grid */}
+             <div className="bg-white rounded-2xl border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
+                 <div className="grid grid-cols-7 border-b-4 border-black bg-slate-50">
+                     {days.map((day, idx) => (
+                         <div key={day} className={`p-4 text-center border-r-2 border-black last:border-r-0 ${new Date().getDay() === (idx + 1) % 7 ? 'bg-primary/10' : ''}`}>
+                             <div className="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-1">Day</div>
+                             <div className="text-lg font-display uppercase text-slate-900">{day}</div>
+                         </div>
+                     ))}
+                 </div>
+                 <div ref={gridRef} className="grid grid-cols-7 min-h-[600px] bg-slate-50/30">
+                     {days.map((_, dayIdx) => (
+                         <div key={dayIdx} className="border-r-2 border-black last:border-r-0 p-2 space-y-3 relative">
+                             {activities.filter(a => a.day === dayIdx).sort((a, b) => timeToMinutes(a.startTime) - timeToMinutes(b.startTime)).map(activity => {
+                                 const conflicts = checkConflicts(activity);
+                                 const buffers = checkTravelBuffer(activity);
+                                 
+                                 return (
+                                     <motion.div 
+                                        layout
+                                        drag="x"
+                                        dragConstraints={gridRef}
+                                        dragElastic={0.1}
+                                        onDragEnd={(e, info) => handleDragEnd(e, info, activity)}
+                                        whileDrag={{ scale: 1.05, zIndex: 50, boxShadow: "0 20px 25px -5px rgb(0 0 0 / 0.1)" }}
+                                        key={activity.id}
+                                        className={`p-3 rounded-xl border-2 shadow-sm relative group cursor-pointer transition-all ${
+                                            activity.childName === 'Leo' ? 'bg-cyan-50 border-cyan-200' : 'bg-fuchsia-50 border-fuchsia-200'
+                                        } ${conflicts.length > 0 ? 'ring-2 ring-red-500 ring-offset-2' : ''}`}
+                                        onClick={() => { setEditingActivity(activity); setShowActivityModal(true); }}
+                                     >
+                                         <div className="flex justify-between items-start mb-1">
+                                             <div className="flex items-center gap-1.5">
+                                                 {activity.icon === 'Music' && <Music size={12} className="text-slate-400"/>}
+                                                 {activity.icon === 'Palette' && <Palette size={12} className="text-slate-400"/>}
+                                                 {activity.icon === 'Dumbbell' && <Dumbbell size={12} className="text-slate-400"/>}
+                                                 {activity.icon === 'Book' && <Book size={12} className="text-slate-400"/>}
+                                                 {activity.icon === 'Coffee' && <Coffee size={12} className="text-slate-400"/>}
+                                                 {activity.icon === 'Car' && <Car size={12} className="text-slate-400"/>}
+                                                 {activity.icon === 'Smile' && <Smile size={12} className="text-slate-400"/>}
+                                                 <span className="text-[10px] font-black uppercase tracking-tighter opacity-60">{activity.childName}</span>
+                                             </div>
+                                             <span className="text-[10px] font-bold text-slate-500">{activity.startTime}</span>
+                                         </div>
+                                         <h4 className="font-bold text-xs text-slate-900 leading-tight mb-1">{activity.title}</h4>
+                                         <div className="flex items-center text-[9px] text-slate-500 font-medium">
+                                             <Clock size={10} className="mr-1"/> {activity.duration}m
+                                         </div>
+
+                                         {/* Conflict Warning */}
+                                         {conflicts.length > 0 && (
+                                             <div className="mt-2 p-1.5 bg-red-100 rounded border border-red-200 flex items-start gap-1.5">
+                                                 <AlertTriangle size={10} className="text-red-600 shrink-0 mt-0.5"/>
+                                                 <p className="text-[8px] font-bold text-red-700 leading-tight">
+                                                     This overlaps with {conflicts[0].childName}'s {conflicts[0].title}
+                                                 </p>
+                                             </div>
+                                         )}
+
+                                         {/* Buffer Suggestion */}
+                                         {conflicts.length === 0 && buffers.length > 0 && (
+                                             <div className="mt-2 p-1.5 bg-amber-50 rounded border border-amber-200 flex items-start gap-1.5">
+                                                 <Car size={10} className="text-amber-600 shrink-0 mt-0.5"/>
+                                                 <p className="text-[8px] font-bold text-amber-700 leading-tight">
+                                                     Tight gap with {buffers[0].title}. Suggest 30m travel buffer.
+                                                 </p>
+                                             </div>
+                                         )}
+
+                                         <button 
+                                            className="absolute -top-2 -right-2 w-5 h-5 bg-white border border-slate-200 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-sm hover:text-red-500"
+                                            onClick={(e) => { e.stopPropagation(); setActivities(activities.filter(a => a.id !== activity.id)); }}
+                                         >
+                                             <X size={10}/>
+                                         </button>
+                                     </motion.div>
+                                 );
+                             })}
+                             
+                             {/* Quick Add Button */}
+                             <motion.button 
+                                  whileHover={{ scale: 1.02, backgroundColor: '#f8fafc' }}
+                                  whileTap={{ scale: 0.98 }}
+                                  className="w-full py-4 border-2 border-dashed border-slate-200 rounded-xl flex flex-col items-center justify-center text-slate-400 hover:border-primary hover:text-primary transition-all group"
+                                  onClick={() => { setEditingActivity({ id: '', title: '', childName: 'Leo', day: dayIdx, startTime: '12:00', duration: 60, type: 'CUSTOM' }); setShowActivityModal(true); }}
+                             >
+                                 <Plus size={20} className="mb-1 group-hover:rotate-90 transition-transform duration-300"/>
+                                 <span className="text-[10px] font-black uppercase tracking-widest">Add Activity</span>
+                             </motion.button>
+                         </div>
+                     ))}
+                 </div>
+             </div>
+
+             {/* Activity Modal */}
+             {showActivityModal && (
+                 <div className="fixed inset-0 z-[70] bg-black/50 flex items-center justify-center p-4">
+                     <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-in zoom-in-95 border-4 border-black">
+                         <div className="flex justify-between items-center mb-6">
+                             <h2 className="text-2xl font-display uppercase tracking-wide">{editingActivity?.id ? 'Edit Activity' : 'Add Activity'}</h2>
+                             <button onClick={() => setShowActivityModal(false)} className="p-2 hover:bg-slate-100 rounded-full transition-colors"><X/></button>
+                         </div>
+                         <form onSubmit={handleAddActivity} className="space-y-4">
+                             <div>
+                                 <label className="block text-xs font-black uppercase text-slate-400 tracking-widest mb-2">Activity Title</label>
+                                 <input name="title" required defaultValue={editingActivity?.title} placeholder="e.g. Piano Lesson" className="w-full p-3 border-2 border-slate-100 rounded-xl font-bold text-slate-900" />
+                             </div>
+                             <div className="grid grid-cols-2 gap-4">
+                                 <div>
+                                     <label className="block text-xs font-black uppercase text-slate-400 tracking-widest mb-2">Child</label>
+                                     <select name="childName" defaultValue={editingActivity?.childName} className="w-full p-3 border-2 border-slate-100 rounded-xl bg-white font-bold">
+                                         <option value="Leo">Leo</option>
+                                         <option value="Emma">Emma</option>
+                                     </select>
                                  </div>
                                  <div>
-                                     <h4 className="font-bold text-slate-900 font-display">{p.title}</h4>
-                                     <p className="text-sm text-slate-500">{p.nextSession}</p>
+                                     <label className="block text-xs font-black uppercase text-slate-400 tracking-widest mb-2">Icon</label>
+                                     <select name="icon" defaultValue={editingActivity?.icon} className="w-full p-3 border-2 border-slate-100 rounded-xl bg-white font-bold">
+                                         <option value="">None</option>
+                                         <option value="Music">Music</option>
+                                         <option value="Palette">Arts</option>
+                                         <option value="Dumbbell">Sports</option>
+                                         <option value="Book">Study</option>
+                                         <option value="Coffee">Break</option>
+                                         <option value="Car">Travel</option>
+                                         <option value="Smile">Fun</option>
+                                     </select>
                                  </div>
                              </div>
-                             <Button size="sm" variant="outline">Details</Button>
+                             <div className="grid grid-cols-3 gap-4">
+                                 <div className="col-span-1">
+                                     <label className="block text-xs font-black uppercase text-slate-400 tracking-widest mb-2">Day</label>
+                                     <select name="day" defaultValue={editingActivity?.day} className="w-full p-3 border-2 border-slate-100 rounded-xl bg-white font-bold">
+                                         {days.map((d, i) => <option key={i} value={i}>{d}</option>)}
+                                     </select>
+                                 </div>
+                                 <div className="col-span-1">
+                                     <label className="block text-xs font-black uppercase text-slate-400 tracking-widest mb-2">Start</label>
+                                     <input name="startTime" type="time" required defaultValue={editingActivity?.startTime} className="w-full p-3 border-2 border-slate-100 rounded-xl font-bold" />
+                                 </div>
+                                 <div className="col-span-1">
+                                     <label className="block text-xs font-black uppercase text-slate-400 tracking-widest mb-2">Mins</label>
+                                     <input name="duration" type="number" required defaultValue={editingActivity?.duration || 60} className="w-full p-3 border-2 border-slate-100 rounded-xl font-bold" />
+                                 </div>
+                             </div>
+                             <div className="flex gap-4 pt-4">
+                                 <Button variant="ghost" type="button" onClick={() => setShowActivityModal(false)} className="flex-1">Cancel</Button>
+                                 <Button type="submit" className="flex-1 bg-primary text-slate-900 font-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                                     {editingActivity?.id ? 'Update' : 'Add to Planner'}
+                                 </Button>
+                             </div>
+                         </form>
+                     </div>
+                 </div>
+             )}
+
+             <div>
+                 <h3 className="font-display text-xl text-slate-900 uppercase mb-4">Upcoming This Week</h3>
+                 <div className="grid md:grid-cols-2 gap-4">
+                     {activities.filter(a => a.day >= new Date().getDay() - 1).slice(0, 4).map(a => (
+                         <div key={a.id} className="bg-white p-4 rounded-xl border-2 border-slate-100 flex justify-between items-center hover:border-black transition-all">
+                             <div className="flex items-center gap-4">
+                                 <div className="w-12 h-12 bg-slate-100 rounded-lg flex flex-col items-center justify-center border border-slate-200">
+                                     <span className="text-[8px] font-black uppercase text-slate-400">{days[a.day]}</span>
+                                     <span className="font-black text-slate-900">{a.startTime.split(':')[0]}</span>
+                                 </div>
+                                 <div>
+                                     <h4 className="font-bold text-slate-900 font-display uppercase tracking-wide">{a.title}</h4>
+                                     <p className="text-xs text-slate-500 font-medium">{a.childName} • {a.location || 'Berlin'}</p>
+                                 </div>
+                             </div>
+                             <Button size="sm" variant="outline" onClick={() => { setEditingActivity(a); setShowActivityModal(true); }}>Edit</Button>
                          </div>
                      ))}
                  </div>
