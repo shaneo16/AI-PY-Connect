@@ -4,6 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Klass Hero</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -13,42 +16,51 @@
               primary: 'rgb(15, 195, 255)', // Blue
               primaryDark: 'rgb(10, 160, 215)', // Darker Blue for hovers
               secondary: 'rgb(255, 255, 54)', // Yellow
-              accent: 'rgb(199, 199, 199)', // Grey (Borders/Accents)
+              accent: 'rgb(229, 229, 229)', // Grey (Borders/Accents)
               dark: 'rgb(0, 0, 0)', // Black
-              peach: 'rgb(255, 234, 201)', // Pale Pink Background
+              peach: 'rgb(255, 250, 240)', // Much lighter peach for a cleaner look
+              // Prime Youth Theme
+              pyInk: '#2c2c2c',
+              pyInkSoft: '#555555',
+              pyInkMuted: '#999999',
+              pyPaper: '#f5f0e8',
+              pyPaperWarm: '#ede8dc',
+              pyAccent: '#d94f2b',
+              pyAccentSoft: '#faeae4',
+              pyGreen: '#2a5c3a',
+              pyGreenSoft: '#e4ede6',
+              pyGreenMid: '#1e4a2d',
               slate: {
-                50: '#ffffff', // Forcing cards to be white-ish if needed, or keep slate scale but mapped to greys
-                100: 'rgb(245, 245, 245)',
-                200: 'rgb(229, 229, 229)',
-                300: 'rgb(199, 199, 199)', // Matching accent
+                50: '#f9fafb',
+                100: '#f3f4f6',
+                200: '#e5e7eb',
+                300: '#d1d5db',
                 400: '#9ca3af',
                 500: '#6b7280',
                 600: '#4b5563',
                 700: '#374151',
                 800: '#1f2937',
-                900: 'rgb(0, 0, 0)', // Force dark slate to black
+                900: '#111827',
               }
+            },
+            boxShadow: {
+              'preply': '0 4px 12px rgba(0, 0, 0, 0.08)',
+              'preply-hover': '0 8px 24px rgba(0, 0, 0, 0.12)',
             },
             fontFamily: {
               sans: ['Inter', 'sans-serif'],
-              display: ['"Skaters Demo"', 'Impact', 'sans-serif'],
+              display: ['Inter', 'sans-serif'], // Toning down the brutalist font for a cleaner look
+              pySerif: ['Fraunces', 'serif'],
+              pySans: ['DM Sans', 'sans-serif'],
             },
           },
         },
       }
     </script>
     <style>
-      /* Fallback for Skaters Demo if local file not present, 
-         using a bold distinct look to match the vibe */
-      @font-face {
-        font-family: 'Skaters Demo';
-        src: local('Skaters Demo'), local('SkatersDemo'), url('https://fonts.cdnfonts.com/s/92576/SkatersDemo.woff') format('woff');
-        font-display: swap;
-      }
-
       body {
         font-family: 'Inter', sans-serif;
-        background-color: rgb(255, 234, 201);
+        background-color: #f9fafb; /* Clean light grey background */
         color: rgb(0, 0, 0);
       }
       

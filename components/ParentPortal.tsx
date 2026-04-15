@@ -70,77 +70,83 @@ export const ProgramCard: React.FC<{
   showBadges?: boolean;
 }> = ({ program, onClick, onProviderClick, showBadges = true }) => (
     <div 
-      className="bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-lg transition-all cursor-pointer group flex flex-col h-full"
+      className="bg-white border border-slate-100 rounded-2xl overflow-hidden hover:shadow-preply transition-all cursor-pointer group flex flex-col md:flex-row h-full md:h-64"
       onClick={onClick}
     >
-        <div className="h-48 w-full overflow-hidden relative">
+        <div className="h-48 md:h-full w-full md:w-64 overflow-hidden relative shrink-0">
            <img src={program.image} alt={program.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
            {showBadges && (
-               <div className="absolute top-3 left-3 flex gap-1">
+               <div className="absolute top-3 left-3 flex flex-col gap-1">
                  {program.verifications.map(type => (
-                   <div key={type} className="bg-white/90 backdrop-blur border border-slate-200 p-1 rounded-full shadow-sm" title={type.replace('_', ' ')}>
-                      <VerificationIcon type={type} size={12} />
+                   <div key={type} className="bg-white/90 backdrop-blur border border-slate-100 p-1.5 rounded-full shadow-sm" title={type.replace('_', ' ')}>
+                      <VerificationIcon type={type} size={14} />
                    </div>
                  ))}
                </div>
            )}
-           {program.isOnline && (
-               <div className="absolute top-3 right-3 bg-green-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm flex items-center">
-                   <div className="w-1.5 h-1.5 bg-white rounded-full mr-1 animate-pulse"></div> ONLINE
-               </div>
-           )}
         </div>
-        <div className="p-5 flex flex-col flex-1 relative">
-            <div 
-               className="absolute -top-8 right-5 w-16 h-16 rounded-full border-4 border-white overflow-hidden shadow-md bg-white z-10 hover:scale-110 transition-transform cursor-pointer"
-               onClick={(e) => {
-                  if (onProviderClick) {
-                      e.stopPropagation();
-                      onProviderClick(program.providerId);
-                  }
-               }}
-            >
-              <img src={program.providerImage} alt={program.provider} className="w-full h-full object-cover" />
+        <div className="p-6 flex flex-col flex-1 relative">
+            <div className="flex justify-between items-start mb-2">
+                <div className="flex flex-col">
+                    <div className="flex items-center gap-2 mb-1">
+                        <span className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded tracking-wider ${
+                            program.category === 'Sports' ? 'bg-cyan-50 text-cyan-700' :
+                            program.category === 'Arts' ? 'bg-fuchsia-50 text-fuchsia-700' :
+                            program.category === 'Music' ? 'bg-amber-50 text-amber-700' :
+                            'bg-slate-50 text-slate-600'
+                        }`}>{program.category}</span>
+                        {program.isOnline && (
+                            <span className="px-2 py-0.5 bg-green-50 text-green-700 text-[10px] font-bold uppercase rounded tracking-wider flex items-center">
+                                <div className="w-1 h-1 bg-green-500 rounded-full mr-1 animate-pulse"></div> ONLINE
+                            </span>
+                        )}
+                    </div>
+                    <h3 className="font-bold text-slate-900 text-xl leading-tight tracking-tight">{program.title}</h3>
+                </div>
+                <div className="text-right">
+                    <div className="text-2xl font-bold text-slate-900">€{program.price}</div>
+                    <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">per session</div>
+                </div>
             </div>
 
-            <div className="flex gap-2 mb-2">
-                 <span className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded tracking-wider border ${
-                     program.category === 'Sports' ? 'bg-cyan-50 text-cyan-700 border-cyan-100' :
-                     program.category === 'Arts' ? 'bg-fuchsia-50 text-fuchsia-700 border-fuchsia-100' :
-                     program.category === 'Music' ? 'bg-amber-50 text-amber-700 border-amber-100' :
-                     'bg-slate-50 text-slate-600 border-slate-100'
-                 }`}>{program.category}</span>
-                 <span className="px-2 py-0.5 bg-slate-100 text-slate-600 text-[10px] font-bold uppercase rounded tracking-wider border border-slate-200">
-                     {program.type}
-                 </span>
+            <div className="flex items-center gap-3 mb-4">
+                <div 
+                   className="w-10 h-10 rounded-full border border-slate-100 overflow-hidden shadow-sm bg-white hover:scale-110 transition-transform cursor-pointer"
+                   onClick={(e) => {
+                      if (onProviderClick) {
+                          e.stopPropagation();
+                          onProviderClick(program.providerId);
+                      }
+                   }}
+                >
+                  <img src={program.providerImage} alt={program.provider} className="w-full h-full object-cover" />
+                </div>
+                <div>
+                    <p className="text-sm text-slate-700 font-bold">{program.provider}</p>
+                    <div className="flex items-center text-xs text-slate-400">
+                        <MapPin size={12} className="mr-1" />
+                        <span className="truncate">{program.location}</span>
+                    </div>
+                </div>
             </div>
 
-            <h3 className="font-bold text-slate-900 text-lg mb-1 leading-tight font-display tracking-wide uppercase">{program.title}</h3>
-            
-            <div className="mb-3">
-                 <p className="text-sm text-slate-500 font-medium">{program.provider}</p>
-                 {program.assignedToName && (
-                     <div className="flex items-center mt-1 text-xs text-slate-500 bg-slate-50 w-fit px-1.5 py-0.5 rounded border border-slate-100">
-                         <div className="w-4 h-4 rounded-full bg-slate-200 overflow-hidden mr-1.5">
-                            {program.assignedToImage && <img src={program.assignedToImage} alt="" className="w-full h-full object-cover"/>}
-                         </div>
-                         Instructor: <span className="font-bold ml-1">{program.assignedToName}</span>
-                     </div>
-                 )}
-            </div>
-            
-            <div className="flex items-center text-xs text-slate-400 mb-4">
-               <MapPin size={14} className="mr-1 shrink-0" />
-               <span className="truncate">{program.location}</span>
-            </div>
+            <p className="text-sm text-slate-500 line-clamp-2 mb-4 flex-1">
+                Join our expert instructors for an immersive {program.category.toLowerCase()} experience designed to build confidence and skills in a fun environment.
+            </p>
 
             <div className="mt-auto pt-4 border-t border-slate-50 flex justify-between items-center">
-               <div className="flex items-center">
-                  <Star size={14} className="text-amber-400 fill-amber-400 mr-1" />
-                  <span className="font-bold text-slate-900 text-sm">{program.rating}</span>
-                  <span className="text-xs text-slate-400 ml-1">({program.reviews})</span>
+               <div className="flex items-center gap-4">
+                   <div className="flex items-center">
+                      <Star size={16} className="text-amber-400 fill-amber-400 mr-1" />
+                      <span className="font-bold text-slate-900 text-sm">{program.rating}</span>
+                      <span className="text-xs text-slate-400 ml-1">({program.reviews})</span>
+                   </div>
+                   <div className="flex items-center text-xs text-slate-500 font-medium">
+                       <Users size={14} className="mr-1.5 text-slate-400"/>
+                       {program.type}
+                   </div>
                </div>
-               <span className="font-bold text-lg text-primaryDark">€{program.price}</span>
+               <Button size="sm" variant="primary" className="rounded-full px-6">Book Now</Button>
             </div>
         </div>
     </div>
@@ -400,84 +406,84 @@ export const ParentPortal: React.FC = () => {
              {/* Children Overview */}
              <div className="flex gap-4 overflow-x-auto pb-4 hide-scrollbar">
                 {['Leo (10) - JFK School', 'Emma (8) - BIS'].map((child, i) => (
-                   <div key={i} className="flex items-center p-3 bg-white border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] min-w-[220px]">
-                      <div className="w-10 h-10 bg-peach rounded-full flex items-center justify-center mr-3 font-black text-primaryDark border-2 border-black">
+                   <div key={i} className="flex items-center p-3 bg-white border border-slate-100 rounded-2xl shadow-sm min-w-[220px]">
+                      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mr-3 font-bold text-primaryDark border border-primary/20">
                           {child[0]}
                       </div>
                       <div>
-                          <div className="font-black text-sm text-slate-900 uppercase tracking-tight">{child.split(' - ')[0]}</div>
-                          <div className="text-[10px] font-bold text-slate-500 truncate uppercase">{child.split(' - ')[1]}</div>
+                          <div className="font-bold text-sm text-slate-900 tracking-tight">{child.split(' - ')[0]}</div>
+                          <div className="text-[10px] font-semibold text-slate-500 truncate uppercase">{child.split(' - ')[1]}</div>
                       </div>
                    </div>
                 ))}
-                <button className="flex items-center justify-center w-10 h-10 rounded-full border-2 border-dashed border-slate-300 text-slate-400 hover:bg-slate-50 shrink-0 self-center ml-2">
+                <button className="flex items-center justify-center w-10 h-10 rounded-full border-2 border-dashed border-slate-200 text-slate-400 hover:bg-white hover:border-primary transition-all shrink-0 self-center ml-2">
                     <Plus size={20}/>
                 </button>
              </div>
 
              {/* Safety Verified Banner */}
-             <div className="bg-cyan-50 border-2 border-cyan-200 p-4 rounded-xl flex items-center justify-between">
+             <div className="bg-white border border-slate-100 p-6 rounded-2xl flex items-center justify-between shadow-sm">
                  <div className="flex items-center">
-                     <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center mr-4 shadow-sm">
-                         <ShieldCheck size={24} className="text-primary"/>
+                     <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mr-4 shadow-sm">
+                         <ShieldCheck size={28} className="text-primary"/>
                      </div>
                      <div>
-                         <h4 className="font-display uppercase text-sm text-primaryDark tracking-wide">Trust & Safety First</h4>
-                         <p className="text-xs text-slate-600">All providers on Klass Hero undergo a multi-layered verification process.</p>
+                         <h4 className="font-bold text-lg text-slate-900 tracking-tight">Trust & Safety First</h4>
+                         <p className="text-sm text-slate-500">All providers on Klass Hero undergo a multi-layered verification process.</p>
                      </div>
                  </div>
-                 <Button variant="outline" size="sm" className="border-primary text-primary hover:bg-primary/10 h-8 text-[10px] uppercase font-black">Learn More</Button>
+                 <Button variant="outline" size="sm" className="rounded-full px-6">Learn More</Button>
              </div>
 
              {/* Dynamic Weekly Activity Goal */}
-             <div className="bg-gradient-to-r from-primaryDark to-primary p-6 rounded-2xl text-white shadow-lg relative overflow-hidden border-4 border-black">
-                <div className="absolute right-0 top-0 opacity-10 rotate-12"><Trophy size={160} /></div>
+             <div className="bg-white p-8 rounded-3xl text-slate-900 shadow-preply relative overflow-hidden border border-slate-100">
+                <div className="absolute right-0 top-0 opacity-5 rotate-12 -mr-8 -mt-8"><Trophy size={200} /></div>
                 <div className="relative z-10">
-                    <div className="flex justify-between items-center mb-2">
-                        <h2 className="text-xl font-display uppercase flex items-center tracking-wide"><Target size={24} className="mr-3 text-secondary"/> Progress to Rewards</h2>
-                        <span className="font-black text-3xl font-display">{overallGoalProgress}%</span>
+                    <div className="flex justify-between items-center mb-4">
+                        <h2 className="text-2xl font-bold flex items-center tracking-tight"><Target size={28} className="mr-3 text-primary"/> Progress to Rewards</h2>
+                        <span className="font-bold text-4xl text-primary">{overallGoalProgress}%</span>
                     </div>
-                    <div className="w-full bg-black/20 rounded-full h-5 mb-4 border-2 border-black/30 overflow-hidden">
-                        <div className="bg-secondary h-full rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(255,255,54,0.5)]" style={{ width: `${overallGoalProgress}%` }}></div>
+                    <div className="w-full bg-slate-100 rounded-full h-4 mb-6 overflow-hidden">
+                        <div className="bg-primary h-full rounded-full transition-all duration-1000" style={{ width: `${overallGoalProgress}%` }}></div>
                     </div>
                     <div className="flex justify-between items-end">
-                        <p className="text-sm text-cyan-50 font-black uppercase tracking-widest">
+                        <p className="text-sm text-slate-500 font-medium">
                             {overallGoalProgress === 100 ? "Goal Smashed! Points Awarded!" : "Keep pushing to earn Prime Points!"}
                         </p>
-                        <Button size="sm" onClick={() => setShowGoalModal(true)} className="bg-white text-primaryDark border-2 border-black h-8 text-[10px] shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">Adjust Goals</Button>
+                        <Button size="sm" onClick={() => setShowGoalModal(true)} variant="primary" className="rounded-full px-6">Adjust Goals</Button>
                     </div>
                 </div>
              </div>
 
              {/* Detailed Goals Tracker */}
-             <div className="bg-white p-6 rounded-2xl border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-                <div className="flex justify-between items-center mb-6">
-                    <h3 className="font-display text-2xl text-slate-900 uppercase">Active Goals</h3>
-                    <button onClick={() => setShowGoalModal(true)} className="text-primaryDark hover:underline text-sm font-black uppercase tracking-widest flex items-center"><Plus size={16} className="mr-1"/> Set New Target</button>
+             <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
+                <div className="flex justify-between items-center mb-8">
+                    <h3 className="text-2xl font-bold text-slate-900 tracking-tight">Active Goals</h3>
+                    <button onClick={() => setShowGoalModal(true)} className="text-primary hover:underline text-sm font-bold flex items-center"><Plus size={18} className="mr-1"/> Set New Target</button>
                 </div>
-                <div className="grid md:grid-cols-2 gap-4">
+                <div className="grid md:grid-cols-2 gap-6">
                     {goals.map(goal => (
-                        <div key={goal.id} className="p-4 bg-slate-50 border-2 border-slate-100 rounded-xl relative group hover:border-black transition-all">
-                            <div className="flex justify-between items-start mb-3">
+                        <div key={goal.id} className="p-6 bg-slate-50 border border-slate-100 rounded-2xl relative group hover:border-primary/30 transition-all">
+                            <div className="flex justify-between items-start mb-4">
                                 <div>
-                                    <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest bg-white px-2 py-0.5 rounded border border-slate-100 mb-1 inline-block">{goal.childName} • {goal.type}</span>
-                                    <h4 className="font-bold text-slate-900">{goal.title}</h4>
+                                    <span className="text-[10px] font-bold uppercase text-primary tracking-widest bg-primary/10 px-2 py-1 rounded-md mb-2 inline-block">{goal.childName} • {goal.type}</span>
+                                    <h4 className="font-bold text-slate-900 text-lg">{goal.title}</h4>
                                 </div>
                                 <div className="text-right">
-                                    <div className="text-xs font-black text-primaryDark">+{goal.rewardPoints} PTS</div>
+                                    <div className="text-sm font-bold text-primary">+{goal.rewardPoints} PTS</div>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-4">
                                 <div className="flex-1 bg-slate-200 h-2 rounded-full overflow-hidden">
                                     <div className="bg-primary h-full" style={{ width: `${(goal.currentValue / goal.targetValue) * 100}%` }}></div>
                                 </div>
-                                <span className="text-xs font-black text-slate-600">{goal.currentValue}/{goal.targetValue}</span>
+                                <span className="text-sm font-bold text-slate-600">{goal.currentValue}/{goal.targetValue}</span>
                             </div>
                             <button 
                                 onClick={() => setGoals(goals.filter(g => g.id !== goal.id))}
-                                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity text-slate-300 hover:text-red-500"
+                                className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity text-slate-300 hover:text-red-500"
                             >
-                                <X size={14}/>
+                                <X size={18}/>
                             </button>
                         </div>
                     ))}
@@ -492,14 +498,14 @@ export const ParentPortal: React.FC = () => {
              </div>
 
              {/* Achievements */}
-             <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                <h3 className="font-bold text-lg text-slate-900 mb-4 flex items-center"><Award className="mr-2 text-amber-500"/> Family Achievements</h3>
-                <div className="flex gap-4 overflow-x-auto pb-2">
+             <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
+                <h3 className="text-2xl font-bold text-slate-900 mb-6 flex items-center tracking-tight"><Award className="mr-3 text-amber-500"/> Family Achievements</h3>
+                <div className="flex gap-6 overflow-x-auto pb-4 hide-scrollbar">
                     {MOCK_BADGES.map(badge => (
-                        <div key={badge.id} className="flex flex-col items-center min-w-[100px] text-center p-3 bg-slate-50 rounded-xl border border-slate-100">
-                            <div className="text-3xl mb-2">{badge.icon}</div>
-                            <div className="font-bold text-xs text-slate-900">{badge.name}</div>
-                            <div className="text-[10px] text-slate-500 mt-1">{badge.earnedDate}</div>
+                        <div key={badge.id} className="flex flex-col items-center min-w-[120px] text-center p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:border-primary/20 transition-all group">
+                            <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">{badge.icon}</div>
+                            <div className="font-bold text-sm text-slate-900 mb-1">{badge.name}</div>
+                            <div className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">{badge.earnedDate}</div>
                         </div>
                     ))}
                 </div>
@@ -507,14 +513,14 @@ export const ParentPortal: React.FC = () => {
              
              {/* Recommendations */}
              <div>
-                <div className="flex justify-between items-center mb-4">
-                    <h3 className="font-bold text-lg text-slate-900 flex items-center"><Sparkles className="mr-2 text-fuchsia-500"/> Recommended for Leo</h3>
-                    <div className="flex items-center text-[10px] font-black uppercase text-slate-400 bg-white px-2 py-1 rounded border border-slate-200">
-                        <Shield size={12} className="mr-1 text-primary"/> 100% Vetted Providers
+                <div className="flex justify-between items-center mb-6">
+                    <h3 className="text-2xl font-bold text-slate-900 flex items-center tracking-tight"><Sparkles className="mr-3 text-fuchsia-500"/> Recommended for Leo</h3>
+                    <div className="flex items-center text-[10px] font-bold uppercase text-slate-400 bg-white px-3 py-1.5 rounded-full border border-slate-100 shadow-sm">
+                        <Shield size={14} className="mr-1.5 text-primary"/> 100% Vetted Providers
                     </div>
                 </div>
-                <div className="grid md:grid-cols-3 gap-6">
-                    {MOCK_PROGRAMS.slice(0,3).map(p => (
+                <div className="grid gap-6">
+                    {MOCK_PROGRAMS.slice(0,2).map(p => (
                         <ProgramCard 
                           key={p.id} 
                           program={p} 
@@ -529,29 +535,30 @@ export const ParentPortal: React.FC = () => {
              </div>
 
              {/* Refer & Earn */}
-             <div className="bg-slate-900 text-white p-6 rounded-2xl shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 border-4 border-black">
-                 <div>
-                     <h3 className="text-xl font-display uppercase flex items-center mb-2"><Users className="mr-2 text-primary"/> Refer & Earn</h3>
-                     <p className="text-slate-400 text-sm mb-4">Invite friends and earn Prime Points towards free bookings!</p>
-                     <div className="flex items-center gap-4 text-sm">
+             <div className="bg-slate-900 text-white p-10 rounded-3xl shadow-preply flex flex-col md:flex-row items-center justify-between gap-10 relative overflow-hidden">
+                 <div className="absolute left-0 top-0 w-full h-full bg-[radial-gradient(circle_at_top_right,rgba(15,195,255,0.1),transparent)] pointer-events-none"></div>
+                 <div className="relative z-10 max-w-md">
+                     <h3 className="text-3xl font-bold flex items-center mb-3 tracking-tight"><Users className="mr-3 text-primary"/> Refer & Earn</h3>
+                     <p className="text-slate-400 text-lg mb-6 leading-relaxed">Invite friends and earn Prime Points towards free bookings for your family!</p>
+                     <div className="flex items-center gap-8">
                          <div>
-                             <div className="font-black text-2xl text-primary">{MOCK_REFERRAL_STATS.totalReferrals}</div>
+                             <div className="font-bold text-3xl text-primary">{MOCK_REFERRAL_STATS.totalReferrals}</div>
                              <div className="text-slate-500 font-bold uppercase text-[10px] tracking-widest">Referrals</div>
                          </div>
-                         <div className="w-px h-8 bg-slate-700"></div>
+                         <div className="w-px h-10 bg-slate-800"></div>
                          <div>
-                             <div className="font-black text-2xl text-secondary">{MOCK_REFERRAL_STATS.earnedPoints}</div>
+                             <div className="font-bold text-3xl text-secondary">{MOCK_REFERRAL_STATS.earnedPoints}</div>
                              <div className="text-slate-500 font-bold uppercase text-[10px] tracking-widest">Points</div>
                          </div>
                      </div>
                  </div>
-                 <div className="bg-white/10 p-4 rounded-xl border border-white/10 w-full md:w-auto min-w-[250px]">
-                     <div className="text-[10px] text-slate-400 mb-1 uppercase tracking-widest font-black">Your Hero Code</div>
-                     <div className="flex items-center justify-between bg-black/30 rounded-lg p-2 border border-white/10">
-                         <code className="font-mono text-lg font-bold text-primary tracking-widest">{MOCK_REFERRAL_STATS.code}</code>
-                         <button className="p-2 hover:bg-white/10 rounded-md transition-colors"><Copy size={16}/></button>
+                 <div className="bg-white/5 backdrop-blur-sm p-6 rounded-2xl border border-white/10 w-full md:w-auto min-w-[300px] relative z-10">
+                     <div className="text-[10px] text-slate-400 mb-2 uppercase tracking-widest font-bold">Your Hero Code</div>
+                     <div className="flex items-center justify-between bg-black/40 rounded-xl p-3 border border-white/10 mb-4">
+                         <code className="font-mono text-xl font-bold text-primary tracking-widest">{MOCK_REFERRAL_STATS.code}</code>
+                         <button className="p-2 hover:bg-white/10 rounded-lg transition-colors text-slate-400 hover:text-white"><Copy size={20}/></button>
                      </div>
-                     <Button size="sm" className="w-full mt-3 bg-primary hover:bg-primaryDark text-slate-900 font-black">Copy & Share</Button>
+                     <Button size="lg" className="w-full bg-primary hover:bg-primaryDark text-slate-900 font-bold rounded-xl">Copy & Share</Button>
                  </div>
              </div>
           </div>
@@ -564,60 +571,96 @@ export const ParentPortal: React.FC = () => {
         );
 
         return (
-          <div className="space-y-6 animate-in fade-in h-full flex flex-col pb-20">
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
-                <input 
-                  type="text" 
-                  placeholder="Search activities, providers, or subjects..." 
-                  className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary shadow-sm"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-              {/* Trending Chips */}
-              <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar md:max-w-md">
-                  {TRENDING_SEARCHES.map(t => (
-                      <button 
-                        key={t} 
-                        onClick={() => setSearchTerm(t)} 
-                        className="whitespace-nowrap px-3 py-1 bg-white border border-slate-200 rounded-full text-xs hover:bg-cyan-50 hover:border-cyan-200 hover:text-primaryDark transition-colors"
-                      >
-                        {t}
-                      </button>
+          <div className="flex flex-col lg:flex-row gap-8 animate-in fade-in h-full pb-20">
+            {/* Left Sidebar Filters */}
+            <aside className="lg:w-64 shrink-0 space-y-8">
+                <div>
+                   <h3 className="font-bold text-slate-900 mb-4 tracking-tight">Categories</h3>
+                   <div className="flex flex-col gap-1">
+                      {categories.map(cat => (
+                        <button
+                          key={cat}
+                          onClick={() => setSelectedCategory(cat)}
+                          className={`flex items-center justify-between px-4 py-2.5 rounded-xl text-sm transition-all ${
+                            selectedCategory === cat 
+                              ? 'bg-primary/10 text-primaryDark font-bold' 
+                              : 'text-slate-600 hover:bg-slate-100'
+                          }`}
+                        >
+                          {cat}
+                          {selectedCategory === cat && <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>}
+                        </button>
+                      ))}
+                   </div>
+                </div>
+
+                <div>
+                   <h3 className="font-bold text-slate-900 mb-4 tracking-tight">Trending</h3>
+                   <div className="flex flex-wrap gap-2">
+                      {TRENDING_SEARCHES.map(t => (
+                          <button 
+                            key={t} 
+                            onClick={() => setSearchTerm(t)} 
+                            className="px-3 py-1.5 bg-white border border-slate-100 rounded-full text-[10px] font-bold uppercase tracking-wider text-slate-500 hover:border-primary hover:text-primary transition-all shadow-sm"
+                          >
+                            {t}
+                          </button>
+                      ))}
+                   </div>
+                </div>
+
+                <div className="p-4 bg-amber-50 rounded-2xl border border-amber-100">
+                    <div className="flex items-center gap-2 mb-2">
+                        <Star size={16} className="text-amber-500 fill-amber-500"/>
+                        <span className="text-[10px] font-bold text-amber-700 uppercase tracking-widest">Top Rated</span>
+                    </div>
+                    <p className="text-[10px] text-amber-600 font-medium">Browse only providers with 4.8+ rating and verified reviews.</p>
+                </div>
+            </aside>
+
+            {/* Main Content Area */}
+            <div className="flex-1 space-y-6">
+                <div className="relative">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+                    <input 
+                      type="text" 
+                      placeholder="Search activities, providers, or subjects..." 
+                      className="w-full pl-12 pr-4 py-4 bg-white border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary shadow-sm text-slate-900 placeholder:text-slate-400 font-medium"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                </div>
+
+                <div className="flex items-center justify-between">
+                    <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest">
+                        Showing {filteredPrograms.length} Results
+                    </h2>
+                    <div className="flex items-center gap-2 text-xs font-bold text-slate-400">
+                        Sort by: <span className="text-slate-900 cursor-pointer hover:text-primary">Relevance</span>
+                    </div>
+                </div>
+
+                <div className="grid gap-6 overflow-y-auto pb-4">
+                  {filteredPrograms.map(program => (
+                    <ProgramCard 
+                      key={program.id} 
+                      program={program} 
+                      onClick={() => setSelectedProgram(program)}
+                      onProviderClick={(id) => {
+                         const prov = MOCK_PROVIDERS.find(pr => pr.id === id);
+                         if (prov) setSelectedProvider(prov);
+                      }}
+                    />
                   ))}
-              </div>
-            </div>
-
-            <div className="flex gap-2 overflow-x-auto pb-2 hide-scrollbar">
-              {categories.map(cat => (
-                <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-                    selectedCategory === cat 
-                      ? 'bg-slate-900 text-white shadow-md' 
-                      : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 overflow-y-auto pb-4">
-              {filteredPrograms.map(program => (
-                <ProgramCard 
-                  key={program.id} 
-                  program={program} 
-                  onClick={() => setSelectedProgram(program)}
-                  onProviderClick={(id) => {
-                     const prov = MOCK_PROVIDERS.find(pr => pr.id === id);
-                     if (prov) setSelectedProvider(prov);
-                  }}
-                />
-              ))}
+                  {filteredPrograms.length === 0 && (
+                      <div className="py-20 text-center bg-white rounded-3xl border border-slate-100 shadow-sm">
+                          <Search size={48} className="mx-auto text-slate-200 mb-4"/>
+                          <h3 className="text-xl font-bold text-slate-900 mb-2">No results found</h3>
+                          <p className="text-slate-500">Try adjusting your search or filters to find what you're looking for.</p>
+                          <Button variant="outline" className="mt-6 rounded-full" onClick={() => { setSearchTerm(''); setSelectedCategory('All'); }}>Clear All Filters</Button>
+                      </div>
+                  )}
+                </div>
             </div>
           </div>
         );
@@ -919,44 +962,48 @@ export const ParentPortal: React.FC = () => {
         return (
           <div className="flex flex-col lg:flex-row gap-6 h-full pb-20">
              {/* Highlights Feed */}
-             <div className="lg:w-2/3 space-y-6">
-                <h2 className="text-xl font-bold text-slate-900">Community Highlights</h2>
+             <div className="lg:w-2/3 space-y-8">
+                <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Community Highlights</h2>
                 {MOCK_FEED_POSTS.map(post => (
-                    <div key={post.id} className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                        <div className="p-4 flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                <img src={post.providerImage} className="w-10 h-10 rounded-full bg-slate-200" alt=""/>
+                    <div key={post.id} className="bg-white rounded-3xl border border-slate-100 shadow-preply overflow-hidden group">
+                        <div className="p-5 flex items-center justify-between">
+                            <div className="flex items-center gap-4">
+                                <img src={post.providerImage} className="w-12 h-12 rounded-2xl bg-slate-100 object-cover border border-slate-100" alt=""/>
                                 <div>
-                                    <h4 className="font-bold text-sm">{post.providerName}</h4>
-                                    <p className="text-xs text-slate-500">{post.timeAgo}</p>
+                                    <h4 className="font-bold text-slate-900">{post.providerName}</h4>
+                                    <p className="text-xs text-slate-400 font-medium">{post.timeAgo}</p>
                                 </div>
                             </div>
-                            <Button variant="ghost" size="sm" className={post.liked ? 'text-red-500' : 'text-slate-400'}><HeartIcon fill={post.liked ? "currentColor" : "none"} size={20}/></Button>
+                            <Button variant="ghost" size="sm" className={`rounded-full w-10 h-10 p-0 ${post.liked ? 'text-red-500 bg-red-50' : 'text-slate-300 hover:text-slate-400 hover:bg-slate-50'}`}>
+                                <HeartIcon fill={post.liked ? "currentColor" : "none"} size={20}/>
+                            </Button>
                         </div>
-                        <img src={post.image} alt="Post" className="w-full aspect-video object-cover"/>
-                        <div className="p-4">
-                            <div className="flex gap-4 mb-2 text-sm text-slate-500 font-bold">
-                                <span>{post.likes} likes</span>
-                                <span>{post.comments} comments</span>
+                        <div className="px-5 pb-5">
+                            <img src={post.image} alt="Post" className="w-full aspect-video object-cover rounded-2xl"/>
+                        </div>
+                        <div className="px-5 pb-6">
+                            <div className="flex gap-6 mb-3 text-xs text-slate-400 font-bold uppercase tracking-widest">
+                                <span className="flex items-center gap-1.5"><HeartIcon size={14} className="text-slate-300"/> {post.likes} likes</span>
+                                <span className="flex items-center gap-1.5"><MessageCircle size={14} className="text-slate-300"/> {post.comments} comments</span>
                             </div>
-                            <p className="text-sm text-slate-700"><span className="font-bold mr-2">{post.providerName}</span>{post.caption}</p>
+                            <p className="text-sm text-slate-600 leading-relaxed"><span className="font-bold text-slate-900 mr-2">{post.providerName}</span>{post.caption}</p>
                         </div>
                     </div>
                 ))}
              </div>
 
              {/* Jobs Sidebar */}
-             <div className="lg:w-1/3">
+             <div className="lg:w-1/3 space-y-6">
                  <div className="flex justify-between items-center mb-4">
-                     <h2 className="text-xl font-bold text-slate-900">My Jobs</h2>
-                     <Button size="sm" onClick={() => setShowJobModal(true)}><Plus size={16} className="mr-1"/> Post Job</Button>
+                     <h2 className="text-2xl font-bold text-slate-900 tracking-tight">My Jobs</h2>
+                     <Button size="sm" onClick={() => setShowJobModal(true)} className="rounded-full px-5"><Plus size={16} className="mr-1"/> Post Job</Button>
                  </div>
                  
                  <div className="space-y-4">
                      {jobs.map(job => (
-                         <div key={job.id} className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                             <h4 className="font-bold text-slate-900">{job.title}</h4>
-                             <p className="text-sm text-slate-600 mt-1 mb-2">{job.description}</p>
+                         <div key={job.id} className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-preply transition-all">
+                             <h4 className="font-bold text-slate-900 text-lg tracking-tight">{job.title}</h4>
+                             <p className="text-sm text-slate-500 mt-2 mb-4 line-clamp-2 leading-relaxed">{job.description}</p>
                              <div className="flex justify-between items-center text-xs text-slate-500">
                                  <span>{job.datePosted}</span>
                                  <span className="font-bold text-primaryDark">{job.budget}</span>
@@ -1103,11 +1150,11 @@ export const ParentPortal: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-50 flex">
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex flex-col w-64 bg-slate-900 text-slate-300 p-6 space-y-6 shrink-0 h-screen sticky top-0 border-r-4 border-black">
+      <aside className="hidden lg:flex flex-col w-64 bg-white border-r border-slate-100 p-6 space-y-6 shrink-0 h-screen sticky top-0">
         <div>
           <div className="flex items-center space-x-3 mb-8 px-2">
-             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-slate-900 font-bold shadow shadow-primary/50 border border-black">E</div>
-             <span className="text-white font-bold text-lg tracking-tight font-display uppercase">Explorer Hub</span>
+             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-slate-900 font-bold shadow-sm">E</div>
+             <span className="text-slate-900 font-bold text-lg tracking-tight">Explorer Hub</span>
           </div>
           <nav className="space-y-1 font-sans">
             <NavSidebarLink icon={<Home size={20} />} label="Home" active={activeTab === 'home'} onClick={() => setActiveTab('home')} />
@@ -1118,13 +1165,13 @@ export const ParentPortal: React.FC = () => {
             <NavSidebarLink icon={<Settings size={20} />} label="Settings" active={activeTab === 'settings'} onClick={() => setActiveTab('settings')} />
           </nav>
         </div>
-        <div className="mt-auto p-4 bg-primary/10 rounded-xl border-2 border-primary/20">
+        <div className="mt-auto p-4 bg-slate-50 rounded-xl border border-slate-100">
             <div className="flex items-center gap-2 mb-2">
                 <Sparkles size={16} className="text-primary"/>
-                <span className="text-[10px] font-black text-white uppercase tracking-widest">Klass Rewards</span>
+                <span className="text-[10px] font-bold text-slate-900 uppercase tracking-widest">Klass Rewards</span>
             </div>
-            <p className="text-[10px] text-slate-400 mb-2 font-bold uppercase tracking-wider">You have 600 points available!</p>
-            <Button size="sm" className="w-full text-[10px] h-7 bg-primary border-none text-slate-900 font-black">View Rewards</Button>
+            <p className="text-[10px] text-slate-500 mb-2 font-bold uppercase tracking-wider">You have 600 points available!</p>
+            <Button size="sm" className="w-full text-[10px] h-7 bg-primary border-none text-slate-900 font-bold">View Rewards</Button>
         </div>
       </aside>
 
@@ -1307,9 +1354,9 @@ export const ParentPortal: React.FC = () => {
 const NavSidebarLink: React.FC<{ icon: React.ReactNode; label: string; active?: boolean; onClick?: () => void }> = ({ icon, label, active, onClick }) => (
   <button 
     onClick={onClick}
-    className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors ${active ? 'bg-primary text-slate-900 font-black shadow-lg shadow-primary/40 border border-black' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}`}
+    className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all ${active ? 'bg-primary/10 text-primaryDark font-bold shadow-sm' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}`}
   >
-    {icon}
-    <span className="font-bold uppercase tracking-widest text-sm">{label}</span>
+    <span className={`${active ? 'text-primaryDark' : 'text-slate-400'}`}>{icon}</span>
+    <span className="text-sm font-semibold">{label}</span>
   </button>
 );

@@ -130,6 +130,56 @@ export const TrustSafetyPage: React.FC = () => {
         </div>
       </div>
 
+      {/* Data Protection Section */}
+      <div className="bg-slate-50 py-20 border-y-2 border-slate-200">
+        <div className="max-w-5xl mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-display text-black mb-4 uppercase">Data Protection: Built on Trust and Accountability</h2>
+            <p className="text-xl text-slate-700 max-w-3xl mx-auto leading-relaxed">
+              At Klass Hero, child safety starts with strong data security. We handle all data in line with GDPR standards, taking full responsibility for protecting families, educators, and schools.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="bg-white p-8 rounded-3xl border-2 border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+              <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-6">
+                <UserCheck className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-bold text-black mb-4">Parents</h3>
+              <p className="text-slate-600 leading-relaxed">
+                Full control over your data, with secure storage of your child’s information and bookings.
+              </p>
+            </div>
+
+            <div className="bg-white p-8 rounded-3xl border-2 border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+              <div className="w-12 h-12 bg-secondary/20 rounded-2xl flex items-center justify-center text-secondary-foreground mb-6">
+                <Shield className="w-6 h-6 text-primaryDark" />
+              </div>
+              <h3 className="text-xl font-bold text-black mb-4">Providers</h3>
+              <p className="text-slate-600 leading-relaxed">
+                A compliant, professional system that protects your credentials, invoicing, and client data.
+              </p>
+            </div>
+
+            <div className="bg-white p-8 rounded-3xl border-2 border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+              <div className="w-12 h-12 bg-green-50 rounded-2xl flex items-center justify-center text-green-600 mb-6">
+                <Heart className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-bold text-black mb-4">Children</h3>
+              <p className="text-slate-600 leading-relaxed">
+                Minimal data collection and a strong focus on privacy, ensuring a safe learning environment.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-16 text-center">
+            <p className="text-lg font-bold text-slate-900 bg-white inline-block px-8 py-4 rounded-full border-2 border-slate-200 shadow-sm">
+              Our security-first approach makes Klass Hero a trusted platform for the Berlin community.
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Final Section */}
       <div className="bg-white py-20 border-t-2 border-slate-300">
         <div className="max-w-4xl mx-auto px-4 text-center">

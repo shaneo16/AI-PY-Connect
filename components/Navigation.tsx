@@ -9,27 +9,27 @@ interface NavigationProps {
   role: UserRole;
   onLogout: () => void;
   onLogin: (role: UserRole) => void;
-  onNavigate: (page: 'home' | 'about' | 'programs' | 'resources' | 'parents_resources' | 'pitch_deck' | 'trust_safety') => void;
+  onNavigate: (page: 'home' | 'about' | 'programs' | 'resources' | 'parents_resources' | 'pitch_deck' | 'trust_safety' | 'provider_checklist') => void;
 }
 
 export const Navigation: React.FC<NavigationProps> = ({ role, onLogout, onLogin, onNavigate }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const handleMobileNavigate = (page: 'home' | 'about' | 'programs' | 'resources' | 'parents_resources' | 'pitch_deck' | 'trust_safety') => {
+  const handleMobileNavigate = (page: 'home' | 'about' | 'programs' | 'resources' | 'parents_resources' | 'pitch_deck' | 'trust_safety' | 'provider_checklist') => {
     onNavigate(page);
     setIsMobileMenuOpen(false);
   };
 
   return (
-    <nav className="bg-slate-200/95 backdrop-blur-md border-b-2 border-slate-300 sticky top-0 z-50 h-16 transition-all shadow-sm">
+    <nav className="bg-white/95 backdrop-blur-md border-b border-slate-100 sticky top-0 z-50 h-16 transition-all shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center cursor-pointer group" onClick={() => onNavigate('home')}>
-          <div className="h-12 w-12 mr-2 transition-transform group-hover:scale-105 flex-shrink-0">
+          <div className="h-10 w-10 mr-2 transition-transform group-hover:scale-105 flex-shrink-0">
             <Logo className="w-full h-full" />
           </div>
-          <span className="text-3xl tracking-tight text-black hidden sm:block font-display mt-1">
-            KLASS HERO
+          <span className="text-2xl font-bold tracking-tight text-slate-900 hidden sm:block mt-1">
+            Klass Hero
           </span>
         </div>
 
@@ -37,30 +37,31 @@ export const Navigation: React.FC<NavigationProps> = ({ role, onLogout, onLogin,
         <div className="hidden md:flex items-center gap-4">
           {role === UserRole.GUEST ? (
             <>
-              <div className="flex items-center space-x-6 text-sm font-bold text-black mr-4 font-sans">
-                <button onClick={() => onNavigate('programs')} className="hover:text-primary transition-colors uppercase tracking-wide">Programs</button>
-                <button onClick={() => onNavigate('parents_resources')} className="hover:text-primary transition-colors uppercase tracking-wide">For Parents</button>
-                <button onClick={() => onNavigate('resources')} className="hover:text-secondary transition-colors uppercase tracking-wide">For Providers</button>
-                <button onClick={() => onNavigate('trust_safety')} className="hover:text-primary transition-colors uppercase tracking-wide">Trust & Safety</button>
-                <button onClick={() => onNavigate('about')} className="hover:text-primary transition-colors uppercase tracking-wide">About</button>
+              <div className="flex items-center space-x-8 text-sm font-semibold text-slate-600 mr-4">
+                <button onClick={() => onNavigate('programs')} className="hover:text-primary transition-colors">Programs</button>
+                <button onClick={() => onNavigate('parents_resources')} className="hover:text-primary transition-colors">For Parents</button>
+                <button onClick={() => onNavigate('resources')} className="hover:text-primary transition-colors">For Providers</button>
+                <button onClick={() => onNavigate('provider_checklist')} className="hover:text-primary transition-colors">Provider Checklist</button>
+                <button onClick={() => onNavigate('trust_safety')} className="hover:text-primary transition-colors">Trust & Safety</button>
+                <button onClick={() => onNavigate('about')} className="hover:text-primary transition-colors">About</button>
               </div>
               <div className="flex items-center gap-2">
-                 <Button variant="ghost" onClick={() => onNavigate('pitch_deck')} className="text-black hover:text-primary border-2 border-transparent">
+                 <Button variant="ghost" onClick={() => onNavigate('pitch_deck')} className="text-slate-600 hover:text-primary">
                    <Presentation size={18} className="mr-2"/> Pitch Deck
                  </Button>
-                 <Button variant="ghost" onClick={() => onLogin(UserRole.PARENT)} className="text-black hover:text-black hover:bg-white border-2 border-transparent">Parent Log In</Button>
-                 <Button onClick={() => onLogin(UserRole.PROVIDER)} variant="secondary">Provider Log In</Button>
+                 <Button variant="ghost" onClick={() => onLogin(UserRole.PARENT)} className="text-slate-600 hover:text-slate-900">Log In</Button>
+                 <Button onClick={() => onLogin(UserRole.PROVIDER)} variant="primary" size="sm">Get Started</Button>
               </div>
             </>
           ) : (
             <div className="flex items-center gap-4">
-              <span className="text-sm font-bold text-slate-900 hidden md:block uppercase font-sans">
+              <span className="text-sm font-semibold text-slate-600 hidden md:block">
                 {role === UserRole.PARENT ? 'Explorer Family' : 'Professional Account'}
               </span>
-              <div className={`h-8 w-8 rounded-full flex items-center justify-center border-2 border-black text-black ${role === UserRole.PARENT ? 'bg-primary' : 'bg-secondary'}`}>
+              <div className={`h-8 w-8 rounded-full flex items-center justify-center border border-slate-200 text-slate-700 ${role === UserRole.PARENT ? 'bg-primary/10' : 'bg-secondary/10'}`}>
                 <User size={18} />
               </div>
-              <Button variant="ghost" size="sm" onClick={onLogout} className="text-slate-600 hover:text-red-500">
+              <Button variant="ghost" size="sm" onClick={onLogout} className="text-slate-500 hover:text-red-500">
                 <LogOut size={18} />
               </Button>
             </div>
@@ -88,6 +89,7 @@ export const Navigation: React.FC<NavigationProps> = ({ role, onLogout, onLogin,
                <button onClick={() => handleMobileNavigate('programs')} className="text-left px-4 py-2 hover:bg-white rounded-lg font-bold font-sans text-black">Programs</button>
                <button onClick={() => handleMobileNavigate('parents_resources')} className="text-left px-4 py-2 hover:bg-white rounded-lg font-bold font-sans text-black">For Parents</button>
                <button onClick={() => handleMobileNavigate('resources')} className="text-left px-4 py-2 hover:bg-white rounded-lg font-bold font-sans text-black">For Providers</button>
+               <button onClick={() => handleMobileNavigate('provider_checklist')} className="text-left px-4 py-2 hover:bg-white rounded-lg font-bold font-sans text-black">Provider Checklist</button>
                <button onClick={() => handleMobileNavigate('trust_safety')} className="text-left px-4 py-2 hover:bg-white rounded-lg font-bold font-sans text-black">Trust & Safety</button>
                <button onClick={() => handleMobileNavigate('about')} className="text-left px-4 py-2 hover:bg-white rounded-lg font-bold font-sans text-black">About Us</button>
                <button onClick={() => handleMobileNavigate('pitch_deck')} className="text-left px-4 py-2 hover:bg-white rounded-lg font-bold font-sans text-black flex items-center">

@@ -11,8 +11,9 @@ import { ResourcesPage } from './components/ResourcesPage';
 import { ParentsResourcesPage } from './components/ParentsResourcesPage';
 import { PitchDeck } from './components/PitchDeck';
 import { TrustSafetyPage } from './components/TrustSafetyPage';
+import { ProviderChecklistPage } from './components/ProviderChecklistPage';
 
-type View = 'HOME' | 'ABOUT' | 'DASHBOARD' | 'PROGRAMS' | 'RESOURCES' | 'PARENTS_RESOURCES' | 'PITCH_DECK' | 'TRUST_SAFETY';
+type View = 'HOME' | 'ABOUT' | 'DASHBOARD' | 'PROGRAMS' | 'RESOURCES' | 'PARENTS_RESOURCES' | 'PITCH_DECK' | 'TRUST_SAFETY' | 'PROVIDER_CHECKLIST';
 
 const App: React.FC = () => {
   const [role, setRole] = useState<UserRole>(UserRole.GUEST);
@@ -28,7 +29,7 @@ const App: React.FC = () => {
     setView('HOME');
   };
 
-  const handleNavigate = (page: 'home' | 'about' | 'programs' | 'resources' | 'parents_resources' | 'pitch_deck' | 'trust_safety') => {
+  const handleNavigate = (page: 'home' | 'about' | 'programs' | 'resources' | 'parents_resources' | 'pitch_deck' | 'trust_safety' | 'provider_checklist') => {
     if (role !== UserRole.GUEST) {
       return; 
     }
@@ -39,6 +40,7 @@ const App: React.FC = () => {
     else if (page === 'parents_resources') setView('PARENTS_RESOURCES');
     else if (page === 'pitch_deck') setView('PITCH_DECK');
     else if (page === 'trust_safety') setView('TRUST_SAFETY');
+    else if (page === 'provider_checklist') setView('PROVIDER_CHECKLIST');
   };
 
   const renderContent = () => {
@@ -60,13 +62,15 @@ const App: React.FC = () => {
       case 'PROGRAMS':
         return <PublicPrograms onLoginRequest={() => handleLogin(UserRole.PARENT)} />;
       case 'RESOURCES':
-        return <ResourcesPage />;
+        return <ResourcesPage onNavigate={handleNavigate} />;
       case 'PARENTS_RESOURCES':
         return <ParentsResourcesPage />;
       case 'PITCH_DECK':
         return <PitchDeck onClose={() => setView('HOME')} />;
       case 'TRUST_SAFETY':
         return <TrustSafetyPage />;
+      case 'PROVIDER_CHECKLIST':
+        return <ProviderChecklistPage />;
       case 'HOME':
       default:
         return (

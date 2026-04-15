@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import { Button } from './Button';
 
-export const ResourcesPage: React.FC = () => {
+export const ResourcesPage: React.FC<{ onNavigate?: (page: any) => void }> = ({ onNavigate }) => {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
@@ -32,9 +32,17 @@ export const ResourcesPage: React.FC = () => {
           <p className="text-xl text-slate-700 max-w-3xl mx-auto leading-relaxed">
             Klass Hero is more than a marketplace; it is a comprehensive operational infrastructure designed by parents and partners of teachers to empower independent educators and youth organizations.
           </p>
-          <div className="mt-10">
+          <div className="mt-10 flex flex-col md:flex-row gap-4 justify-center">
             <Button size="lg" className="bg-primary text-white hover:bg-primaryDark">
               Start Your Application Today
+            </Button>
+            <Button 
+              size="lg" 
+              variant="outline" 
+              className="border-primary text-primary hover:bg-primary/5"
+              onClick={() => onNavigate?.('provider_checklist')}
+            >
+              View Provider Checklist
             </Button>
           </div>
         </div>
