@@ -4,39 +4,20 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Legend
 } from 'recharts';
 import { 
-  LayoutDashboard, List, Users, TrendingUp, Plus, Edit, Share2, Upload, Send, X, Megaphone, Printer, Download, Clock, Briefcase, MapPin, User, Video, Shield, DollarSign, Rocket, BookOpen, MessageSquare, FileText, Settings, CreditCard, UserPlus, Eye, CheckCircle, AlertTriangle, Search, Filter, Copy, FileCheck, Calendar, Receipt, Lock, Info
+  LayoutDashboard, List, Users, TrendingUp, Plus, Edit, Share2, Upload, Send, X, Megaphone, Printer, Download, Clock, Briefcase, MapPin, User, Video, Shield, DollarSign, Rocket, BookOpen, MessageSquare, FileText, Settings, CreditCard, UserPlus, Eye, CheckCircle, AlertTriangle, Search, Filter, Copy, FileCheck, Calendar, Receipt, Lock, Info, Award
 } from 'lucide-react';
 import { PROVIDER_STATS, ANALYTICS_DATA, MOCK_PROGRAMS, MOCK_CONVERSATIONS, MOCK_STUDENTS, MOCK_EXPENSES, MOCK_TEAM_MEMBERS, MOCK_INVOICES } from '../constants';
 import { Button } from './Button';
 import { VerificationType, PaymentRouting, Program, TeamMember, Expense, Invoice } from '../types';
 import { VerificationIcon, VideoCallModal, ProgramCard } from './ParentPortal';
 
-// --- Upgrade Overlay Component ---
-type OverlayProps = {
-    title: string;
-    description: string;
-    targetTier: 'Professional' | 'Business';
-    onUpgrade: (tier: 'Professional' | 'Business') => void;
-};
 
-const UpgradeOverlay: React.FC<OverlayProps> = ({ title, description, targetTier, onUpgrade }) => (
-    <div className="absolute inset-0 bg-white/60 backdrop-blur-sm z-10 flex flex-col items-center justify-center text-center p-8 animate-in fade-in">
-        <div className="bg-white p-8 rounded-2xl shadow-2xl max-w-md border border-slate-200">
-            <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg text-black">
-                <Lock size={32} />
-            </div>
-            <h3 className="text-2xl font-bold text-slate-900 mb-2">{title}</h3>
-            <p className="text-slate-600 mb-8 leading-relaxed font-sans">{description}</p>
-            <Button onClick={() => onUpgrade(targetTier)} className="w-full py-4 text-lg bg-secondary hover:bg-yellow-300 text-black shadow-xl shadow-secondary/20">
-                Upgrade to {targetTier}
-            </Button>
-        </div>
-    </div>
-);
 
 export const ProviderPortal: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('overview');
-  const [tier, setTier] = useState<'Starter' | 'Professional' | 'Business'>('Business');
+   const [activeTab, setActiveTab] = useState('overview');
+   const [bookingsAmount, setBookingsAmount] = useState<number>(2850);
+   const [isEarlyAdopter, setIsEarlyAdopter] = useState<boolean>(true);
+   const [showEarningsModal, setShowEarningsModal] = useState<boolean>(false);
   
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [isBusinessVerified, setIsBusinessVerified] = useState(true);
@@ -62,14 +43,8 @@ export const ProviderPortal: React.FC = () => {
   const [newMessage, setNewMessage] = useState('');
   const [showVideoCall, setShowVideoCall] = useState(false);
 
-  const PROGRAM_LIMITS = {
-      'Starter': 2,
-      'Professional': 5,
-      'Business': 999 
-  };
-
-  const hasAccessToTeam = tier === 'Business';
-  const hasAccessToFinance = tier === 'Business';
+  const hasAccessToTeam = true;
+  const hasAccessToFinance = true;
 
   const filteredPrograms = MOCK_PROGRAMS.filter(prog => {
       const matchesSearch = prog.title.toLowerCase().includes(programSearchTerm.toLowerCase());
@@ -78,7 +53,7 @@ export const ProviderPortal: React.FC = () => {
   });
 
   const currentProgramCount = filteredPrograms.length;
-  const canCreateProgram = currentProgramCount < PROGRAM_LIMITS[tier];
+  const canCreateProgram = true;
 
   const activeConversation = MOCK_CONVERSATIONS.find(c => c.id === activeConversationId);
   const directMessages = MOCK_CONVERSATIONS.filter(c => !c.isGroup);
@@ -102,10 +77,6 @@ export const ProviderPortal: React.FC = () => {
   }
   
   const handleDuplicateProgram = (program: Program) => {
-      if (!canCreateProgram) {
-          alert(`You have reached the limit of ${PROGRAM_LIMITS[tier]} programs for the ${tier} plan.`);
-          return;
-      }
       const newProgram = { ...program, id: `copy_${Date.now()}`, title: `${program.title} (Copy)`, enrolledCount: 0 };
       setEditingProgram(newProgram);
       setShowCreateProgramModal(true);
@@ -195,6 +166,144 @@ export const ProviderPortal: React.FC = () => {
           </div>
       )}
 
+      {showEarningsModal && (
+          <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-xs flex items-center justify-center p-4" onClick={() => setShowEarningsModal(false)}>
+              <div className="bg-white rounded-2xl shadow-2xl w-full max-w-xl overflow-hidden animate-in fade-in-50 zoom-in-95 duration-200 text-left" onClick={e => e.stopPropagation()}>
+                  {/* Header */}
+                  <div className="p-6 bg-slate-900 text-white flex justify-between items-center relative">
+                      <div>
+                          <h2 className="text-xl font-bold font-sans flex items-center gap-2">
+                              <Award size={20} className="text-yellow-400 shrink-0" />
+                              Earnings progress
+                          </h2>
+                          <p className="text-xs text-slate-300 mt-1 font-sans">Track your monthly bookings volume milestones and unlock lower commission tiers.</p>
+                      </div>
+                      <button 
+                          onClick={() => setShowEarningsModal(false)}
+                          className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors border-none"
+                      >
+                          <X size={20} />
+                      </button>
+                  </div>
+
+                  {/* Body Content */}
+                  <div className="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
+                      
+                      {/* Overall Progress Stat Ring / Card */}
+                      <div className="p-5 bg-indigo-50/50 rounded-2xl border border-indigo-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                          <div className="space-y-1">
+                              <span className="text-[10px] font-mono font-bold text-indigo-500 uppercase tracking-widest">Active Performance Level</span>
+                              <div className="text-lg font-bold text-slate-900 leading-tight font-sans">Level 2 – Early Adopter <span className="text-xs font-semibold text-green-700 bg-green-50 px-2 py-0.5 rounded border border-green-200 ml-1">Grandfathered Baseline</span></div>
+                              <p className="text-xs text-slate-500">Your base rate is locked at <strong className="text-slate-800 font-bold">18%</strong> (normally 22% for new accounts).</p>
+                          </div>
+                      </div>
+
+                      {/* Gamified Tier Map */}
+                      <div>
+                          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 font-mono">Commission Milestone Levels</h3>
+                          <div className="space-y-4">
+                              {/* Tier 1 */}
+                              <div className="flex gap-4 relative">
+                                  {/* Line connector */}
+                                  <div className="absolute top-6 bottom-0 left-4 w-0.5 bg-slate-200"></div>
+                                  <div className="w-8 h-8 rounded-full bg-slate-100 border border-slate-300 text-slate-500 flex items-center justify-center text-xs font-bold font-mono z-10 shrink-0">
+                                      01
+                                  </div>
+                                  <div className="flex-1 bg-slate-50/50 p-4 rounded-xl border border-slate-100 flex justify-between items-center">
+                                      <div>
+                                          <h4 className="text-sm font-bold text-slate-500 line-through">Standard Partner Tier</h4>
+                                          <p className="text-[10px] text-slate-400">Regular account base rate is 22%</p>
+                                      </div>
+                                      <div className="text-right">
+                                          <div className="text-sm font-medium text-slate-400 font-mono">22% Rate</div>
+                                          <span className="text-[9px] text-slate-400 font-bold bg-slate-100 px-1.5 py-0.5 rounded">Bypassed</span>
+                                      </div>
+                                  </div>
+                              </div>
+
+                              {/* Tier 2 */}
+                              <div className="flex gap-4 relative">
+                                  <div className="absolute top-6 bottom-0 left-4 w-0.5 bg-slate-200"></div>
+                                  <div className="w-8 h-8 rounded-full bg-green-500 border-4 border-green-100 text-white flex items-center justify-center text-xs font-bold font-mono z-10 shrink-0">
+                                      02
+                                  </div>
+                                  <div className="flex-1 bg-green-50/20 p-4 rounded-xl border border-green-200 flex justify-between items-center">
+                                      <div>
+                                          <h4 className="text-sm font-bold text-green-950 flex items-center gap-1.5">
+                                              Early Adopter Status
+                                              <span className="relative flex h-2 w-2">
+                                                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                                  <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                                              </span>
+                                          </h4>
+                                          <p className="text-[10px] text-green-700">Permanent baseline safeguard</p>
+                                      </div>
+                                      <div className="text-right">
+                                          <div className="text-sm font-bold text-green-900 font-mono">18% Rate</div>
+                                          <span className="text-[9px] text-green-700 bg-green-100 px-1.5 py-0.5 rounded font-bold">Active Now</span>
+                                      </div>
+                                  </div>
+                              </div>
+
+                              {/* Tier 3 */}
+                              <div className="flex gap-4 relative">
+                                  <div className="absolute top-6 bottom-0 left-4 w-0.5 bg-slate-200"></div>
+                                  <div className="w-8 h-8 rounded-full bg-indigo-100 border border-indigo-300 text-indigo-700 flex items-center justify-center text-xs font-bold font-mono z-10 shrink-0">
+                                      03
+                                  </div>
+                                  <div className="flex-1 bg-indigo-50/25 p-4 rounded-xl border border-indigo-200 flex justify-between items-center">
+                                      <div>
+                                          <h4 className="text-sm font-bold text-indigo-950">Pro Achiever Milestone</h4>
+                                          <p className="text-[10px] text-indigo-700">Unlocks when monthly GMV reaches €4,000</p>
+                                      </div>
+                                      <div className="text-right">
+                                          <div className="text-sm font-bold text-indigo-900 font-mono">12% Rate</div>
+                                          <span className="text-[9px] text-indigo-600 bg-indigo-100 px-1.5 py-0.5 rounded font-bold">71% Earned</span>
+                                      </div>
+                                  </div>
+                              </div>
+
+                              {/* Tier 4 */}
+                              <div className="flex gap-4">
+                                  <div className="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 text-slate-400 flex items-center justify-center text-xs font-bold font-mono z-10 shrink-0">
+                                      04
+                                  </div>
+                                  <div className="flex-1 bg-slate-50/30 p-4 rounded-xl border border-slate-150 flex justify-between items-center opacity-65">
+                                      <div>
+                                          <h4 className="text-sm font-bold text-slate-700">Premier Elite Milestone</h4>
+                                          <p className="text-[10px] text-slate-400 font-normal">Unlocks when monthly GMV reaches €8,000</p>
+                                      </div>
+                                      <div className="text-right">
+                                          <div className="text-sm font-bold text-slate-650 font-mono">8% Rate</div>
+                                          <span className="text-[9px] text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded font-bold">Locked</span>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+
+                      {/* Real tips block */}
+                      <div className="bg-amber-50/40 p-4 rounded-xl border border-amber-200/50 flex gap-3">
+                          <Info className="text-amber-600 shrink-0 mt-0.5" size={18} />
+                          <div>
+                              <h4 className="text-xs font-bold text-amber-900">How to level up this month</h4>
+                              <p className="text-[11px] text-amber-700 mt-1 leading-relaxed text-left">
+                                  You are only <strong className="text-amber-905 font-bold">€1,150</strong> away from unlocking the <strong className="font-bold text-amber-905">12% commission level</strong>! Sharing your direct enrollment links in team communications or newsletters typically boosts bookings by over 30% and can get you over the line.
+                              </p>
+                          </div>
+                      </div>
+                  </div>
+
+                  {/* Footer */}
+                  <div className="p-4 bg-slate-50 border-t flex justify-end">
+                      <Button onClick={() => setShowEarningsModal(false)} className="bg-slate-900 hover:bg-slate-800 text-white font-bold py-2 px-6 rounded-lg text-sm shadow-sm transition-all border-none">
+                          Close Overview
+                      </Button>
+                  </div>
+              </div>
+          </div>
+      )}
+
       <aside className="hidden lg:flex flex-col w-64 bg-slate-900 text-slate-300 p-6 space-y-6 shrink-0 overflow-y-auto">
         <div>
           <div className="flex items-center space-x-3 mb-8 px-2">
@@ -209,14 +318,6 @@ export const ProviderPortal: React.FC = () => {
             <SidebarLink icon={<MessageSquare size={20} />} label="Messages" active={activeTab === 'chat'} onClick={() => setActiveTab('chat')} />
           </nav>
         </div>
-        <div className="mt-auto pt-6 border-t border-slate-800 font-sans">
-           <p className="text-xs text-slate-500 mb-2 font-bold uppercase">Plan Tier</p>
-           <div className="space-y-2">
-              <button onClick={() => setTier('Business')} className={`w-full text-left px-3 py-2 rounded text-xs transition-colors ${tier === 'Business' ? 'bg-primary text-slate-900 font-bold' : 'hover:bg-slate-800'}`}>Business Plus (€48)</button>
-              <button onClick={() => setTier('Professional')} className={`w-full text-left px-3 py-2 rounded text-xs transition-colors ${tier === 'Professional' ? 'bg-secondary text-black font-bold' : 'hover:bg-slate-800'}`}>Professional (€8)</button>
-              <button onClick={() => setTier('Starter')} className={`w-full text-left px-3 py-2 rounded text-xs transition-colors ${tier === 'Starter' ? 'bg-slate-600 text-white font-bold' : 'hover:bg-slate-800'}`}>Starter (Free)</button>
-           </div>
-        </div>
       </aside>
 
       <main className="flex-1 overflow-y-auto p-4 md:p-8 relative mb-16 lg:mb-0 font-sans">
@@ -224,9 +325,6 @@ export const ProviderPortal: React.FC = () => {
           <div>
             <h1 className="text-2xl font-bold text-slate-900">Berlin Kickers Dashboard</h1>
             <div className="flex items-center space-x-2 mt-1">
-               <span className={`text-xs px-2 py-0.5 rounded font-bold uppercase tracking-wide text-white ${tier === 'Starter' ? 'bg-slate-500' : tier === 'Professional' ? 'bg-secondary text-black' : 'bg-cyan-600'}`}>
-                  {tier} Plan
-               </span>
                {isBusinessVerified ? (
                    <span className="flex items-center text-xs font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded border border-green-200">
                        <CheckCircle size={12} className="mr-1"/> Verified Business
@@ -240,28 +338,15 @@ export const ProviderPortal: React.FC = () => {
           </div>
           {(activeTab === 'overview' || activeTab === 'programs') && (
             <div className="flex items-center gap-4">
-                 <div className="hidden md:block text-right">
-                     <div className="text-[10px] font-bold uppercase text-slate-400">Program Slots</div>
-                     <div className="flex items-center gap-2">
-                        <div className="w-24 h-2 bg-slate-200 rounded-full overflow-hidden">
-                            <div className={`h-full ${currentProgramCount >= PROGRAM_LIMITS[tier] ? 'bg-red-500' : 'bg-primary'}`} style={{width: `${Math.min((currentProgramCount / PROGRAM_LIMITS[tier]) * 100, 100)}%`}}></div>
-                        </div>
-                        <span className="text-xs font-bold text-slate-600">{currentProgramCount}/{tier === 'Business' ? '∞' : PROGRAM_LIMITS[tier]}</span>
-                     </div>
-                 </div>
                 <Button 
                     onClick={() => { 
-                        if (canCreateProgram) {
-                            setEditingProgram(null); 
-                            setShowCreateProgramModal(true); 
-                        } else {
-                            alert(`You have reached the limit of ${PROGRAM_LIMITS[tier]} programs for the ${tier} plan. Please upgrade to add more.`);
-                        }
+                        setEditingProgram(null); 
+                        setShowCreateProgramModal(true); 
                     }}
-                    className={`hidden md:flex items-center gap-2 border-none shadow-lg ${canCreateProgram ? 'bg-secondary text-black hover:bg-yellow-300' : 'bg-slate-300 cursor-not-allowed'}`}
+                    className="hidden md:flex items-center gap-2 border-none shadow bg-secondary text-black hover:bg-yellow-300"
                     disabled={!isBusinessVerified}
                 >
-                    {canCreateProgram ? <><Plus size={18} /> New Program</> : 'Limit Reached'}
+                    <Plus size={18} /> New Program
                 </Button>
             </div>
           )}
@@ -277,7 +362,88 @@ export const ProviderPortal: React.FC = () => {
                     </div>
                   ))}
                 </div>
-                
+
+                 {/* Commission Curve Overview Widget */}
+                <div className="bg-white rounded-2xl border border-slate-200 shadow shadow-slate-100 overflow-hidden">
+                    <div className="p-6 border-b border-slate-100 bg-slate-50/70 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div>
+                            <div className="flex items-center gap-2 mb-1">
+                                <span className="text-[10px] font-bold text-green-700 bg-green-50 px-2 py-0.5 rounded border border-green-200 uppercase tracking-widest font-mono">My Rate</span>
+                            </div>
+                            <h2 className="text-lg font-bold text-slate-900">Commission Protection</h2>
+                            <p className="text-xs text-slate-500">Your rate adjusts automatically based on your bookings volume. Resets on the 1st of each month.</p>
+                        </div>
+                        <Button 
+                            onClick={() => setShowEarningsModal(true)} 
+                            className="bg-slate-900 hover:bg-slate-800 text-white text-xs py-2 px-4 rounded-xl flex items-center gap-2 font-bold shadow-sm transition-all border-none"
+                        >
+                            <Award size={14} className="text-yellow-400" />
+                            Track Milestones
+                        </Button>
+                    </div>
+                    
+                    <div className="p-6 space-y-6">
+                        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div className="p-4 bg-slate-50/50 rounded-xl border border-slate-100">
+                                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 font-mono">This Month's GMV</div>
+                                <div className="text-xl font-bold text-slate-900">€{bookingsAmount.toLocaleString()}</div>
+                                <p className="text-[10px] text-slate-400 mt-1 font-sans">Accumulated sales volume</p>
+                            </div>
+                            <div className="p-4 bg-slate-50/50 rounded-xl border border-slate-100">
+                                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 font-mono">Your Rate</div>
+                                <div className="text-xl font-bold text-slate-950 flex items-center gap-1.5">
+                                    <span>18%</span>
+                                    <span className="text-[10px] font-bold text-cyan-700 bg-cyan-50 px-1.5 py-0.5 rounded border border-cyan-100 uppercase tracking-tight font-sans">Early Adopter</span>
+                                </div>
+                                <p className="text-[10px] text-slate-400 mt-1 font-sans">Guaranteed baseline safeguard</p>
+                            </div>
+                            <div className="p-4 bg-slate-50/50 rounded-xl border border-slate-100">
+                                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 font-mono">Next Tier Rate</div>
+                                <div className="text-xl font-bold text-slate-700 font-sans">12% <span className="text-xs font-normal text-slate-400 font-mono">at €4,000</span></div>
+                                <p className="text-[10px] text-slate-400 mt-1 font-sans">€{(4000 - bookingsAmount).toLocaleString()} remaining</p>
+                            </div>
+                            <div className="p-4 bg-green-50/40 rounded-xl border border-green-100">
+                                <div className="text-[10px] font-bold text-green-700 uppercase tracking-widest mb-1 font-mono">Active Savings</div>
+                                <div className="text-xl font-bold text-green-600">€{Math.round(bookingsAmount * 0.04).toLocaleString()}</div>
+                                <p className="text-[10px] text-green-700 mt-1 font-sans">Saved vs standard 22% rate</p>
+                            </div>
+                        </div>
+
+                        {/* Progress Bar with Gamified Target */}
+                        <div className="p-5 bg-gradient-to-r from-slate-50 to-slate-100/50 rounded-2xl border border-slate-100 space-y-4">
+                            <div className="flex justify-between items-center text-xs">
+                                <div className="flex items-center gap-1.5">
+                                    <span className="font-bold text-slate-700 font-sans">Level 2: Early Adopter (18% Locked)</span>
+                                </div>
+                                <div className="text-right">
+                                    <span className="font-bold text-indigo-700 font-mono">{(bookingsAmount / 4000 * 100).toFixed(0)}% Completed</span>
+                                </div>
+                            </div>
+                            
+                            <div className="relative">
+                                {/* Track Background */}
+                                <div className="h-4 bg-slate-200/65 rounded-full overflow-hidden p-0.5 border border-slate-200 relative">
+                                    {/* Filled progress with a luxurious glow */}
+                                    <div 
+                                        className="h-full bg-gradient-to-r from-cyan-500 via-indigo-500 to-indigo-600 rounded-full transition-all duration-700 shadow-sm relative overflow-hidden" 
+                                        style={{ width: `${Math.min(100, (bookingsAmount / 4000) * 100)}%` }}
+                                    >
+                                        <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div className="flex justify-between items-center text-[10px] font-mono text-slate-400 pt-1">
+                                <span>€0 (Guaranteed Safe Baseline)</span>
+                                <span className="font-bold text-slate-500 bg-white px-2 py-0.5 rounded border border-slate-200 shadow-xs flex items-center gap-1">
+                                    ⭐ Level 3 Goal: €4,000 GMV
+                                </span>
+                                <span>€4,000 (Target Rate 12%)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                     <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
                         <div>
@@ -337,15 +503,6 @@ export const ProviderPortal: React.FC = () => {
 
         {activeTab === 'team' && (
             <div className="space-y-8 relative animate-in fade-in">
-                {!hasAccessToTeam && (
-                    <UpgradeOverlay 
-                        title="Team Management is Locked" 
-                        description="Manage your staff, assign instructors to classes, and track hours. This feature is available on the Business plan."
-                        targetTier="Business"
-                        onUpgrade={setTier}
-                    />
-                )}
-                
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div>
                         <h2 className="text-2xl font-bold text-slate-900">Team & Provider Profiles</h2>
@@ -474,15 +631,6 @@ export const ProviderPortal: React.FC = () => {
 
         {activeTab === 'finances' && (
             <div className="space-y-8 relative animate-in fade-in">
-                {!hasAccessToFinance && (
-                    <UpgradeOverlay 
-                        title="Financial Suite Locked" 
-                        description="Track revenue vs expenses. Upgrade to Business Plus to access these tools."
-                        targetTier="Business"
-                        onUpgrade={setTier}
-                    />
-                )}
-
                 <div className="flex justify-between items-center">
                     <div>
                         <h2 className="text-2xl font-bold text-slate-900">Financial Performance</h2>
